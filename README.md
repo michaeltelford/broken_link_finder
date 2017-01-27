@@ -2,7 +2,9 @@
 
 Does what it says on the tin. Finds a websites broken links. 
 
-Simply point it a website and it will crawl all its webpages searching for and identifing any broken links on those pages. You will then be presented with a nice concise summary of your sites broken links. 
+Simply point it a website and it will crawl all its webpages searching for and identifing any broken links on those pages. You will then be presented with a nice concise summary of your sites broken links.
+
+The only exception or gotcha is that the `wgit` doesn't currently follow redirects meaning they will appear as broken links in the results.  
 
 ## Made Possible By
 
@@ -26,7 +28,29 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'broken_link_finder'
+
+include BrokenLinkFinder
+
+def main(url)
+  # Removes the protocol prefix for the filename. 
+  file_path = "/Users/<username>/Downloads/broken_links/#{url[7..-1]}.txt"
+
+  finder = Finder.new url
+  finder.crawl_site
+  
+  File.open file_path, "a+" do |f|
+    finder.pretty_print_broken_links f
+  end
+end
+
+urls = [
+  "https://opensource.org",
+]
+
+urls.each { |url| main url }
+```
 
 ## Development
 
@@ -36,7 +60,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/michaeltelford/broken-link-finder.
+Bug reports and pull requests are welcome on GitHub [here](https://github.com/michaeltelford/broken-link-finder).
 
 ## License
 

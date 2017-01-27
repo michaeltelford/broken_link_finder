@@ -7,3 +7,5 @@
 /pkg/
 /spec/reports/
 /tmp/
+**/spike.rb
+main.rb

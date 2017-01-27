@@ -1,5 +1,6 @@
-require "broken_link_finder/version"
+require_relative "./broken_link_finder/version"
+require_relative "./broken_link_finder/finder"
 
 module BrokenLinkFinder
-  # Your code goes here...
+  #
 end
