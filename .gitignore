@@ -9,3 +9,4 @@
 /tmp/
 **/spike.rb
 main.rb
+.DS_Store
