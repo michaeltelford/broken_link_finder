@@ -1,11 +1,11 @@
 require 'test_helper'
 
-class FinderTest < Minitest::Test
+class FinderTest < TestHelper
   def setup
-    @finder = Finder.new()
+    @finder = Finder.new "https://motherfuckingwebsite.com/"
   end
 
   def test_find_broken_links
-    refute_nil ::BrokenLinkFinder::VERSION
+    skip
   end
 end
