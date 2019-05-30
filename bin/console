@@ -1,10 +1,21 @@
 #!/usr/bin/env ruby
 
 require "bundler/setup"
+require "pry"
 require "broken_link_finder"
 
-# You can add fixtures and/or initialization code here to make experimenting
-# with your gem easier. You can also use a different console, if you like.
+# Call reload to load all recent code changes.
+def reload
+  original_verbose = $VERBOSE
+  $VERBOSE = nil # Temporarily suppress ruby warnings.
+  load 'load.rb'
+  include BrokenLinkFinder
+  $VERBOSE = original_verbose # Restore ruby warnings.
+  true
+end
 
-require "pry"
-Pry.start
+# You can add fixtures and/or initialization code here...
+reload
+finder = Finder.new "https://motherfuckingwebsite.com/"
+
+binding.pry
