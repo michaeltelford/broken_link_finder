@@ -9,3 +9,4 @@
 **/spike.rb
 main.rb
 .DS_Store
+.byebug_history
