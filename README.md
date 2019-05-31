@@ -1,14 +1,14 @@
 # Broken Link Finder
 
-Does what it says on the tin. Finds a websites broken links. 
+Does what it says on the tin. Finds a website's broken links. 
 
-Simply point it a website and it will crawl all its webpages searching for and identifing any broken links on those pages. You will then be presented with a nice concise summary of your sites broken links.
-
-The only exception or gotcha is that the `wgit` doesn't currently follow redirects meaning they will appear as broken links in the results.  
+Simply point it at a website and it will crawl all of its webpages searching for and identifing any broken links. You will then be presented with a nice concise summary of the broken links found.
 
 ## Made Possible By
 
-This repository utilises the awesome `wgit` Ruby gem. See its [repository](https://github.com/michaeltelford/wgit) for more details. 
+This repository utilises the awesome `wgit` Ruby gem. See its [repository](https://github.com/michaeltelford/wgit) for more details.
+
+The only gotcha is that `wgit` doesn't currently follow redirects meaning they will appear as broken links in the results.
 
 ## Installation
 
@@ -28,29 +28,43 @@ Or install it yourself as:
 
 ## Usage
 
+Below is a sample script which crawls a website and outputs its broken links to a file.
+
+> main.rb
+
 ```ruby
 require 'broken_link_finder'
 
-include BrokenLinkFinder
-
-def main(url)
-  # Removes the protocol prefix for the filename. 
-  file_path = "/Users/<username>/Downloads/broken_links/#{url[7..-1]}.txt"
-
-  finder = Finder.new url
-  finder.crawl_site
-  
-  File.open file_path, "a+" do |f|
-    finder.pretty_print_broken_links f
-  end
-end
-
-urls = [
-  "https://opensource.org",
-]
-
-urls.each { |url| main url }
+finder = BrokenLinkFinder::Finder.new
+finder.crawl_site "http://txti.es" # Also, see Finder#crawl_url for a single webpage.
+finder.pretty_print_broken_links
 ```
+
+Then execute the script with:
+
+    $ ruby main.rb
+
+The output should look something like:
+
+```text
+Below is a breakdown of the different pages and their broken links...
+
+The following broken links exist in http://txti.es/about:
+http://twitter.com/thebarrytone
+http://twitter.com/nwbld
+http://twitter.com/txties
+https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=84L4BDS86FBUU
+
+The following broken links exist in http://txti.es/how:
+http://en.wikipedia.org/wiki/Markdown
+http://imgur.com
+```
+
+## TODO
+
+- Create a `broken_link_finder` executable.
+- Add logger functionality (especially useful in the console during development).
+- Update the `wgit` gem as soon as redirects are implemented.
 
 ## Development
 

@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Michael Telford"]
   spec.email         = ["michael.telford@live.com"]
 
-  spec.summary       = "Finds a websites broken links and reports back to you with a summary."
-  spec.description   = "Finds a websites broken links using the 'wgit' gem and reports back to you with a summary."
+  spec.summary       = "Finds a website's broken links and reports back to you with a summary."
+  spec.description   = "Finds a website's broken links using the 'wgit' gem and reports back to you with a summary."
   spec.homepage      = "https://github.com/michaeltelford/broken-link-finder"
   spec.license       = "MIT"
 
