@@ -3,6 +3,7 @@
 require "bundler/setup"
 require "pry"
 require "broken_link_finder"
+require 'wgit/core_ext'
 
 # Call reload to load all recent code changes.
 def reload
@@ -16,6 +17,7 @@ end
 
 # You can add fixtures and/or initialization code here...
 reload
-finder = Finder.new "https://motherfuckingwebsite.com/"
+url = "http://txti.es/"
+finder = Finder.new
 
 binding.pry

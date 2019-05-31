@@ -2,13 +2,12 @@ require 'wgit'
 
 module BrokenLinkFinder
   class Finder
-    attr_reader :url, :broken_links
+    attr_reader :broken_links
 
     # Create a new Finder instance.
-    def initialize(url)
+    def initialize
       @broken_links = {}
-      @url = Wgit::Url.new(url)
-      @crawler = Wgit::Crawler.new(@url)
+      @crawler = Wgit::Crawler.new
     end
 
     # Clear/empty the @broken_links Hash.
@@ -16,24 +15,45 @@ module BrokenLinkFinder
       @broken_links = {}
     end
 
-    # Finds broken urls within an entire site and appends them to the
+    # Finds broken links within an entire site and appends them to the
     # @broken_links array.
-    # We deliberately don't keep a record of valid links because we are 
-    # sacrificing bandwidth and runtime speed for a lower memory footprint. 
-    # This will benefit large site with potentially thousands of links. 
-    def crawl_site
-      @crawler.crawl_site do |doc|
-        crawl_url(doc.url)
+    def crawl_site(url)
+      clear_broken_links
+      url = Wgit::Url.new(url)
+      crawled_pages = []
+
+      @crawler.crawl_site(url) do |doc|
+        # Ensure the given website url is valid.
+        raise "Invalid URL: #{url}" if doc.url == url and doc.empty?
+
+        # Ensure we only process each page once.
+        next if crawled_pages.include?(doc.url)
+        crawled_pages << doc.url
+
+        # Get all page links and determine which are broken.
+        next unless doc
+        links = doc.internal_full_links + doc.external_links
+        find_broken_links(doc.url, links)
       end
+
+      !@broken_links.empty?
     end
 
-    # Finds broken urls within a single page and appends them to the
+    # Finds broken links within a single page and appends them to the
     # @broken_links array.
-    def crawl_url(url = @url)
+    def crawl_url(url)
+      clear_broken_links
+      url = Wgit::Url.new(url)
+
+      # Ensure the given page url is valid.
       doc = @crawler.crawl_url(url)
       raise "Invalid URL: #{url}" unless doc
-      links = doc.external_links + doc.internal_full_links
-      get_broken_links(doc.url, links)
+
+      # Get all page links and determine which are broken.
+      links = doc.internal_full_links + doc.external_links
+      find_broken_links(url, links)
+
+      !@broken_links.empty?
     end
 
     # Pretty prints the contents of broken_links into a stream e.g. Kernel
@@ -43,11 +63,11 @@ module BrokenLinkFinder
       raise "stream must respond_to? :puts" unless stream.respond_to? :puts
       
       if (@broken_links.empty?)
-        stream.puts("Good news, there are no broken links for #{@url}")
+        stream.puts("Good news, there are no broken links!")
         false
       else
         stream.puts("Below is a breakdown of the different pages and their \
-broken links for the site #{@url}")
+broken links...")
         stream.puts("")
 
         @broken_links.each do |page, links|
@@ -63,17 +83,22 @@ broken links for the site #{@url}")
 
     private
 
-    # Find which links are broken and append the details to @broken_links.
-    def get_broken_links(url, links)
+    # Finds which links are broken and append the details to @broken_links.
+    def find_broken_links(url, links)
       links.each do |link|
         ok = @crawler.crawl_url(link)
         if not ok # a.k.a. if the link is broken...
-          unless @broken_links[url]
-            @broken_links[url] = []
-          end
-          @broken_links[url] << link
+          append_broken_link(url, link)
         end
       end
+    end
+
+    # Append url => [link] to @broken_links.
+    def append_broken_link(url, link)
+      unless @broken_links[url]
+        @broken_links[url] = []
+      end
+      @broken_links[url] << link
     end
 
     alias_method :crawl_page, :crawl_url
