@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    broken_link_finder (0.1.0)
+    broken_link_finder (0.2.0)
       wgit
 
 GEM
