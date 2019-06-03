@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     broken_link_finder (0.2.0)
-      wgit
+      wgit (> 0)
 
 GEM
   remote: https://rubygems.org/
@@ -32,7 +32,7 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
-    wgit (0.0.8)
+    wgit (0.0.9)
       mongo (~> 2.6)
       nokogiri (~> 1.10)
 

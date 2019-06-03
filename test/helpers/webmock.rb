@@ -40,3 +40,7 @@ stub_request(:get, $mock_invalid_url).
 # Invalid internal link
 stub_request(:get, $mock_server + $mock_invalid_link).
   to_return(status: 404)
+
+# Redirect
+stub_request(:get, $mock_server + 'redirect').
+  to_return(status: 301, headers: { 'Location': $mock_server + 'location' })
