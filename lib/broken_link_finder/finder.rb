@@ -20,8 +20,8 @@ module BrokenLinkFinder
     def crawl_site(url)
       clear_broken_links
       url = Wgit::Url.new(url)
-      crawled_pages = []
 
+      crawled_pages = []
       @crawler.crawl_site(url) do |doc|
         # Ensure the given website url is valid.
         raise "Invalid URL: #{url}" if doc.url == url and doc.empty?
@@ -32,8 +32,7 @@ module BrokenLinkFinder
 
         # Get all page links and determine which are broken.
         next unless doc
-        links = doc.internal_full_links + doc.external_links
-        find_broken_links(doc.url, links)
+        find_broken_links(doc)
       end
 
       !@broken_links.empty?
@@ -50,8 +49,7 @@ module BrokenLinkFinder
       raise "Invalid URL: #{url}" unless doc
 
       # Get all page links and determine which are broken.
-      links = doc.internal_full_links + doc.external_links
-      find_broken_links(url, links)
+      find_broken_links(doc)
 
       !@broken_links.empty?
     end
@@ -84,11 +82,12 @@ broken links...")
     private
 
     # Finds which links are broken and append the details to @broken_links.
-    def find_broken_links(url, links)
+    def find_broken_links(doc)
+      links = doc.internal_full_links + doc.external_links
       links.each do |link|
         ok = @crawler.crawl_url(link)
         if not ok # a.k.a. if the link is broken...
-          append_broken_link(url, link)
+          append_broken_link(doc.url, link)
         end
       end
     end

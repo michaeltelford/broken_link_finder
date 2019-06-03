@@ -8,8 +8,6 @@ Simply point it at a website and it will crawl all of its webpages searching for
 
 This repository utilises the awesome `wgit` Ruby gem. See its [repository](https://github.com/michaeltelford/wgit) for more details.
 
-The only gotcha is that `wgit` doesn't currently follow redirects meaning they will appear as broken links in the results.
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -28,7 +26,7 @@ Or install it yourself as:
 
 ## Usage
 
-Below is a sample script which crawls a website and outputs its broken links to a file.
+Below is a simple script which crawls a website and outputs its broken links to STDOUT.
 
 > main.rb
 
@@ -37,7 +35,7 @@ require 'broken_link_finder'
 
 finder = BrokenLinkFinder::Finder.new
 finder.crawl_site "http://txti.es" # Also, see Finder#crawl_url for a single webpage.
-finder.pretty_print_broken_links
+finder.pretty_print_broken_links # Also, see Finder#broken_links for a Hash.
 ```
 
 Then execute the script with:
@@ -64,17 +62,16 @@ http://imgur.com
 
 - Create a `broken_link_finder` executable.
 - Add logger functionality (especially useful in the console during development).
-- Update the `wgit` gem as soon as redirects are implemented.
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release[origin]`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub [here](https://github.com/michaeltelford/broken-link-finder).
+Bug reports and pull requests are welcome on [GitHub](https://github.com/michaeltelford/broken-link-finder).
 
 ## License
 
