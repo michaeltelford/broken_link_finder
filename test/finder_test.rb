@@ -62,4 +62,9 @@ class FinderTest < TestHelper
   rescue RuntimeError => ex
     assert_equal "Invalid URL: #{$mock_invalid_url}", ex.message
   end
+
+  def test_crawl_page__alias
+    finder = Finder.new
+    assert finder.respond_to? :crawl_page
+  end
 end

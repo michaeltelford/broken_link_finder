@@ -34,7 +34,7 @@ Below is a simple script which crawls a website and outputs its broken links to 
 require 'broken_link_finder'
 
 finder = BrokenLinkFinder::Finder.new
-finder.crawl_site "http://txti.es" # Also, see Finder#crawl_url for a single webpage.
+finder.crawl_site "http://txti.es" # Also, see Finder#crawl_page for a single webpage.
 finder.pretty_print_broken_links # Also, see Finder#broken_links for a Hash.
 ```
 
@@ -60,6 +60,7 @@ http://imgur.com
 
 ## TODO
 
+- Speed boost.
 - Create a `broken_link_finder` executable.
 - Add logger functionality (especially useful in the console during development).
 
