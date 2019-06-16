@@ -35,14 +35,14 @@ require 'broken_link_finder'
 
 finder = BrokenLinkFinder::Finder.new
 finder.crawl_site "http://txti.es" # Also, see Finder#crawl_page for a single webpage.
-finder.pretty_print_broken_links # Also, see Finder#broken_links for a Hash.
+finder.pretty_print_broken_links # Also, see Finder#broken_links for a Hash of links.
 ```
 
 Then execute the script with:
 
     $ ruby main.rb
 
-The output should look something like:
+If broken links are found then the output should look something like:
 
 ```text
 Below is a breakdown of the different pages and their broken links...
@@ -60,7 +60,6 @@ http://imgur.com
 
 ## TODO
 
-- Speed boost.
 - Create a `broken_link_finder` executable.
 - Add logger functionality (especially useful in the console during development).
 
@@ -68,7 +67,7 @@ http://imgur.com
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release[origin]`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release[origin]`, which will create a git tag for the version, push git commits and tags, and push the `*.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 

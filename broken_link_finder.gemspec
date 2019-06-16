@@ -42,5 +42,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "byebug", "~> 11.0"
   spec.add_development_dependency "webmock", "~> 3.5"
 
-  spec.add_runtime_dependency "wgit", "> 0"
+  spec.add_runtime_dependency "wgit", "0.0.9"
+  spec.add_runtime_dependency "thread", "0.2"
 end

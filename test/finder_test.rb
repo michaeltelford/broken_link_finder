@@ -18,8 +18,17 @@ class FinderTest < TestHelper
 
   def test_crawl_site
     finder = Finder.new
-    assert finder.crawl_site $mock_server
+    broken_links_found, crawled_pages = finder.crawl_site $mock_server
 
+    assert broken_links_found
+    assert_equal([
+      "http://mock-server.com/",
+      "http://mock-server.com/contact",
+      "http://mock-server.com/location",
+      "http://mock-server.com/about",
+      "http://mock-server.com/not_found",
+      "http://mock-server.com/redirect"
+    ], crawled_pages)
     assert_equal({ 
       $mock_server => [
         $mock_server + $mock_invalid_link,
@@ -33,6 +42,9 @@ class FinderTest < TestHelper
         $mock_invalid_url
       ]
     }, finder.broken_links)
+
+    # Check it can be run multiple times consecutively without error.
+    finder.crawl_site $mock_server
   end
 
   def test_crawl_url
