@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+require 'broken_link_finder'
+require 'thor'
+
+class BrokenLinkFinderCLI < Thor
+  desc 'crawl [URL]', 'Find broken links at the URL'
+  option :recursive, type: :boolean, aliases: [:r], desc: 'Crawl the entire site'
+  def crawl(url)
+    url = "http://#{url}" unless url.start_with?('http')
+    finder = BrokenLinkFinder::Finder.new
+    options[:recursive] ? finder.crawl_site(url) : finder.crawl_page(url)
+    finder.pretty_print_broken_links
+  end
+end
+
+BrokenLinkFinderCLI.start(ARGV)

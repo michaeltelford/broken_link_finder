@@ -29,9 +29,10 @@ Gem::Specification.new do |spec|
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
   end
-  spec.bindir        = "bin"
-  # spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  spec.bindir        = "exe"
+  spec.executables   = ["broken_link_finder"]
   spec.require_paths = ["lib"]
+  spec.post_install_message = "Added the executable 'broken_link_finder' to $PATH"
 
   spec.required_ruby_version = '~> 2.5' # Only works with ruby 2.5.x
 
@@ -44,4 +45,5 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "wgit", "0.0.9"
   spec.add_runtime_dependency "thread", "0.2"
+  spec.add_runtime_dependency "thor", "0.20.3"
 end

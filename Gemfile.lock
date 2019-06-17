@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     broken_link_finder (0.3.0)
+      thor (= 0.20.3)
       thread (= 0.2)
       wgit (= 0.0.9)
 
@@ -29,6 +30,7 @@ GEM
     public_suffix (3.1.0)
     rake (10.5.0)
     safe_yaml (1.0.5)
+    thor (0.20.3)
     thread (0.2.0)
     webmock (3.5.1)
       addressable (>= 2.3.6)
