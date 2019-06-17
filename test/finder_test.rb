@@ -18,61 +18,61 @@ class FinderTest < TestHelper
 
   def test_crawl_site
     finder = Finder.new
-    broken_links_found, crawled_pages = finder.crawl_site $mock_server
+    broken_links_found, crawled_pages = finder.crawl_site 'http://mock-server.com/'
 
     assert broken_links_found
     assert_equal([
-      "http://mock-server.com/",
-      "http://mock-server.com/contact",
-      "http://mock-server.com/location",
-      "http://mock-server.com/about",
-      "http://mock-server.com/not_found",
-      "http://mock-server.com/redirect"
+      'http://mock-server.com/',
+      'http://mock-server.com/contact',
+      'http://mock-server.com/location',
+      'http://mock-server.com/about',
+      'http://mock-server.com/not_found',
+      'http://mock-server.com/redirect'
     ], crawled_pages)
     assert_equal({ 
-      $mock_server => [
-        $mock_server + $mock_invalid_link,
-        $mock_invalid_url
+      'http://mock-server.com/' => [
+        'http://mock-server.com/not_found',
+        'https://doesnt-exist.com'
       ],
-      $mock_server + 'contact' => [
-        $mock_server + $mock_invalid_link,
-        $mock_invalid_url
+      'http://mock-server.com/contact' => [
+        'http://mock-server.com/not_found',
+        'https://doesnt-exist.com'
       ],
-      $mock_server + 'about' => [
-        $mock_invalid_url
+      'http://mock-server.com/about' => [
+        'https://doesnt-exist.com'
       ]
     }, finder.broken_links)
 
     # Check it can be run multiple times consecutively without error.
-    finder.crawl_site $mock_server
+    finder.crawl_site 'http://mock-server.com/'
   end
 
   def test_crawl_url
     finder = Finder.new
-    assert finder.crawl_url $mock_server
+    assert finder.crawl_url 'http://mock-server.com/'
 
     assert_equal({ 
-      $mock_server => [
-        $mock_server + $mock_invalid_link,
-        $mock_invalid_url
+      'http://mock-server.com/' => [
+        'http://mock-server.com/not_found',
+        'https://doesnt-exist.com'
       ]
     }, finder.broken_links)
   end
 
   def test_crawl_url__no_broken_links
     finder = Finder.new
-    refute finder.crawl_url($mock_server + 'location')
+    refute finder.crawl_url('http://mock-server.com/location')
 
     assert_equal(Hash.new, finder.broken_links)
   end
 
   def test_crawl_url__invalid
     finder = Finder.new
-    finder.crawl_url $mock_invalid_url
+    finder.crawl_url 'https://doesnt-exist.com'
     
     flunk
   rescue RuntimeError => ex
-    assert_equal "Invalid URL: #{$mock_invalid_url}", ex.message
+    assert_equal 'Invalid URL: https://doesnt-exist.com', ex.message
   end
 
   def test_crawl_page__alias
