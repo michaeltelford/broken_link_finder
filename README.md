@@ -26,7 +26,19 @@ Or install it yourself as:
 
 ## Usage
 
-Below is a simple script which crawls a website and outputs its broken links to STDOUT.
+### Executable
+
+Installing this gem installs the `broken_link_finder` executable into your `$PATH`. The executable allows you to find broken links from your command line. For example:
+
+    $ broken_link_finder crawl http://txti.es
+
+Adding the `-r` switch would crawl the entire txti.es site, not just it's index page.
+
+See the [output](##Output) section below for an example of a site with broken links.
+
+### Library
+
+Below is a simple script which crawls a website and outputs it's broken links to `STDOUT`.
 
 > main.rb
 
@@ -42,7 +54,9 @@ Then execute the script with:
 
     $ ruby main.rb
 
-If broken links are found then the output should look something like:
+## Output
+
+If broken links are found then the output will look something like:
 
 ```text
 Below is a breakdown of the different pages and their broken links...
@@ -60,7 +74,6 @@ http://imgur.com
 
 ## TODO
 
-- Create a `broken_link_finder` executable.
 - Add logger functionality (especially useful in the console during development).
 
 ## Development
