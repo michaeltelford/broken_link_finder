@@ -1,6 +1,6 @@
 # Broken Link Finder
 
-Does what it says on the tin. Finds a website's broken links. 
+Does what it says on the tin. Finds a website's broken links.
 
 Simply point it at a website and it will crawl all of its webpages searching for and identifing any broken links. You will then be presented with a nice concise summary of the broken links found.
 
@@ -34,7 +34,7 @@ Installing this gem installs the `broken_link_finder` executable into your `$PAT
 
 Adding the `-r` switch would crawl the entire txti.es site, not just it's index page.
 
-See the [output](##Output) section below for an example of a site with broken links.
+See the [output](#Output) section below for an example of a site with broken links.
 
 ### Library
 
