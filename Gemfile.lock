@@ -4,7 +4,7 @@ PATH
     broken_link_finder (0.4.0)
       thor (= 0.20.3)
       thread (= 0.2)
-      wgit (= 0.0.9)
+      wgit (= 0.0.10)
 
 GEM
   remote: https://rubygems.org/
@@ -36,8 +36,8 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
-    wgit (0.0.9)
-      mongo (~> 2.6)
+    wgit (0.0.10)
+      mongo (~> 2.8.0)
       nokogiri (~> 1.10)
 
 PLATFORMS
