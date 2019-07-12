@@ -74,6 +74,7 @@ http://imgur.com
 
 ## TODO
 
+- Improve the intelligence of the finder. Currently a custom 'Not Found' webpage will not be discovered as a broken link; it should.
 - Add logger functionality (especially useful in the console during development).
 
 ## Development
