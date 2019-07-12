@@ -36,6 +36,10 @@ stub_request(:get, 'https://doesnt-exist.com').
 stub_request(:get, 'http://mock-server.com/not_found').
   to_return(status: 404)
 
-# Redirect
+# Redirect - Absolute Location
 stub_request(:get, 'http://mock-server.com/redirect').
   to_return(status: 301, headers: { 'Location': 'http://mock-server.com/location' })
+
+# Redirect - Relative Location
+stub_request(:get, 'http://mock-server.com/redirect/2').
+  to_return(status: 301, headers: { 'Location': '/location' })

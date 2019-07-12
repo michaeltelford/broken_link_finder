@@ -27,7 +27,8 @@ class FinderTest < TestHelper
       'http://mock-server.com/location',
       'http://mock-server.com/about',
       'http://mock-server.com/not_found',
-      'http://mock-server.com/redirect'
+      'http://mock-server.com/redirect',
+      'http://mock-server.com/redirect/2'
     ], crawled_pages)
     assert_equal({ 
       'http://mock-server.com/' => [
