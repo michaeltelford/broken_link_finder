@@ -1,0 +1,33 @@
+<html>
+<header>
+<title>Broken Links Test Page</title>
+</header>
+<body>
+<h1>Test Page</h1>
+<p>This is a test page for testing broken link finders.</p>
+<p></p>
+
+<h2>Absolute Links to this site</h2>
+<p><img src="https://meosch.tk/images/non-existing_logo.png">404 Absolute broken link to image on meosch.tk that does not exist.</p>
+<p><a href="https://meosch.tk/nonexisting_page.html">404 Absolute broken link to non-existing page on meosch.tk</a></p>
+<p><a href="https://meosch.tk/nonexisting_page.html#anchorthatdoesnotexist">404 Absolute broken anchor link to non-existing page on meosch.tk</a></p>
+<p><a href="https://meosch.tk/links.html#anchorthatdoesnotexist">200 Absolute broken anchor link to this page on meosch.tk</a></p>
+
+<h2>Relative Links to this site</h2>
+<p><img src="/images/non-existent_logo.png">404 Relative broken link to image on meosch.tk that does not exist.</p>
+<p><a href="/nonexistent_page.html">404 Relative broken link to non-existing page on meosch.tk</a></p>
+<p><a href="/nonexistent_page.html#anchorthatdoesnotexist">404 Relative broken anchor link to non-existing page on meosch.tk</a></p>
+<p><a href="/links.html#anchorthatdoesnotexist">200 Relative broken anchor link to this page on meosch.tk - Note: This is a duplicate (see above) and so won't be returned in the broken link results</a></p>
+
+<h2>Broken Links on another domain</h2>
+<p><img src="https://meos.ch/images/non-existing_logo.png">404 Broken link to image on meos.ch that does not exist.</p>
+<p><a href="https://meos.ch/brokenlink">404 Broken link on meos.ch</a></p>
+<p><a href="https://meos.ch/brokenlink#anchorthandoesnotexist">404 Broken anchor link to non-existing page on meos.ch</a></p>
+<p><a href="https://meos.ch#anchorthandoesnotexist">200 Broken anchor link to existing page on meos.ch</a></p>
+
+<h2>Links to non-existant domain</h2>
+<p><a href="https://thisdomaindoesnotexist-thouthou.com/badpage.html">404 Broken Link to non-existing domain</a><p>
+<p><img src="https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png">404 Broken Link to image on non-existing domain</p>
+<p><a href="https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist">404 Broken Anchor Link on non-existing domain</a></p>
+</body>
+</html>

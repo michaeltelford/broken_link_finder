@@ -30,7 +30,7 @@ class FinderTest < TestHelper
       'http://mock-server.com/redirect',
       'http://mock-server.com/redirect/2'
     ], crawled_pages)
-    assert_equal({ 
+    assert_equal({
       'http://mock-server.com/' => [
         'http://mock-server.com/not_found',
         'https://doesnt-exist.com'
@@ -52,7 +52,7 @@ class FinderTest < TestHelper
     finder = Finder.new
     assert finder.crawl_url 'http://mock-server.com/'
 
-    assert_equal({ 
+    assert_equal({
       'http://mock-server.com/' => [
         'http://mock-server.com/not_found',
         'https://doesnt-exist.com'
@@ -70,10 +70,37 @@ class FinderTest < TestHelper
   def test_crawl_url__invalid
     finder = Finder.new
     finder.crawl_url 'https://doesnt-exist.com'
-    
+
     flunk
   rescue RuntimeError => ex
     assert_equal 'Invalid URL: https://doesnt-exist.com', ex.message
+  end
+
+  def test_crawl_url__links_page
+    finder = Finder.new
+    assert finder.crawl_url 'https://meosch.tk/links.html'
+    expected = {
+      'https://meosch.tk/links.html' => [
+        'https://meosch.tk/images/non-existing_logo.png',
+        'https://meosch.tk/nonexisting_page.html',
+        'https://meosch.tk/nonexisting_page.html#anchorthatdoesnotexist',
+        'https://meosch.tk/links.html#anchorthatdoesnotexist',
+
+        'https://meosch.tk/images/non-existent_logo.png',
+        'https://meosch.tk/nonexistent_page.html',
+        'https://meosch.tk/nonexistent_page.html#anchorthatdoesnotexist',
+
+        'https://meos.ch/images/non-existing_logo.png',
+        'https://meos.ch/brokenlink',
+        'https://meos.ch/brokenlink#anchorthandoesnotexist',
+        'https://meos.ch#anchorthandoesnotexist',
+
+        'https://thisdomaindoesnotexist-thouthou.com/badpage.html',
+        'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png',
+        'https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist',
+      ]
+    }
+    assert_equal(expected, finder.broken_links)
   end
 
   def test_crawl_page__alias

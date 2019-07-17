@@ -67,7 +67,7 @@ module BrokenLinkFinder
 
     # Pretty prints the contents of broken_links into a stream e.g. Kernel
     # (STDOUT) or a file - anything that respond_to? :puts.
-    # Returns true if there were broken links and vice versa. 
+    # Returns true if there were broken links and vice versa.
     def pretty_print_broken_links(stream = Kernel)
       raise "stream must respond_to? :puts" unless stream.respond_to? :puts
 
@@ -96,11 +96,20 @@ broken links...")
     def find_broken_links(doc)
       links = doc.internal_full_links + doc.external_links
       links.each do |link|
-        ok = @crawler.crawl_url(link)
-        if not ok # a.k.a. if the link is broken...
+        link_doc = @crawler.crawl_url(link)
+        if link_doc.nil? or has_broken_anchor(link_doc)
           append_broken_link(doc.url, link)
         end
       end
+    end
+
+    # Returns true if the link is/contains a broken anchor.
+    def has_broken_anchor(doc)
+      raise "link document is nil" unless doc
+      return false unless doc.url.anchor
+
+      anchor = doc.url.anchor[1..-1] # Remove the # prefix.
+      doc.xpath("//*[@id='#{anchor}']").empty?
     end
 
     # Append url => [link] to @broken_links.
