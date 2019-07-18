@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.description   = "Finds a website's broken links using the 'wgit' gem and reports back to you with a summary."
   spec.homepage      = "https://github.com/michaeltelford/broken-link-finder"
   spec.license       = "MIT"
-  spec.metadata      = { 
+  spec.metadata      = {
     "source_code_uri" => "https://github.com/michaeltelford/broken-link-finder",
   }
 
@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "byebug", "~> 11.0"
   spec.add_development_dependency "webmock", "~> 3.5"
 
-  spec.add_runtime_dependency "wgit", "0.0.10"
+  spec.add_runtime_dependency "wgit", "0.0.12"
   spec.add_runtime_dependency "thread", "0.2"
   spec.add_runtime_dependency "thor", "0.20.3"
 end
