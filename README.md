@@ -4,6 +4,14 @@ Does what it says on the tin. Finds a website's broken links.
 
 Simply point it at a website and it will crawl all of its webpages searching for and identifing any broken links. You will then be presented with a nice concise summary of the broken links found.
 
+## How It Works
+
+Any page element with a `href` or `src` attribute is considered a link. For each link on a given page, any of the following conditions (in order) constitutes that the link is broken:
+
+1) A response status code of `404 Not Found` is returned.
+2) An empty HTML response body is returned.
+3) The HTML response body doesn't contain an element ID matching that of the link's anchor e.g. `http://server.com#about` must contain an element with an ID of `about` or the link is considered broken.
+
 ## Made Possible By
 
 This repository utilises the awesome `wgit` Ruby gem. See its [repository](https://github.com/michaeltelford/wgit) for more details.
