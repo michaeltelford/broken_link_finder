@@ -69,11 +69,11 @@ class FinderTest < TestHelper
 
   def test_crawl_url__invalid
     finder = Finder.new
-    finder.crawl_url 'https://doesnt-exist.com'
+    finder.crawl_url 'https://server-error.com'
 
     flunk
   rescue RuntimeError => ex
-    assert_equal 'Invalid URL: https://doesnt-exist.com', ex.message
+    assert_equal 'Invalid URL: https://server-error.com', ex.message
   end
 
   def test_crawl_url__links_page

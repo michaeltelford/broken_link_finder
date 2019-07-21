@@ -97,7 +97,9 @@ broken links...")
       links = doc.internal_full_links + doc.external_links
       links.each do |link|
         link_doc = @crawler.crawl_url(link)
-        if link_doc.nil? or has_broken_anchor(link_doc)
+        if @crawler.last_response.is_a?(Net::HTTPNotFound) or
+            link_doc.nil? or
+            has_broken_anchor(link_doc)
           append_broken_link(doc.url, link)
         end
       end

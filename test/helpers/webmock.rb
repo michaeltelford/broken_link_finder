@@ -30,11 +30,11 @@ stub_request(:get, 'https://some-external-site.com.au').
 
 # Invalid external URL
 stub_request(:get, 'https://doesnt-exist.com').
-  to_return(status: 404)
+  to_return(mock_response('not_found', status: 404))
 
 # Invalid internal link
 stub_request(:get, 'http://mock-server.com/not_found').
-  to_return(status: 404)
+  to_return(mock_response('not_found', status: 404))
 
 # Redirect - Absolute Location
 stub_request(:get, 'http://mock-server.com/redirect').
@@ -43,6 +43,10 @@ stub_request(:get, 'http://mock-server.com/redirect').
 # Redirect - Relative Location
 stub_request(:get, 'http://mock-server.com/redirect/2').
   to_return(status: 301, headers: { 'Location': '/location' })
+
+# Server error
+stub_request(:get, 'https://server-error.com').
+  to_return(status: 500)
 
 # meosch.tk aka fixtures/links.html
 stub_request(:get, 'https://meosch.tk/links.html').
@@ -71,4 +75,4 @@ stub_request(:get, 'https://meos.ch#anchorthandoesnotexist').
   'https://thisdomaindoesnotexist-thouthou.com/badpage.html',
   'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png',
   'https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist',
-].each { |url| stub_request(:get, url).to_return(status: 404) }
+].each { |url| stub_request(:get, url).to_return(mock_response('not_found', status: 404)) }
