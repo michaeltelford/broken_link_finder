@@ -6,11 +6,12 @@ Simply point it at a website and it will crawl all of its webpages searching for
 
 ## How It Works
 
-Any page element with a `href` or `src` attribute is considered a link. For each link on a given page, any of the following conditions (in order) constitutes that the link is broken:
+Any page element with a `href` or `src` attribute is considered a link. For each link on a given page, any of the following conditions constitutes that the link is broken:
 
-1) A response status code of `404 Not Found` is returned.
-2) An empty HTML response body is returned.
-3) The HTML response body doesn't contain an element ID matching that of the link's anchor e.g. `http://server.com#about` must contain an element with an ID of `about` or the link is considered broken.
+- A response status code of `404 Not Found` is returned.
+- An empty HTML response body is returned.
+- The HTML response body doesn't contain an element ID matching that of the link's anchor e.g. `http://server.com#about` must contain an element with an ID of `about` or the link is considered broken.
+- The link redirects more than 5 times in a row.
 
 ## Made Possible By
 
