@@ -75,4 +75,6 @@ stub_request(:get, 'https://meos.ch#anchorthandoesnotexist').
   'https://thisdomaindoesnotexist-thouthou.com/badpage.html',
   'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png',
   'https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist',
-].each { |url| stub_request(:get, url).to_return(mock_response('not_found', status: 404)) }
+].each do |url|
+  stub_request(:get, url).to_return(mock_response('not_found', status: 404))
+end

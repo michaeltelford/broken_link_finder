@@ -6,16 +6,22 @@ Simply point it at a website and it will crawl all of its webpages searching for
 
 ## How It Works
 
-Any page element with a `href` or `src` attribute is considered a link. For each link on a given page, any of the following conditions constitutes that the link is broken:
+Any HTML page element with a `href` or `src` attribute is considered a link. For each link on a given page, any of the following conditions constitutes that the link is broken:
 
 - A response status code of `404 Not Found` is returned.
 - An empty HTML response body is returned.
-- The HTML response body doesn't contain an element ID matching that of the link's anchor e.g. `http://server.com#about` must contain an element with an ID of `about` or the link is considered broken.
-- The link redirects more than 5 times in a row.
+- The HTML response body doesn't contain an element ID matching that of the link's anchor e.g. `http://server.com#about` must contain an element with `id="about"` or the link is considered broken.
+- The link redirects more than 5 times consecutively.
+
+**Note**: Not all link types are supported.
+
+In a nutshell, only HTTP(S) based links can be successfully verified by `broken_link_finder`. As a result some links on a page might be (recorded and) ignored. You should verify these links yourself manually. Examples of unsupported link types include `tel:*`, `mailto:*`, `ftp://*` etc.
+
+See the [usage](#Usage) section below on how to check which links have been ignored during a crawl.
 
 ## Made Possible By
 
-This repository utilises the awesome `wgit` Ruby gem. See its [repository](https://github.com/michaeltelford/wgit) for more details.
+`broken_link_finder` relies heavily on the `wgit` Ruby gem. See its [repository](https://github.com/michaeltelford/wgit) for more details.
 
 ## Installation
 
@@ -54,9 +60,10 @@ Below is a simple script which crawls a website and outputs it's broken links to
 ```ruby
 require 'broken_link_finder'
 
-finder = BrokenLinkFinder::Finder.new
-finder.crawl_site "http://txti.es" # Also, see Finder#crawl_page for a single webpage.
-finder.pretty_print_broken_links # Also, see Finder#broken_links for a Hash of links.
+finder = BrokenLinkFinder.new
+finder.crawl_site "http://txti.es"    # Or use Finder#crawl_page for a single webpage.
+finder.pretty_print_link_summary      # Or use Finder#broken_links and Finder#ignored_links
+                                      # for direct access to the link Hashes.
 ```
 
 Then execute the script with:
@@ -79,6 +86,15 @@ https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=84L4BDS86FB
 The following broken links exist in http://txti.es/how:
 http://en.wikipedia.org/wiki/Markdown
 http://imgur.com
+
+Below is a breakdown of the non supported (ignored) links found, you should check these manually:
+
+The following links were ignored on http://txti.es:
+tel:+13174562564
+mailto:big.jim@jmail.com
+
+The following links were ignored on http://txti.es/contact:
+ftp://server.com
 ```
 
 ## TODO

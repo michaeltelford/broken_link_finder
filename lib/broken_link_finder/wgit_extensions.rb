@@ -8,12 +8,14 @@ Wgit::Document.define_extension(
   text_content_only: true,
 ) do |links|
   if links
-    links.map! do |link|
-      Wgit::Url.new(link)
-    rescue
-      nil
-    end
-    links.compact!
+    links = links.
+      map do |link|
+        Wgit::Url.new(link)
+      rescue
+        nil
+      end.
+      compact.
+      uniq
   end
   links
 end
