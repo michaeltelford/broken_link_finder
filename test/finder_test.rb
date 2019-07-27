@@ -44,10 +44,10 @@ class FinderTest < TestHelper
     assert_equal({
       'http://mock-server.com/' => [
         'https://doesnt-exist.com',
-        'http://mock-server.com/not_found',
+        'not_found',
       ],
       'http://mock-server.com/contact' => [
-        'http://mock-server.com/not_found',
+        'not_found',
         'https://doesnt-exist.com',
       ],
       'http://mock-server.com/about' => [
@@ -75,7 +75,7 @@ class FinderTest < TestHelper
     assert_equal({
       'http://mock-server.com/' => [
         'https://doesnt-exist.com',
-        'http://mock-server.com/not_found',
+        'not_found',
       ]
     }, finder.broken_links)
     assert_equal({
@@ -113,9 +113,10 @@ class FinderTest < TestHelper
         'https://meosch.tk/nonexisting_page.html#anchorthatdoesnotexist',
         'https://meosch.tk/links.html#anchorthatdoesnotexist',
 
-        'https://meosch.tk/images/non-existent_logo.png',
-        'https://meosch.tk/nonexistent_page.html',
-        'https://meosch.tk/nonexistent_page.html#anchorthatdoesnotexist',
+        '/images/non-existent_logo.png',
+        '/nonexistent_page.html',
+        '/nonexistent_page.html#anchorthatdoesnotexist',
+        '/links.html#anchorthatdoesnotexist',
 
         'https://meos.ch/images/non-existing_logo.png',
         'https://meos.ch/brokenlink',

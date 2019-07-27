@@ -127,12 +127,12 @@ you should check these manually:")
             true
           end
         end.
-        map { |link| link.is_relative? ? doc.url.to_base.concat(link) : link }.
         uniq
 
       # Iterate over the supported links checking if they're broken or not.
       links.each do |link|
-        link_doc = @crawler.crawl_url(link)
+        link_url = link.is_relative? ? doc.url.to_base.concat(link) : link
+        link_doc = @crawler.crawl_url(link_url)
 
         if @crawler.last_response.is_a?(Net::HTTPNotFound) or
             link_doc.nil? or
