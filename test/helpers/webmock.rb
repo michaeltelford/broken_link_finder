@@ -4,7 +4,8 @@ include WebMock::API
 WebMock.enable!
 
 def mock_response(file_name, status: 200)
-  file_path = "test/fixtures/#{file_name}.html"
+  file_name += '.html' unless file_name.include?('.')
+  file_path = "test/fixtures/#{file_name}"
   { status: status, body: File.read(file_path) }
 end
 
@@ -27,6 +28,12 @@ stub_request(:get, 'http://mock-server.com/location').
 # / (index page for $mock_external_site)
 stub_request(:get, 'https://some-external-site.com.au').
   to_return(mock_response('mock_external_site'))
+
+# JS and CSS links (to check they aren't crawled).
+stub_request(:get, 'http://mock-server.com/script.js').
+  to_return(mock_response('script.js'))
+stub_request(:get, 'http://mock-server.com/styles.css').
+  to_return(mock_response('styles.css'))
 
 # Invalid external URL
 stub_request(:get, 'https://doesnt-exist.com').

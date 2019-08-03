@@ -62,7 +62,7 @@ require 'broken_link_finder'
 
 finder = BrokenLinkFinder.new
 finder.crawl_site "http://txti.es"    # Or use Finder#crawl_page for a single webpage.
-finder.pretty_print_link_summary      # Or use Finder#broken_links and Finder#ignored_links
+finder.pretty_print_link_report      # Or use Finder#broken_links and Finder#ignored_links
                                       # for direct access to the link Hashes.
 ```
 

@@ -1,3 +1,4 @@
+require_relative 'reporter'
 require 'wgit'
 require 'thread/pool'
 
@@ -13,8 +14,12 @@ module BrokenLinkFinder
 
     attr_reader :broken_links, :ignored_links
 
-    # Create a new Finder instance.
-    def initialize(max_threads: DEFAULT_MAX_THREADS)
+    # Creates a new Finder instance.
+    def initialize(sort: :page, max_threads: DEFAULT_MAX_THREADS)
+      unless [:page, :link].include?(sort)
+        raise "sort by either :page or :link, not #{sort}"
+      end
+      @sort = sort
       @max_threads = max_threads
       @lock = Mutex.new
       @crawler = Wgit::Crawler.new
@@ -25,6 +30,23 @@ module BrokenLinkFinder
     def clear_links
       @broken_links = {}
       @ignored_links = {}
+    end
+
+    # Finds broken links within a single page and appends them to the
+    # @broken_links array. Returns true if at least one broken link was found.
+    # Access the broken links with Finder#broken_links.
+    def crawl_url(url)
+      clear_links
+      url = Wgit::Url.new(url)
+
+      # Ensure the given page url is valid.
+      doc = @crawler.crawl_url(url)
+      raise "Invalid URL: #{url}" unless doc
+
+      # Get all page links and determine which are broken.
+      find_broken_links(doc)
+
+      @broken_links.any?
     end
 
     # Finds broken links within an entire site and appends them to the
@@ -56,61 +78,21 @@ module BrokenLinkFinder
       [@broken_links.any?, crawled_pages]
     end
 
-    # Finds broken links within a single page and appends them to the
-    # @broken_links array. Returns true if at least one broken link was found.
-    # Access the broken links with Finder#broken_links.
-    def crawl_url(url)
-      clear_links
-      url = Wgit::Url.new(url)
-
-      # Ensure the given page url is valid.
-      doc = @crawler.crawl_url(url)
-      raise "Invalid URL: #{url}" unless doc
-
-      # Get all page links and determine which are broken.
-      find_broken_links(doc)
-
-      @broken_links.any?
-    end
-
-    # Pretty prints the link summary into a stream e.g. Kernel
-    # (STDOUT) or a file - anything that respond_to? :puts.
+    # Pretty prints the link report into a stream e.g. STDOUT or a file,
+    # anything that respond_to? :puts. Defaults to STDOUT.
     # Returns true if there were broken links and vice versa.
-    def pretty_print_link_summary(stream = Kernel)
-      raise "stream must respond_to? :puts" unless stream.respond_to? :puts
-
-      # Broken link summary.
-      if @broken_links.empty?
-        stream.puts("Good news, there are no broken links!")
-        stream.puts("")
-      else
-        stream.puts("Below is a breakdown of the different pages and their \
-broken links...")
-        stream.puts("")
-
-        @broken_links.each do |page, links|
-          stream.puts("The following broken links exist on #{page}:")
-          links.each do |link|
-            stream.puts(link)
-          end
-          stream.puts("")
-        end
-      end
-
-      # Ignored link summary.
-      if @ignored_links.any?
-        stream.puts("Below is a breakdown of the non supported links found, \
-you should check these manually:")
-        stream.puts("")
-
-        @ignored_links.each do |page, links|
-          stream.puts("The following links were ignored on #{page}:")
-          links.each do |link|
-            stream.puts(link)
-          end
-          stream.puts("")
-        end
-      end
+    def pretty_print_link_report(
+      stream = STDOUT,
+      broken_verbose: true,
+      ignored_verbose: false
+    )
+      reporter = BrokenLinkFinder::Reporter.new(
+        stream, @sort, @broken_links, @ignored_links
+      )
+      reporter.pretty_print_link_report(
+        broken_verbose: broken_verbose,
+        ignored_verbose: ignored_verbose
+      )
 
       @broken_links.any?
     end
@@ -140,37 +122,56 @@ you should check these manually:")
           append_broken_link(doc.url, link)
         end
       end
+
+      nil
     end
 
     # Returns true if the link is/contains a broken anchor.
     def has_broken_anchor(doc)
       raise "link document is nil" unless doc
-      return false unless doc.url.anchor
 
-      anchor = doc.url.anchor[1..-1] # Remove the # prefix.
+      anchor = doc.url.anchor
+      return false unless anchor
+
+      anchor = anchor[1..-1] if anchor.start_with?('#')
       doc.xpath("//*[@id='#{anchor}']").empty?
     end
 
-    # Append url => [link] to @broken_links.
+    # Append key => [value] to @broken_links.
     def append_broken_link(url, link)
+      key, value = get_key_value(url, link)
       @lock.synchronize do
-        unless @broken_links[url]
-          @broken_links[url] = []
+        unless @broken_links[key]
+          @broken_links[key] = []
         end
-        @broken_links[url] << link
+        @broken_links[key] << value
       end
     end
 
-    # Append url => [link] to @ignored_links.
+    # Append key => [value] to @ignored_links.
     def append_ignored_link(url, link)
+      key, value = get_key_value(url, link)
       @lock.synchronize do
-        unless @ignored_links[url]
-          @ignored_links[url] = []
+        unless @ignored_links[key]
+          @ignored_links[key] = []
         end
-        @ignored_links[url] << link
+        @ignored_links[key] << value
+      end
+    end
+
+    # Returns the correct key value depending on the @sort type.
+    # @sort == :page ? [url, link] : [link, url]
+    def get_key_value(url, link)
+      if @sort == :page
+        [url, link]
+      elsif @sort == :link
+        [link, url]
+      else
+        raise "Unsupported sort type: #{sort}"
       end
     end
 
     alias_method :crawl_page, :crawl_url
+    alias_method :pretty_print_link_summary, :pretty_print_link_report
   end
 end

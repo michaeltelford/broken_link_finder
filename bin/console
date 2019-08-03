@@ -2,6 +2,7 @@
 
 require "bundler/setup"
 require "pry"
+require "byebug"
 require "broken_link_finder"
 require 'wgit/core_ext'
 

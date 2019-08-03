@@ -14,7 +14,11 @@ class FinderTest < TestHelper
 
     assert_equal Hash.new, finder.broken_links
     assert_equal Hash.new, finder.ignored_links
+    assert_equal :page, finder.instance_variable_get(:@sort)
     refute_nil finder.instance_variable_get(:@crawler)
+
+    finder = Finder.new sort: :link
+    assert_equal :link, finder.instance_variable_get(:@sort)
   end
 
   def test_clear_links
@@ -25,6 +29,132 @@ class FinderTest < TestHelper
 
     assert finder.broken_links.empty?
     assert finder.ignored_links.empty?
+  end
+
+  def test_crawl_url
+    finder = Finder.new
+    assert finder.crawl_url 'http://mock-server.com/'
+
+    assert_equal({
+      'http://mock-server.com/' => [
+        'https://doesnt-exist.com',
+        'not_found',
+      ]
+    }, finder.broken_links)
+    assert_equal({
+      'http://mock-server.com/' => [
+        'tel:+13174562564',
+        'mailto:youraddress@yourmailserver.com',
+      ],
+    }, finder.ignored_links)
+  end
+
+  def test_crawl_url__sort_by_link
+    finder = Finder.new sort: :link
+    assert finder.crawl_url 'http://mock-server.com/'
+
+    assert_equal({
+      'https://doesnt-exist.com' => [
+        'http://mock-server.com/',
+      ],
+      'not_found' => [
+        'http://mock-server.com/',
+      ],
+    }, finder.broken_links)
+    assert_equal({
+      'tel:+13174562564' => [
+        'http://mock-server.com/',
+      ],
+      'mailto:youraddress@yourmailserver.com' => [
+        'http://mock-server.com/',
+      ]
+    }, finder.ignored_links)
+  end
+
+  def test_crawl_url__no_broken_links
+    finder = Finder.new
+    refute finder.crawl_url('http://mock-server.com/location')
+
+    assert_equal(Hash.new, finder.broken_links)
+    assert_equal(Hash.new, finder.ignored_links)
+  end
+
+  def test_crawl_url__no_broken_links__sort_by_link
+    finder = Finder.new sort: :link
+    refute finder.crawl_url('http://mock-server.com/location')
+
+    assert_equal(Hash.new, finder.broken_links)
+    assert_equal(Hash.new, finder.ignored_links)
+  end
+
+  def test_crawl_url__links_page
+    finder = Finder.new
+    assert finder.crawl_url 'https://meosch.tk/links.html'
+    expected = {
+      'https://meosch.tk/links.html' => [
+        'https://meosch.tk/images/non-existing_logo.png',
+        'https://meosch.tk/nonexisting_page.html',
+        'https://meosch.tk/nonexisting_page.html#anchorthatdoesnotexist',
+        'https://meosch.tk/links.html#anchorthatdoesnotexist',
+
+        '/images/non-existent_logo.png',
+        '/nonexistent_page.html',
+        '/nonexistent_page.html#anchorthatdoesnotexist',
+        '/links.html#anchorthatdoesnotexist',
+
+        'https://meos.ch/images/non-existing_logo.png',
+        'https://meos.ch/brokenlink',
+        'https://meos.ch/brokenlink#anchorthandoesnotexist',
+        'https://meos.ch#anchorthandoesnotexist',
+
+        'https://thisdomaindoesnotexist-thouthou.com/badpage.html',
+        'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png',
+        'https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist',
+      ]
+    }
+    assert_equal expected, finder.broken_links
+    assert_empty finder.ignored_links
+  end
+
+  def test_crawl_url__links_page__sort_by_link
+    finder = Finder.new sort: :link
+    assert finder.crawl_url 'https://meosch.tk/links.html'
+    expected = {
+      'https://meosch.tk/images/non-existing_logo.png' => ['https://meosch.tk/links.html'],
+      'https://meosch.tk/nonexisting_page.html' => ['https://meosch.tk/links.html'],
+      'https://meosch.tk/nonexisting_page.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
+      'https://meosch.tk/links.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
+
+      '/images/non-existent_logo.png' => ['https://meosch.tk/links.html'],
+      '/nonexistent_page.html' => ['https://meosch.tk/links.html'],
+      '/nonexistent_page.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
+      '/links.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
+
+      'https://meos.ch/images/non-existing_logo.png' => ['https://meosch.tk/links.html'],
+      'https://meos.ch/brokenlink' => ['https://meosch.tk/links.html'],
+      'https://meos.ch/brokenlink#anchorthandoesnotexist' => ['https://meosch.tk/links.html'],
+      'https://meos.ch#anchorthandoesnotexist' => ['https://meosch.tk/links.html'],
+
+      'https://thisdomaindoesnotexist-thouthou.com/badpage.html' => ['https://meosch.tk/links.html'],
+      'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png' => ['https://meosch.tk/links.html'],
+      'https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
+    }
+    assert_equal expected, finder.broken_links
+    assert_empty finder.ignored_links
+  end
+
+  def test_crawl_url__invalid
+    finder = Finder.new
+    finder.crawl_url 'https://server-error.com'
+
+    flunk
+  rescue RuntimeError => ex
+    assert_equal 'Invalid URL: https://server-error.com', ex.message
+  end
+
+  def test_crawl_page__alias
+    finder = Finder.new
+    assert finder.respond_to? :crawl_page
   end
 
   def test_crawl_site
@@ -68,72 +198,39 @@ class FinderTest < TestHelper
     finder.crawl_site 'http://mock-server.com/'
   end
 
-  def test_crawl_url
-    finder = Finder.new
-    assert finder.crawl_url 'http://mock-server.com/'
+  def test_crawl_site__sort_by_link
+    finder = Finder.new sort: :link
+    broken_links_found, crawled_pages = finder.crawl_site 'http://mock-server.com/'
 
+    assert broken_links_found
+    assert_equal([
+      'http://mock-server.com/',
+      'http://mock-server.com/contact',
+      'http://mock-server.com/location',
+      'http://mock-server.com/about',
+      'http://mock-server.com/not_found',
+      'http://mock-server.com/redirect',
+      'http://mock-server.com/redirect/2',
+    ], crawled_pages)
     assert_equal({
-      'http://mock-server.com/' => [
-        'https://doesnt-exist.com',
-        'not_found',
-      ]
+      'https://doesnt-exist.com' => [
+        'http://mock-server.com/',
+        'http://mock-server.com/contact',
+        'http://mock-server.com/about',
+      ],
+      'not_found' => [
+        'http://mock-server.com/',
+        'http://mock-server.com/contact',
+      ],
     }, finder.broken_links)
     assert_equal({
-      'http://mock-server.com/' => [
-        'tel:+13174562564',
-        'mailto:youraddress@yourmailserver.com',
-      ],
+      'tel:+13174562564' => ['http://mock-server.com/'],
+      'mailto:youraddress@yourmailserver.com' => ['http://mock-server.com/'],
+      'ftp://websiteaddress.com' => ['http://mock-server.com/contact'],
     }, finder.ignored_links)
-  end
 
-  def test_crawl_url__no_broken_links
-    finder = Finder.new
-    refute finder.crawl_url('http://mock-server.com/location')
-
-    assert_equal(Hash.new, finder.broken_links)
-    assert_equal(Hash.new, finder.ignored_links)
-  end
-
-  def test_crawl_url__invalid
-    finder = Finder.new
-    finder.crawl_url 'https://server-error.com'
-
-    flunk
-  rescue RuntimeError => ex
-    assert_equal 'Invalid URL: https://server-error.com', ex.message
-  end
-
-  def test_crawl_url__links_page
-    finder = Finder.new
-    assert finder.crawl_url 'https://meosch.tk/links.html'
-    expected = {
-      'https://meosch.tk/links.html' => [
-        'https://meosch.tk/images/non-existing_logo.png',
-        'https://meosch.tk/nonexisting_page.html',
-        'https://meosch.tk/nonexisting_page.html#anchorthatdoesnotexist',
-        'https://meosch.tk/links.html#anchorthatdoesnotexist',
-
-        '/images/non-existent_logo.png',
-        '/nonexistent_page.html',
-        '/nonexistent_page.html#anchorthatdoesnotexist',
-        '/links.html#anchorthatdoesnotexist',
-
-        'https://meos.ch/images/non-existing_logo.png',
-        'https://meos.ch/brokenlink',
-        'https://meos.ch/brokenlink#anchorthandoesnotexist',
-        'https://meos.ch#anchorthandoesnotexist',
-
-        'https://thisdomaindoesnotexist-thouthou.com/badpage.html',
-        'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png',
-        'https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist',
-      ]
-    }
-    assert_equal expected, finder.broken_links
-    assert_empty finder.ignored_links
-  end
-
-  def test_crawl_page__alias
-    finder = Finder.new
-    assert finder.respond_to? :crawl_page
+    # Check it can be run multiple times consecutively without error.
+    broken_links_found, _ = finder.crawl_site 'http://mock-server.com/'
+    assert broken_links_found
   end
 end

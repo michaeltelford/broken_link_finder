@@ -11,7 +11,7 @@ class BrokenLinkFinderCLI < Thor
     url = "http://#{url}" unless url.start_with?('http')
     finder = BrokenLinkFinder::Finder.new
     options[:recursive] ? finder.crawl_site(url) : finder.crawl_page(url)
-    finder.pretty_print_link_summary
+    finder.pretty_print_link_report
   end
 end
 
