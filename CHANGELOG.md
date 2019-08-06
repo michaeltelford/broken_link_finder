@@ -16,8 +16,9 @@
 - Added the `--sort-by-link` flag to the executable for displaying the broken links found and the pages containing that link (as opposed to sorting by page by default).
 ### Changed/Removed
 - Changed the **default** sorting (format) for ignored links to be summarised (much more concise) reducing noise in the reports.
+- Updated `README.md` to reflect the new report format.
 ### Fixed
-- ...
+- Bug where the broken/ignored links weren't being ordered consistently between runs. Now, all links are reported alphabetically. This will change existing report formats.
 ---
 
 ## v0.6.0 - 2019/07/27

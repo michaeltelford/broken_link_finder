@@ -46,6 +46,7 @@ module BrokenLinkFinder
       # Get all page links and determine which are broken.
       find_broken_links(doc)
 
+      sort_links
       @broken_links.any?
     end
 
@@ -74,7 +75,8 @@ module BrokenLinkFinder
         pool.process { find_broken_links(doc) }
       end
 
-      pool.shutdown
+      pool.shutdown # Wait for all threads to finish.
+      sort_links
       [@broken_links.any?, crawled_pages]
     end
 
@@ -169,6 +171,15 @@ module BrokenLinkFinder
       else
         raise "Unsupported sort type: #{sort}"
       end
+    end
+
+    # Sort keys and values alphabetically.
+    def sort_links
+      @broken_links = @broken_links.sort_by { |k, v| k }.to_h
+      @ignored_links = @ignored_links.sort_by { |k, v| k }.to_h
+
+      @broken_links.each { |k, v| v.sort! }
+      @ignored_links.each { |k, v| v.sort! }
     end
 
     alias_method :crawl_page, :crawl_url

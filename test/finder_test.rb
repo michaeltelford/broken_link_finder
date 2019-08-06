@@ -39,12 +39,12 @@ class FinderTest < TestHelper
       'http://mock-server.com/' => [
         'https://doesnt-exist.com',
         'not_found',
-      ]
+      ],
     }, finder.broken_links)
     assert_equal({
       'http://mock-server.com/' => [
-        'tel:+13174562564',
         'mailto:youraddress@yourmailserver.com',
+        'tel:+13174562564',
       ],
     }, finder.ignored_links)
   end
@@ -62,12 +62,12 @@ class FinderTest < TestHelper
       ],
     }, finder.broken_links)
     assert_equal({
+      'mailto:youraddress@yourmailserver.com' => [
+        'http://mock-server.com/',
+      ],
       'tel:+13174562564' => [
         'http://mock-server.com/',
       ],
-      'mailto:youraddress@yourmailserver.com' => [
-        'http://mock-server.com/',
-      ]
     }, finder.ignored_links)
   end
 
@@ -92,24 +92,24 @@ class FinderTest < TestHelper
     assert finder.crawl_url 'https://meosch.tk/links.html'
     expected = {
       'https://meosch.tk/links.html' => [
-        'https://meosch.tk/images/non-existing_logo.png',
-        'https://meosch.tk/nonexisting_page.html',
-        'https://meosch.tk/nonexisting_page.html#anchorthatdoesnotexist',
-        'https://meosch.tk/links.html#anchorthatdoesnotexist',
-
         '/images/non-existent_logo.png',
+        '/links.html#anchorthatdoesnotexist',
         '/nonexistent_page.html',
         '/nonexistent_page.html#anchorthatdoesnotexist',
-        '/links.html#anchorthatdoesnotexist',
 
-        'https://meos.ch/images/non-existing_logo.png',
+        'https://meos.ch#anchorthandoesnotexist',
         'https://meos.ch/brokenlink',
         'https://meos.ch/brokenlink#anchorthandoesnotexist',
-        'https://meos.ch#anchorthandoesnotexist',
+        'https://meos.ch/images/non-existing_logo.png',
+
+        'https://meosch.tk/images/non-existing_logo.png',
+        'https://meosch.tk/links.html#anchorthatdoesnotexist',
+        'https://meosch.tk/nonexisting_page.html',
+        'https://meosch.tk/nonexisting_page.html#anchorthatdoesnotexist',
 
         'https://thisdomaindoesnotexist-thouthou.com/badpage.html',
-        'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png',
         'https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist',
+        'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png',
       ]
     }
     assert_equal expected, finder.broken_links
@@ -120,11 +120,6 @@ class FinderTest < TestHelper
     finder = Finder.new sort: :link
     assert finder.crawl_url 'https://meosch.tk/links.html'
     expected = {
-      'https://meosch.tk/images/non-existing_logo.png' => ['https://meosch.tk/links.html'],
-      'https://meosch.tk/nonexisting_page.html' => ['https://meosch.tk/links.html'],
-      'https://meosch.tk/nonexisting_page.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
-      'https://meosch.tk/links.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
-
       '/images/non-existent_logo.png' => ['https://meosch.tk/links.html'],
       '/nonexistent_page.html' => ['https://meosch.tk/links.html'],
       '/nonexistent_page.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
@@ -134,6 +129,11 @@ class FinderTest < TestHelper
       'https://meos.ch/brokenlink' => ['https://meosch.tk/links.html'],
       'https://meos.ch/brokenlink#anchorthandoesnotexist' => ['https://meosch.tk/links.html'],
       'https://meos.ch#anchorthandoesnotexist' => ['https://meosch.tk/links.html'],
+
+      'https://meosch.tk/images/non-existing_logo.png' => ['https://meosch.tk/links.html'],
+      'https://meosch.tk/nonexisting_page.html' => ['https://meosch.tk/links.html'],
+      'https://meosch.tk/nonexisting_page.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
+      'https://meosch.tk/links.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
 
       'https://thisdomaindoesnotexist-thouthou.com/badpage.html' => ['https://meosch.tk/links.html'],
       'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png' => ['https://meosch.tk/links.html'],
@@ -176,18 +176,18 @@ class FinderTest < TestHelper
         'https://doesnt-exist.com',
         'not_found',
       ],
-      'http://mock-server.com/contact' => [
-        'not_found',
-        'https://doesnt-exist.com',
-      ],
       'http://mock-server.com/about' => [
         'https://doesnt-exist.com',
-      ]
+      ],
+      'http://mock-server.com/contact' => [
+        'https://doesnt-exist.com',
+        'not_found',
+      ],
     }, finder.broken_links)
     assert_equal({
       'http://mock-server.com/' => [
-        'tel:+13174562564',
         'mailto:youraddress@yourmailserver.com',
+        'tel:+13174562564',
       ],
       'http://mock-server.com/contact' => [
         'ftp://websiteaddress.com',
@@ -215,8 +215,8 @@ class FinderTest < TestHelper
     assert_equal({
       'https://doesnt-exist.com' => [
         'http://mock-server.com/',
-        'http://mock-server.com/contact',
         'http://mock-server.com/about',
+        'http://mock-server.com/contact',
       ],
       'not_found' => [
         'http://mock-server.com/',
@@ -224,9 +224,9 @@ class FinderTest < TestHelper
       ],
     }, finder.broken_links)
     assert_equal({
-      'tel:+13174562564' => ['http://mock-server.com/'],
-      'mailto:youraddress@yourmailserver.com' => ['http://mock-server.com/'],
       'ftp://websiteaddress.com' => ['http://mock-server.com/contact'],
+      'mailto:youraddress@yourmailserver.com' => ['http://mock-server.com/'],
+      'tel:+13174562564' => ['http://mock-server.com/'],
     }, finder.ignored_links)
 
     # Check it can be run multiple times consecutively without error.
