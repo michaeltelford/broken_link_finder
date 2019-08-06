@@ -28,18 +28,18 @@ module BrokenLinkFinder
     # Report a summary of the broken links.
     def report_broken_links(verbose: true)
       if @broken_links.empty?
-        @stream.puts("Good news, there are no broken links!")
-        @stream.puts("")
+        println "Good news, there are no broken links!"
       else
-        @stream.puts("Below is a report of the different broken links found...")
-        @stream.puts("")
+        println "Below is a report of the different broken links found..."
 
-        @broken_links.each do |page, links|
-          @stream.puts("The following broken links exist on #{page}:")
-          links.each do |link|
-            @stream.puts(link)
-          end
-          @stream.puts("")
+        @broken_links.each do |key, values|
+          msg = sort_by_page? ?
+            "The following broken links were found on '#{key}':" :
+            "The broken link '#{key}' was found on the following pages:"
+
+          print msg
+          values.each { |value| print value }
+          print
         end
       end
     end
@@ -47,18 +47,35 @@ module BrokenLinkFinder
     # Report a summary of the ignored links.
     def report_ignored_links(verbose: false)
       if @ignored_links.any?
-        @stream.puts("Below is a breakdown of the non supported links found, \
-you should check these manually:")
-        @stream.puts("")
+        println "Below are the non supported links found, you should check \
+these manually:"
 
-        @ignored_links.each do |page, links|
-          @stream.puts("The following links were ignored on #{page}:")
-          links.each do |link|
-            @stream.puts(link)
-          end
-          @stream.puts("")
+        @ignored_links.each do |key, values|
+          msg = sort_by_page? ?
+            "The following links were ignored on '#{key}':" :
+            "The link '#{key}' was ignored on the following pages:"
+
+          print msg
+          values.each { |value| print value }
+          print
         end
       end
+    end
+
+    # Return true if the sort is by page.
+    def sort_by_page?
+      @sort == :page
+    end
+
+    # Prints the text. Defaults to an blank line.
+    def print(text = '')
+      @stream.puts(text)
+    end
+
+    # Print the text and a blank line.
+    def println(text)
+      @stream.puts(text)
+      @stream.puts
     end
   end
 end

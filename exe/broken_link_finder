@@ -6,10 +6,12 @@ require 'thor'
 
 class BrokenLinkFinderCLI < Thor
   desc 'crawl [URL]', 'Find broken links at the URL'
-  option :recursive, type: :boolean, aliases: [:r], desc: 'Crawl the entire site'
+  option :recursive, type: :boolean, aliases: [:r], desc: 'Crawl the entire site.'
+  option :sort_by_link, type: :boolean, aliases: [:l], desc: 'Makes report more concise if there are more pages crawled than broken links found. Use with -r on medium/large sites.'
   def crawl(url)
     url = "http://#{url}" unless url.start_with?('http')
-    finder = BrokenLinkFinder::Finder.new
+    sort_by = options[:sort_by_link] ? :link : :page
+    finder = BrokenLinkFinder::Finder.new sort: sort_by
     options[:recursive] ? finder.crawl_site(url) : finder.crawl_page(url)
     finder.pretty_print_link_report
   end
