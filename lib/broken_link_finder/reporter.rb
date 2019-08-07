@@ -15,10 +15,7 @@ module BrokenLinkFinder
     end
 
     # Pretty print a report detailing the link summary.
-    def pretty_print_link_report(
-      broken_verbose: true,
-      ignored_verbose: false
-    )
+    def pretty_print_link_report(broken_verbose: true, ignored_verbose: false)
       report_broken_links(verbose: broken_verbose)
       report_ignored_links(verbose: ignored_verbose)
     end
@@ -50,7 +47,9 @@ module BrokenLinkFinder
         println "Below are the non supported links found, you should check \
 these manually:"
 
-        @ignored_links.each do |key, values|
+        @ignored_links.each_with_index do |pair, i|
+          key, values = *pair
+          break if !verbose and i >= 1 # Print only the first key/value pair.
           msg = sort_by_page? ?
             "The following links were ignored on '#{key}':" :
             "The link '#{key}' was ignored on the following pages:"
@@ -58,6 +57,13 @@ these manually:"
           print msg
           values.each { |value| print value }
           print
+        end
+
+        # Summarise the ignored links found.
+        if !verbose and @ignored_links.keys.length > 1
+          links = @ignored_links[1..-1]
+          num_pages, num_links = get_hash_stats(links)
+          println "#{num_links} links have been ignored across #{num_pages} pages, use --verbose to see them all"
         end
       end
     end
@@ -72,10 +78,22 @@ these manually:"
       @stream.puts(text)
     end
 
-    # Print the text and a blank line.
+    # Prints the text and a blank line.
     def println(text)
       @stream.puts(text)
       @stream.puts
+    end
+
+    # Returns the key/value statistics of hash e.g. the number of keys and
+    # combined values. The hash should be of the format: { 'str' => [] }.
+    def get_hash_stats(hash)
+      num_keys = hash.keys.length
+      num_values = 0
+      hash.values.each { |v| num_values += v.length }
+
+      sort_by_page? ?
+        [num_keys, num_values] :
+        [num_values, num_keys]
     end
   end
 end
