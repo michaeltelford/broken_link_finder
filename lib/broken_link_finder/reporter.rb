@@ -27,15 +27,25 @@ module BrokenLinkFinder
       if @broken_links.empty?
         println "Good news, there are no broken links!"
       else
-        println "Below is a report of the different broken links found..."
+        num_pages, num_links = get_hash_stats(@broken_links)
+        println "Found #{num_links} broken link(s) across #{num_pages} page(s)"
 
         @broken_links.each do |key, values|
           msg = sort_by_page? ?
             "The following broken links were found on '#{key}':" :
             "The broken link '#{key}' was found on the following pages:"
-
           print msg
-          values.each { |value| print value }
+
+          if verbose or values.length <= 3
+            values.each { |value| print value }
+          else # Summarise the values.
+            3.times do |i|
+              print values[i]
+            end
+
+            objects = sort_by_page? ? 'links' : 'pages'
+            print "+ #{values.length - 3} other #{objects}, remove --concise to see them all"
+          end
           print
         end
       end
@@ -50,11 +60,12 @@ these manually:"
         @ignored_links.each_with_index do |pair, i|
           key, values = *pair
           break if !verbose and i >= 1 # Print only the first key/value pair.
+
           msg = sort_by_page? ?
             "The following links were ignored on '#{key}':" :
             "The link '#{key}' was ignored on the following pages:"
-
           print msg
+
           values.each { |value| print value }
           print
         end
@@ -86,10 +97,10 @@ these manually:"
 
     # Returns the key/value statistics of hash e.g. the number of keys and
     # combined values. The hash should be of the format: { 'str' => [] }.
+    # Use like: `num_pages, num_links = get_hash_stats(links)`.
     def get_hash_stats(hash)
       num_keys = hash.keys.length
-      num_values = 0
-      hash.values.each { |v| num_values += v.length }
+      num_values = hash.values.flatten.uniq.length
 
       sort_by_page? ?
         [num_keys, num_values] :
