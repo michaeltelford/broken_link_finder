@@ -5,8 +5,8 @@ require 'thread/pool'
 module BrokenLinkFinder
   # Alias for BrokenLinkFinder::Finder.new, don't use this if you want to
   # override the max_threads variable.
-  def self.new
-    Finder.new
+  def self.new(sort: :page)
+    Finder.new(sort: sort)
   end
 
   class Finder
@@ -19,10 +19,12 @@ module BrokenLinkFinder
       unless [:page, :link].include?(sort)
         raise "sort by either :page or :link, not #{sort}"
       end
+
       @sort = sort
       @max_threads = max_threads
       @lock = Mutex.new
       @crawler = Wgit::Crawler.new
+
       clear_links
     end
 
@@ -64,10 +66,6 @@ module BrokenLinkFinder
       @crawler.crawl_site(url) do |doc|
         # Ensure the given website url is valid.
         raise "Invalid URL: #{url}" if doc.url == url and doc.empty?
-
-        # Ensure we only process each page once. For example, /about.html might
-        # be linked to several times throughout the entire site.
-        next if crawled_pages.include?(doc.url)
         crawled_pages << doc.url
 
         # Get all page links and determine which are broken.
