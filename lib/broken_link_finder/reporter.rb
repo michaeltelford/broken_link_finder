@@ -95,23 +95,24 @@ these manually:"
       @sort == :page
     end
 
-    # Prints the text. Defaults to an blank line.
+    # Prints the text + \n. Defaults to an blank line.
     def print(text = '')
       @stream.puts(text)
     end
 
-    # Prints the text and a blank line.
+    # Prints the text + \n and a blank line.
     def println(text)
       @stream.puts(text)
       @stream.puts
     end
 
     # Returns the key/value statistics of hash e.g. the number of keys and
-    # combined values. The hash should be of the format: { 'str' => [] }.
+    # combined values. The hash should be of the format: { 'str' => [...] }.
     # Use like: `num_pages, num_links = get_hash_stats(links)`.
     def get_hash_stats(hash)
       num_keys = hash.keys.length
-      num_values = hash.values.flatten.uniq.length
+      values = hash.values.flatten
+      num_values = sort_by_page? ? values.length : values.uniq.length
 
       sort_by_page? ?
         [num_keys, num_values] :
