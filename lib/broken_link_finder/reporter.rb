@@ -1,5 +1,8 @@
 module BrokenLinkFinder
   class Reporter
+    # The amount of pages/links to display when verbose is false.
+    NUM_SNIPPETS = 3.freeze
+
     # Creates a new Reporter instance.
     # stream is any Object that responds to :puts.
     def initialize(stream, sort, broken_links, ignored_links)
@@ -36,15 +39,15 @@ module BrokenLinkFinder
             "The broken link '#{key}' was found on the following pages:"
           print msg
 
-          if verbose or values.length <= 3
+          if verbose or values.length <= NUM_SNIPPETS
             values.each { |value| print value }
-          else # Summarise the values.
-            3.times do |i|
+          else # Only print N values.
+            NUM_SNIPPETS.times do |i|
               print values[i]
             end
 
-            objects = sort_by_page? ? 'links' : 'pages'
-            print "+ #{values.length - 3} other #{objects}, remove --concise to see them all"
+            objects = sort_by_page? ? 'link(s)' : 'page(s)'
+            print "+ #{values.length - NUM_SNIPPETS} other #{objects}, remove --concise to see them all"
           end
           print
         end
@@ -66,15 +69,23 @@ these manually:"
             "The link '#{key}' was ignored on the following pages:"
           print msg
 
-          values.each { |value| print value }
+          if verbose or values.length <= NUM_SNIPPETS
+            values.each { |value| print value }
+          else # Only print N values.
+            NUM_SNIPPETS.times do |i|
+              print values[i]
+            end
+
+            objects = sort_by_page? ? 'link(s)' : 'page(s)'
+            print "+ #{values.length - NUM_SNIPPETS} other #{objects}, use --verbose to see them all"
+          end
           print
         end
 
-        # Summarise the ignored links found.
-        if !verbose and @ignored_links.keys.length > 1
-          links = @ignored_links[1..-1]
-          num_pages, num_links = get_hash_stats(links)
-          println "#{num_links} links have been ignored across #{num_pages} pages, use --verbose to see them all"
+        # Summarise the total ignored links found.
+        if !verbose and @ignored_links.length > 1
+          num_pages, num_links = get_hash_stats(@ignored_links)
+          println "In total, #{num_links} links have been ignored across #{num_pages} pages, use --verbose to see them all"
         end
       end
     end
