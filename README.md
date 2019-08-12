@@ -1,6 +1,6 @@
 # Broken Link Finder
 
-Does what it says on the tin. Finds a website's broken links.
+Does what it says on the tin; Finds a website's broken links.
 
 Simply point it at a website and it will crawl all of its webpages searching for and identifing any broken links. You will then be presented with a nice concise summary of the broken links found.
 
@@ -41,19 +41,25 @@ Or install it yourself as:
 
 ## Usage
 
+You can check for broken links via the library or executable.
+
 ### Executable
 
 Installing this gem installs the `broken_link_finder` executable into your `$PATH`. The executable allows you to find broken links from your command line. For example:
 
     $ broken_link_finder crawl http://txti.es
 
-Adding the `-r` switch would crawl the entire txti.es site, not just it's index page.
+Adding the `-r` flag would crawl the entire `txti.es` site, not just its index page.
 
 See the [output](#Output) section below for an example of a site with broken links.
 
+You can peruse all of the available executable flags with:
+
+    $ broken_link_finder help crawl
+
 ### Library
 
-Below is a simple script which crawls a website and outputs it's broken links to `STDOUT`.
+Below is a simple script which crawls a website and outputs its broken links to `STDOUT`:
 
 > main.rb
 
@@ -61,7 +67,7 @@ Below is a simple script which crawls a website and outputs it's broken links to
 require 'broken_link_finder'
 
 finder = BrokenLinkFinder.new
-finder.crawl_site "http://txti.es"    # Or use Finder#crawl_page for a single webpage.
+finder.crawl_site 'http://txti.es'    # Or use Finder#crawl_page for a single webpage.
 finder.pretty_print_link_report       # Or use Finder#broken_links and Finder#ignored_links
                                       # for direct access to the link Hashes.
 ```
@@ -70,24 +76,26 @@ Then execute the script with:
 
     $ ruby main.rb
 
+See the full source code documentation [here](https://www.rubydoc.info/gems/broken_link_finder).
+
 ## Output
 
 If broken links are found then the output will look something like:
 
 ```text
-Below is a breakdown of the different pages and their broken links...
+Found 6 broken link(s) across 2 page(s):
 
-The following broken links exist in http://txti.es/about:
+The following broken links were found on 'http://txti.es/about':
 http://twitter.com/thebarrytone
 http://twitter.com/nwbld
 http://twitter.com/txties
 https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=84L4BDS86FBUU
 
-The following broken links exist in http://txti.es/how:
+The following broken links were found on 'http://txti.es/how':
 http://en.wikipedia.org/wiki/Markdown
 http://imgur.com
 
-Below is a breakdown of the non supported (ignored) links found, you should check these manually:
+Ignored 3 unsupported link(s) across 2 page(s), which you should check manually:
 
 The following links were ignored on http://txti.es:
 tel:+13174562564
@@ -97,16 +105,20 @@ The following links were ignored on http://txti.es/contact:
 ftp://server.com
 ```
 
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release[origin]`, which will create a git tag for the version, push git commits and tags, and push the `*.gem` file to [rubygems.org](https://rubygems.org).
-
 ## Contributing
 
-Bug reports and pull requests are welcome on [GitHub](https://github.com/michaeltelford/broken-link-finder).
+Bug reports and feature requests are welcome on [GitHub](https://github.com/michaeltelford/broken-link-finder). Just raise an issue.
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+
+## Development
+
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new gem version:
+- Update the version number in `version.rb`
+- Run `bundle install`
+- Run `bundle exec rake test` ensuring all tests pass
+- Run `bundle exec rake release[origin]`

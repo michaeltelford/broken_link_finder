@@ -1,6 +1,6 @@
 # Broken Link Finder Change Log
 
-## v0.0.0 - 2020/01/01 (TEMPLATE - DO NOT EDIT)
+## v0.0.0 (TEMPLATE - DO NOT EDIT)
 ### Added
 - ...
 ### Changed/Removed
@@ -9,20 +9,20 @@
 - ...
 ---
 
-## v0.7.0 - 2020/08/06
+## v0.7.0
 ### Added
 - Added the `--verbose` flag to the executable for displaying all ignored links.
 - Added the `--concise` flag to the executable for displaying the broken links in summary form.
 - Added the `--sort-by-link` flag to the executable for displaying the broken links found and the pages containing that link (as opposed to sorting by page by default).
 ### Changed/Removed
 - Changed the **default** sorting (format) for ignored links to be summarised (much more concise) reducing noise in the reports.
-- Updated `README.md` to reflect the new report format.
+- Updated the `README.md` to reflect the new changes.
 ### Fixed
 - Bug where the broken/ignored links weren't being ordered consistently between runs. Now, all links are reported alphabetically. This will change existing report formats.
 - Bug where an anchor of `#` was being returned as broken when it shouldn't.
 ---
 
-## v0.6.0 - 2019/07/27
+## v0.6.0
 ### Added
 - Support for ignored links e.g. mailto's, tel's etc. The README has been updated.
 ### Changed/Removed
@@ -32,7 +32,7 @@
 - Links with anchors aren't regarded as separate pages during a crawl anymore, thus removing duplicate reports.
 ---
 
-## v0.5.0 - 2019/07/21
+## v0.5.0
 ### Added
 - Anchor support is now included meaning the response HTML must include an element with an ID matching that of the anchor in the link's URL; otherwise, it's regarded as broken. Previously, there was no anchor support.
 - The README now includes a How It Works section detailing what constitutes a broken link. See this for more information.
