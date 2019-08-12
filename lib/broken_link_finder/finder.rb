@@ -131,7 +131,7 @@ module BrokenLinkFinder
       raise "link document is nil" unless doc
 
       anchor = doc.url.anchor
-      return false unless anchor
+      return false if anchor.nil? or anchor == '#'
 
       anchor = anchor[1..-1] if anchor.start_with?('#')
       doc.xpath("//*[@id='#{anchor}']").empty?

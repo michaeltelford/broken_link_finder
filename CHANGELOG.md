@@ -19,6 +19,7 @@
 - Updated `README.md` to reflect the new report format.
 ### Fixed
 - Bug where the broken/ignored links weren't being ordered consistently between runs. Now, all links are reported alphabetically. This will change existing report formats.
+- Bug where an anchor of `#` was being returned as broken when it shouldn't.
 ---
 
 ## v0.6.0 - 2019/07/27
