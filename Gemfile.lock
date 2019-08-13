@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    broken_link_finder (0.6.0)
+    broken_link_finder (0.7.0)
       thor (= 0.20.3)
       thread (= 0.2)
       wgit (= 0.0.13)
@@ -26,7 +26,7 @@ GEM
     minitest (5.11.3)
     mongo (2.8.0)
       bson (>= 4.4.2, < 5.0.0)
-    nokogiri (1.10.3)
+    nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
     pry (0.12.2)
       coderay (~> 1.1.0)
