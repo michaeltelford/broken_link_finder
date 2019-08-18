@@ -9,6 +9,15 @@
 - ...
 ---
 
+## v0.8.0
+### Added
+- Logic to prevent re-crawling links for more efficiency.
+### Changed/Removed
+- Updated the `wgit` gem which fixes a bug in `crawl_site` and adds support for non ASCII URL characters.
+### Fixed
+- Bug where an error from the executable wasn't being rescued.
+---
+
 ## v0.7.0
 ### Added
 - Added the `--verbose` flag to the executable for displaying all ignored links.
