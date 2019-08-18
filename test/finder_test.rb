@@ -2,11 +2,17 @@ require 'helpers/test_helper'
 
 class FinderTest < TestHelper
   def test_initialize_from_module
-    finder = BrokenLinkFinder.new
+    finder = BrokenLinkFinder.new sort: :link
 
     assert_equal Hash.new, finder.broken_links
     assert_equal Hash.new, finder.ignored_links
+    assert_equal 0, finder.total_links_crawled
+    assert_equal Set, finder.instance_variable_get(:@all_broken_links).class
+    assert_equal Set, finder.instance_variable_get(:@all_intact_links).class
+    assert_empty finder.instance_variable_get(:@all_broken_links)
+    assert_empty finder.instance_variable_get(:@all_intact_links)
     refute_nil finder.instance_variable_get(:@crawler)
+    assert_equal :link, finder.instance_variable_get(:@sort)
   end
 
   def test_initialize
@@ -14,8 +20,13 @@ class FinderTest < TestHelper
 
     assert_equal Hash.new, finder.broken_links
     assert_equal Hash.new, finder.ignored_links
-    assert_equal :page, finder.instance_variable_get(:@sort)
+    assert_equal 0, finder.total_links_crawled
+    assert_equal Set, finder.instance_variable_get(:@all_broken_links).class
+    assert_equal Set, finder.instance_variable_get(:@all_intact_links).class
+    assert_empty finder.instance_variable_get(:@all_broken_links)
+    assert_empty finder.instance_variable_get(:@all_intact_links)
     refute_nil finder.instance_variable_get(:@crawler)
+    assert_equal :page, finder.instance_variable_get(:@sort)
 
     finder = Finder.new sort: :link
     assert_equal :link, finder.instance_variable_get(:@sort)
@@ -27,8 +38,11 @@ class FinderTest < TestHelper
     finder.instance_variable_set :@ignored_links, { name: 'bar' }
     finder.clear_links
 
-    assert finder.broken_links.empty?
-    assert finder.ignored_links.empty?
+    assert_empty finder.broken_links
+    assert_empty finder.ignored_links
+    assert_equal 0, finder.total_links_crawled
+    assert_empty finder.instance_variable_get(:@all_broken_links)
+    assert_empty finder.instance_variable_get(:@all_intact_links)
   end
 
   def test_crawl_url
@@ -47,6 +61,7 @@ class FinderTest < TestHelper
         'tel:+13174562564',
       ],
     }, finder.ignored_links)
+    assert_equal 8, finder.total_links_crawled
   end
 
   def test_crawl_url__sort_by_link
@@ -69,6 +84,7 @@ class FinderTest < TestHelper
         'http://mock-server.com/',
       ],
     }, finder.ignored_links)
+    assert_equal 8, finder.total_links_crawled
   end
 
   def test_crawl_url__no_broken_links
@@ -77,6 +93,7 @@ class FinderTest < TestHelper
 
     assert_equal(Hash.new, finder.broken_links)
     assert_equal(Hash.new, finder.ignored_links)
+    assert_equal 2, finder.total_links_crawled
   end
 
   def test_crawl_url__no_broken_links__sort_by_link
@@ -85,6 +102,7 @@ class FinderTest < TestHelper
 
     assert_equal(Hash.new, finder.broken_links)
     assert_equal(Hash.new, finder.ignored_links)
+    assert_equal 2, finder.total_links_crawled
   end
 
   def test_crawl_url__links_page
@@ -114,6 +132,7 @@ class FinderTest < TestHelper
     }
     assert_equal expected, finder.broken_links
     assert_empty finder.ignored_links
+    assert_equal 15, finder.total_links_crawled
   end
 
   def test_crawl_url__links_page__sort_by_link
@@ -141,6 +160,7 @@ class FinderTest < TestHelper
     }
     assert_equal expected, finder.broken_links
     assert_empty finder.ignored_links
+    assert_equal 15, finder.total_links_crawled
   end
 
   def test_crawl_url__invalid
@@ -152,16 +172,11 @@ class FinderTest < TestHelper
     assert_equal 'Invalid URL: https://server-error.com', ex.message
   end
 
-  def test_crawl_page__alias
-    finder = Finder.new
-    assert finder.respond_to? :crawl_page
-  end
-
   def test_crawl_site
     finder = Finder.new
-    broken_links_found, crawled_pages = finder.crawl_site 'http://mock-server.com/'
+    has_broken_links, crawled_pages = finder.crawl_site 'http://mock-server.com/'
 
-    assert broken_links_found
+    assert has_broken_links
     assert_equal([
       'http://mock-server.com/',
       'http://mock-server.com/contact',
@@ -193,6 +208,7 @@ class FinderTest < TestHelper
         'ftp://websiteaddress.com',
       ],
     }, finder.ignored_links)
+    assert_equal 13, finder.total_links_crawled
 
     # Check it can be run multiple times consecutively without error.
     finder.crawl_site 'http://mock-server.com/'
@@ -200,9 +216,9 @@ class FinderTest < TestHelper
 
   def test_crawl_site__sort_by_link
     finder = Finder.new sort: :link
-    broken_links_found, crawled_pages = finder.crawl_site 'http://mock-server.com/'
+    has_broken_links, crawled_pages = finder.crawl_site 'http://mock-server.com/'
 
-    assert broken_links_found
+    assert has_broken_links
     assert_equal([
       'http://mock-server.com/',
       'http://mock-server.com/contact',
@@ -228,9 +244,10 @@ class FinderTest < TestHelper
       'mailto:youraddress@yourmailserver.com' => ['http://mock-server.com/'],
       'tel:+13174562564' => ['http://mock-server.com/'],
     }, finder.ignored_links)
+    assert_equal 13, finder.total_links_crawled
 
     # Check it can be run multiple times consecutively without error.
-    broken_links_found, _ = finder.crawl_site 'http://mock-server.com/'
-    assert broken_links_found
+    has_broken_links, _ = finder.crawl_site 'http://mock-server.com/'
+    assert has_broken_links
   end
 end

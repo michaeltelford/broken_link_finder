@@ -1,6 +1,7 @@
 require_relative 'reporter'
 require 'wgit'
 require 'thread/pool'
+require 'set'
 
 module BrokenLinkFinder
   # Alias for BrokenLinkFinder::Finder.new, don't use this if you want to
@@ -12,7 +13,7 @@ module BrokenLinkFinder
   class Finder
     DEFAULT_MAX_THREADS = 30.freeze
 
-    attr_reader :broken_links, :ignored_links
+    attr_reader :broken_links, :ignored_links, :total_links_crawled
 
     # Creates a new Finder instance.
     def initialize(sort: :page, max_threads: DEFAULT_MAX_THREADS)
@@ -20,18 +21,21 @@ module BrokenLinkFinder
         raise "sort by either :page or :link, not #{sort}"
       end
 
-      @sort = sort
+      @sort        = sort
       @max_threads = max_threads
-      @lock = Mutex.new
-      @crawler = Wgit::Crawler.new
+      @lock        = Mutex.new
+      @crawler     = Wgit::Crawler.new
 
       clear_links
     end
 
     # Clear/empty the link collection Hashes.
     def clear_links
-      @broken_links = {}
-      @ignored_links = {}
+      @broken_links        = {}
+      @ignored_links       = {}
+      @total_links_crawled = 0
+      @all_broken_links    = Set.new
+      @all_intact_links    = Set.new
     end
 
     # Finds broken links within a single page and appends them to the
@@ -39,9 +43,9 @@ module BrokenLinkFinder
     # Access the broken links with Finder#broken_links.
     def crawl_url(url)
       clear_links
-      url = Wgit::Url.new(url)
 
       # Ensure the given page url is valid.
+      url = Wgit::Url.new(url)
       doc = @crawler.crawl_url(url)
       raise "Invalid URL: #{url}" unless doc
 
@@ -49,6 +53,8 @@ module BrokenLinkFinder
       find_broken_links(doc)
 
       sort_links
+      set_total_links_crawled
+
       @broken_links.any?
     end
 
@@ -58,6 +64,7 @@ module BrokenLinkFinder
     # Access the broken links with Finder#broken_links.
     def crawl_site(url)
       clear_links
+
       url = Wgit::Url.new(url)
       pool = Thread.pool(@max_threads)
       crawled_pages = []
@@ -73,8 +80,12 @@ module BrokenLinkFinder
         pool.process { find_broken_links(doc) }
       end
 
-      pool.shutdown # Wait for all threads to finish.
+      # Wait for all threads to finish.
+      pool.shutdown
+
       sort_links
+      set_total_links_crawled
+
       [@broken_links.any?, crawled_pages]
     end
 
@@ -101,7 +112,7 @@ module BrokenLinkFinder
 
     # Finds which links are unsupported or broken and records the details.
     def find_broken_links(doc)
-      # Process the Document's links before checking if they're broke.
+      # Report and reject any non supported links.
       links = doc.all_links.
         reject do |link|
           if !link.is_relative? and !link.start_with?('http')
@@ -113,13 +124,25 @@ module BrokenLinkFinder
 
       # Iterate over the supported links checking if they're broken or not.
       links.each do |link|
+        # Check if the link has already been processed previously.
+        next if @all_intact_links.include?(link)
+
+        if @all_broken_links.include?(link)
+          append_broken_link(doc.url, link)
+          next
+        end
+
+        # The link hasn't been processed before so we crawl it.
         link_url = link.is_relative? ? doc.url.to_base.concat(link) : link
         link_doc = @crawler.crawl_url(link_url)
 
+        # Determine if the crawled link is broken or not.
         if @crawler.last_response.is_a?(Net::HTTPNotFound) or
             link_doc.nil? or
             has_broken_anchor(link_doc)
           append_broken_link(doc.url, link)
+        else
+          @lock.synchronize { @all_intact_links << link }
         end
       end
 
@@ -140,17 +163,21 @@ module BrokenLinkFinder
     # Append key => [value] to @broken_links.
     def append_broken_link(url, link)
       key, value = get_key_value(url, link)
+
       @lock.synchronize do
         unless @broken_links[key]
           @broken_links[key] = []
         end
         @broken_links[key] << value
+
+        @all_broken_links  << link
       end
     end
 
     # Append key => [value] to @ignored_links.
     def append_ignored_link(url, link)
       key, value = get_key_value(url, link)
+
       @lock.synchronize do
         unless @ignored_links[key]
           @ignored_links[key] = []
@@ -178,6 +205,11 @@ module BrokenLinkFinder
 
       @broken_links.each { |k, v| v.sort! }
       @ignored_links.each { |k, v| v.sort! }
+    end
+
+    # Sets and returns the total number of links crawled.
+    def set_total_links_crawled
+      @total_links_crawled = @all_broken_links.size + @all_intact_links.size
     end
 
     alias_method :crawl_page, :crawl_url
