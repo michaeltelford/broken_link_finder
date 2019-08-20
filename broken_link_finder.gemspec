@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.post_install_message = "Added the executable 'broken_link_finder' to $PATH"
 
-  spec.required_ruby_version = '~> 2.5' # Only works with ruby 2.5.x
+  spec.required_ruby_version = '~> 2.5'
 
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "rake", "~> 10.0"
@@ -45,7 +45,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "httplog", "~> 1.3"
   spec.add_development_dependency "memory_profiler", "~> 0.9"
 
-  spec.add_runtime_dependency "wgit", "0.0.13"
+  spec.add_runtime_dependency "wgit", "0.0.15"
   spec.add_runtime_dependency "thread", "0.2"
   spec.add_runtime_dependency "thor", "0.20.3"
 end

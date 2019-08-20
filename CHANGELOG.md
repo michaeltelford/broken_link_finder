@@ -13,7 +13,7 @@
 ### Added
 - Logic to prevent re-crawling links for more efficiency.
 ### Changed/Removed
-- Updated the `wgit` gem which fixes a bug in `crawl_site` and adds support for non ASCII URL characters.
+- Updated the `wgit` gem which fixes a bug in `crawl_site` and adds support for IRI's.
 ### Fixed
 - Bug where an error from the executable wasn't being rescued.
 ---
