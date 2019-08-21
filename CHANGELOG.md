@@ -9,6 +9,15 @@
 - ...
 ---
 
+## v0.8.1
+### Added
+- ...
+### Changed/Removed
+- ...
+### Fixed
+- Updated `wgit` dep containing bug fixes.
+---
+
 ## v0.8.0
 ### Added
 - Logic to prevent re-crawling links for more efficiency.
