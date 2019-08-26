@@ -169,7 +169,7 @@ class FinderTest < TestHelper
 
     flunk
   rescue RuntimeError => ex
-    assert_equal 'Invalid URL: https://server-error.com', ex.message
+    assert_equal 'Invalid or broken URL: https://server-error.com', ex.message
   end
 
   def test_crawl_site
@@ -185,6 +185,8 @@ class FinderTest < TestHelper
       'http://mock-server.com/not_found',
       'http://mock-server.com/redirect',
       'http://mock-server.com/redirect/2',
+      'http://mock-server.com/location?q=hello',
+      'http://mock-server.com/about?q=world',
     ], crawled_pages)
     assert_equal({
       'http://mock-server.com/' => [
@@ -194,7 +196,11 @@ class FinderTest < TestHelper
       'http://mock-server.com/about' => [
         'https://doesnt-exist.com',
       ],
+      'http://mock-server.com/about?q=world' => [
+        'https://doesnt-exist.com',
+      ],
       'http://mock-server.com/contact' => [
+        '#doesntexist',
         'https://doesnt-exist.com',
         'not_found',
       ],
@@ -208,7 +214,7 @@ class FinderTest < TestHelper
         'ftp://websiteaddress.com',
       ],
     }, finder.ignored_links)
-    assert_equal 13, finder.total_links_crawled
+    assert_equal 17, finder.total_links_crawled
 
     # Check it can be run multiple times consecutively without error.
     finder.crawl_site 'http://mock-server.com/'
@@ -227,11 +233,17 @@ class FinderTest < TestHelper
       'http://mock-server.com/not_found',
       'http://mock-server.com/redirect',
       'http://mock-server.com/redirect/2',
+      'http://mock-server.com/location?q=hello',
+      'http://mock-server.com/about?q=world',
     ], crawled_pages)
     assert_equal({
+      '#doesntexist' => [
+        'http://mock-server.com/contact',
+      ],
       'https://doesnt-exist.com' => [
         'http://mock-server.com/',
         'http://mock-server.com/about',
+        'http://mock-server.com/about?q=world',
         'http://mock-server.com/contact',
       ],
       'not_found' => [
@@ -244,10 +256,19 @@ class FinderTest < TestHelper
       'mailto:youraddress@yourmailserver.com' => ['http://mock-server.com/'],
       'tel:+13174562564' => ['http://mock-server.com/'],
     }, finder.ignored_links)
-    assert_equal 13, finder.total_links_crawled
+    assert_equal 17, finder.total_links_crawled
 
     # Check it can be run multiple times consecutively without error.
     has_broken_links, _ = finder.crawl_site 'http://mock-server.com/'
     assert has_broken_links
+  end
+
+  def test_crawl_site__invalid
+    finder = Finder.new
+    finder.crawl_site 'https://server-error.com'
+
+    flunk
+  rescue RuntimeError => ex
+    assert_equal 'Invalid or broken URL: https://server-error.com', ex.message
   end
 end

@@ -9,7 +9,7 @@ def mock_response(file_name, status: 200)
   { status: status, body: File.read(file_path) }
 end
 
-# / (index webpage for $mock_server)
+# / (index webpage for the mock server)
 stub_request(:get, 'http://mock-server.com/').
   to_return(mock_response('index'))
 
@@ -20,9 +20,13 @@ stub_request(:get, 'http://mock-server.com/contact').
 # /about
 stub_request(:get, 'http://mock-server.com/about').
   to_return(mock_response('about'))
+stub_request(:get, 'http://mock-server.com/about?q=world').
+  to_return(mock_response('about'))
 
 # /location
 stub_request(:get, 'http://mock-server.com/location').
+  to_return(mock_response('location'))
+stub_request(:get, 'http://mock-server.com/location?q=hello').
   to_return(mock_response('location'))
 
 # / (index page for $mock_external_site)

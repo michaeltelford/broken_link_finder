@@ -44,10 +44,11 @@ module BrokenLinkFinder
     def crawl_url(url)
       clear_links
 
-      # Ensure the given page url is valid.
       url = Wgit::Url.new(url)
       doc = @crawler.crawl_url(url)
-      raise "Invalid URL: #{url}" unless doc
+
+      # Ensure the given page url is valid.
+      raise "Invalid or broken URL: #{url}" unless doc
 
       # Get all page links and determine which are broken.
       find_broken_links(doc)
@@ -70,15 +71,16 @@ module BrokenLinkFinder
       crawled_pages = []
 
       # Crawl the site's HTML web pages looking for links.
-      @crawler.crawl_site(url) do |doc|
-        # Ensure the given website url is valid.
-        raise "Invalid URL: #{url}" if doc.url == url and doc.empty?
+      orig_doc = @crawler.crawl_site(url) do |doc|
         crawled_pages << doc.url
-
-        # Get all page links and determine which are broken.
         next unless doc
+
+        # Start a thread for each page, checking for broken links.
         pool.process { find_broken_links(doc) }
       end
+
+      # Ensure the given website url is valid.
+      raise "Invalid or broken URL: #{url}" if orig_doc.nil?
 
       # Wait for all threads to finish.
       pool.shutdown
@@ -133,7 +135,7 @@ module BrokenLinkFinder
         end
 
         # The link hasn't been processed before so we crawl it.
-        link_url = link.is_relative? ? doc.url.to_base.concat(link) : link
+        link_url = get_absolute_link(doc, link)
         link_doc = @crawler.crawl_url(link_url)
 
         # Determine if the crawled link is broken or not.
@@ -147,6 +149,15 @@ module BrokenLinkFinder
       end
 
       nil
+    end
+
+    # Returns the link in absolute form so it can be crawled.
+    def get_absolute_link(doc, link)
+      if link.is_relative?
+        doc.base_url(link: link).concat(link)
+      else
+        link
+      end
     end
 
     # Returns true if the link is/contains a broken anchor.
