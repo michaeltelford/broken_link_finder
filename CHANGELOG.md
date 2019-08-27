@@ -9,6 +9,15 @@
 - ...
 ---
 
+## v0.9.0
+### Added
+- The `version` command to the executable.
+### Changed/Removed
+- ...
+### Fixed
+- Updated `wgit` dependancy to fix several bugs
+---
+
 ## v0.8.1
 ### Added
 - ...

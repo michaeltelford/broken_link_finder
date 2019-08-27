@@ -39,6 +39,10 @@ Or install it yourself as:
 
     $ gem install broken_link_finder
 
+Finally, verify the installation with:
+
+    $ broken_link_finder version
+
 ## Usage
 
 You can check for broken links via the library or executable.

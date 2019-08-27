@@ -26,6 +26,11 @@ class BrokenLinkFinderCLI < Thor
   rescue Exception => ex
     puts "An error has occurred: #{ex.message}"
   end
+
+  desc 'version', 'Display the currently installed version'
+  def version
+    puts "broken_link_finder v#{BrokenLinkFinder::VERSION}"
+  end
 end
 
 BrokenLinkFinderCLI.start(ARGV)
