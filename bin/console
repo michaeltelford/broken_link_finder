@@ -5,20 +5,29 @@ require "pry"
 require "byebug"
 require "broken_link_finder"
 require 'wgit/core_ext'
+require 'logger'
 require 'httplog'
+
+logger = Logger.new(STDOUT)
+logger.formatter = proc do |severity, datetime, progname, msg|
+  "#{msg}\n"
+end
 
 # Monkey patch all Net:HTTP network calls and log them.
 HttpLog.configure do |config|
+  config.enabled        = true
+  config.logger         = logger
+
   config.log_connect    = false
   config.log_request    = true
   config.log_headers    = false
   config.log_data       = false
   config.log_status     = true
   config.log_response   = false
-  config.log_benchmark  = true
+  config.log_benchmark  = false
 
-  config.compact_log    = true
-  config.json_log       = true
+  config.compact_log    = false
+  config.json_log       = false
 end
 
 # Call reload to load all recent code changes.
@@ -33,9 +42,12 @@ end
 
 # You can add fixtures and/or initialization code here...
 reload
+
 url = "http://txti.es/"
 by_page = Finder.new
 by_link = Finder.new sort: :link
 finder = by_page
+
+puts "\nbroken_link_finder v#{BrokenLinkFinder::VERSION}"
 
 binding.pry

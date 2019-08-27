@@ -15,6 +15,16 @@ task :help do
   system "bundle exec rake -D"
 end
 
+desc "Run the setup script"
+task :setup do
+  system "./bin/setup"
+end
+
+desc "Run the development console"
+task :console do
+  system "./bin/console"
+end
+
 desc "Compile all project Ruby files with warnings."
 task :compile do
   paths = Dir["**/*.rb", "**/*.gemspec", 'exe/broken_link_finder']

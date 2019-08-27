@@ -211,10 +211,13 @@ module BrokenLinkFinder
 
     # Sort keys and values alphabetically.
     def sort_links
-      @broken_links = @broken_links.sort_by { |k, v| k }.to_h
+      @broken_links.values.map  { |v| v.uniq! }
+      @ignored_links.values.map { |v| v.uniq! }
+
+      @broken_links  = @broken_links.sort_by  { |k, v| k }.to_h
       @ignored_links = @ignored_links.sort_by { |k, v| k }.to_h
 
-      @broken_links.each { |k, v| v.sort! }
+      @broken_links.each  { |k, v| v.sort! }
       @ignored_links.each { |k, v| v.sort! }
     end
 
