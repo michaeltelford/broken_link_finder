@@ -88,7 +88,7 @@ module BrokenLinkFinder
       sort_links
       set_total_links_crawled
 
-      [@broken_links.any?, crawled_pages]
+      [@broken_links.any?, crawled_pages.uniq]
     end
 
     # Pretty prints the link report into a stream e.g. STDOUT or a file,

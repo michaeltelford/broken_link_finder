@@ -183,8 +183,6 @@ class FinderTest < TestHelper
       'http://mock-server.com/location',
       'http://mock-server.com/about',
       'http://mock-server.com/not_found',
-      'http://mock-server.com/redirect',
-      'http://mock-server.com/redirect/2',
       'http://mock-server.com/location?q=hello',
       'http://mock-server.com/about?q=world',
     ], crawled_pages)
@@ -231,8 +229,6 @@ class FinderTest < TestHelper
       'http://mock-server.com/location',
       'http://mock-server.com/about',
       'http://mock-server.com/not_found',
-      'http://mock-server.com/redirect',
-      'http://mock-server.com/redirect/2',
       'http://mock-server.com/location?q=hello',
       'http://mock-server.com/about?q=world',
     ], crawled_pages)
