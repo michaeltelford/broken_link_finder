@@ -2,17 +2,18 @@ require 'helpers/test_helper'
 
 class FinderTest < TestHelper
   def test_initialize_from_module
-    finder = BrokenLinkFinder.new sort: :link
+    finder = BrokenLinkFinder.new sort: :link, max_threads: 10
 
     assert_equal Hash.new, finder.broken_links
     assert_equal Hash.new, finder.ignored_links
     assert_equal 0, finder.total_links_crawled
+    assert_equal 10, finder.max_threads
+    assert_equal :link, finder.sort
     assert_equal Set, finder.instance_variable_get(:@all_broken_links).class
     assert_equal Set, finder.instance_variable_get(:@all_intact_links).class
     assert_empty finder.instance_variable_get(:@all_broken_links)
     assert_empty finder.instance_variable_get(:@all_intact_links)
     refute_nil finder.instance_variable_get(:@crawler)
-    assert_equal :link, finder.instance_variable_get(:@sort)
   end
 
   def test_initialize
@@ -21,15 +22,17 @@ class FinderTest < TestHelper
     assert_equal Hash.new, finder.broken_links
     assert_equal Hash.new, finder.ignored_links
     assert_equal 0, finder.total_links_crawled
+    assert_equal 100, finder.max_threads
+    assert_equal :page, finder.sort
     assert_equal Set, finder.instance_variable_get(:@all_broken_links).class
     assert_equal Set, finder.instance_variable_get(:@all_intact_links).class
     assert_empty finder.instance_variable_get(:@all_broken_links)
     assert_empty finder.instance_variable_get(:@all_intact_links)
     refute_nil finder.instance_variable_get(:@crawler)
-    assert_equal :page, finder.instance_variable_get(:@sort)
 
-    finder = Finder.new sort: :link
-    assert_equal :link, finder.instance_variable_get(:@sort)
+    finder = Finder.new sort: :link, max_threads: 10
+    assert_equal :link, finder.sort
+    assert_equal 10, finder.max_threads
   end
 
   def test_clear_links

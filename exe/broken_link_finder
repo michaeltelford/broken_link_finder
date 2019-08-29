@@ -6,18 +6,20 @@ require 'thor'
 
 class BrokenLinkFinderCLI < Thor
   desc 'crawl [URL]', 'Find broken links at the URL'
-  option :recursive, type: :boolean, aliases: [:r], desc: 'Crawl the entire site.'
-  option :sort_by_link, type: :boolean, aliases: [:l], desc: 'Makes report more concise if there are more pages crawled than broken links found. Use with -r on medium/large sites.'
-  option :verbose, type: :boolean, aliases: [:v], desc: 'Display all ignored links.'
-  option :concise, type: :boolean, aliases: [:c], desc: 'Display only a summary of broken links.'
+  option :recursive, type: :boolean, aliases: [:r], default: false, desc: 'Crawl the entire site.'
+  option :threads, type: :numeric, aliases: [:t], default: BrokenLinkFinder::DEFAULT_MAX_THREADS, desc: 'Max number of threads to use when crawling recursively; 1 thread per web page.'
+  option :sort_by_link, type: :boolean, aliases: [:l], default: false, desc: 'Makes report more concise if there are more pages crawled than broken links found. Use with -r on medium/large sites.'
+  option :verbose, type: :boolean, aliases: [:v], default: false, desc: 'Display all ignored links.'
+  option :concise, type: :boolean, aliases: [:c], default: false, desc: 'Display only a summary of broken links.'
   def crawl(url)
     url = "http://#{url}" unless url.start_with?('http')
 
-    sort_by           = options[:sort_by_link]  ? :link : :page
-    broken_verbose    = options[:concise]       ? false : true
-    ignored_verbose   = options[:verbose]       ? true  : false
+    sort_by           = options[:sort_by_link] ? :link : :page
+    max_threads       = options[:threads]
+    broken_verbose    = !options[:concise]
+    ignored_verbose   = options[:verbose]
 
-    finder = BrokenLinkFinder::Finder.new(sort: sort_by)
+    finder = BrokenLinkFinder::Finder.new(sort: sort_by, max_threads: max_threads)
     options[:recursive] ? finder.crawl_site(url) : finder.crawl_page(url)
     finder.pretty_print_link_report(
       broken_verbose: broken_verbose,

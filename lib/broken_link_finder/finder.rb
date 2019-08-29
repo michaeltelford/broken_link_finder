@@ -4,19 +4,18 @@ require 'thread/pool'
 require 'set'
 
 module BrokenLinkFinder
-  # Alias for BrokenLinkFinder::Finder.new, don't use this if you want to
-  # override the max_threads variable.
-  def self.new(sort: :page)
-    Finder.new(sort: sort)
+  DEFAULT_MAX_THREADS = 100.freeze
+
+  # Alias for BrokenLinkFinder::Finder.new.
+  def self.new(sort: :page, max_threads: DEFAULT_MAX_THREADS)
+    Finder.new(sort: sort, max_threads: max_threads)
   end
 
   class Finder
-    DEFAULT_MAX_THREADS = 30.freeze
-
-    attr_reader :broken_links, :ignored_links, :total_links_crawled
+    attr_reader :sort, :broken_links, :ignored_links, :total_links_crawled, :max_threads
 
     # Creates a new Finder instance.
-    def initialize(sort: :page, max_threads: DEFAULT_MAX_THREADS)
+    def initialize(sort: :page, max_threads: BrokenLinkFinder::DEFAULT_MAX_THREADS)
       unless [:page, :link].include?(sort)
         raise "sort by either :page or :link, not #{sort}"
       end
@@ -153,11 +152,7 @@ module BrokenLinkFinder
 
     # Returns the link in absolute form so it can be crawled.
     def get_absolute_link(doc, link)
-      if link.is_relative?
-        doc.base_url(link: link).concat(link)
-      else
-        link
-      end
+      link.is_relative? ? doc.base_url(link: link).concat(link) : link
     end
 
     # Returns true if the link is/contains a broken anchor.

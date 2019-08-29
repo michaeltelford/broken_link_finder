@@ -21,6 +21,7 @@ module BrokenLinkFinder
     def pretty_print_link_report(broken_verbose: true, ignored_verbose: false)
       report_broken_links(verbose: broken_verbose)
       report_ignored_links(verbose: ignored_verbose)
+      nil
     end
 
     private
