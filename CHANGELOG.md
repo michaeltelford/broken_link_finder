@@ -12,9 +12,9 @@
 ## v0.9.0
 ### Added
 - The `version` command to the executable.
-- The `--threads` aka `-t` option to the executable's `crawl` command.
+- The `--threads` aka `-t` option to the executable's `crawl` command to control crawl speed vs. resource usage.
 ### Changed/Removed
-- Changed the default number of maximum threads for a recursive crawl from 30 to 100. Users will see a speed boost with increased resource usage as a result. This is configurable using the new command option e.g. `--threads 30`.
+- Changed the default number of maximum threads for a recursive crawl from 30 to 100. Users will see a speed boost with increased resource usage as a result. This is configurable using the new `crawl` command option e.g. `--threads 30`.
 ### Fixed
 - Several bugs by updating the `wgit` dependancy.
 - A bug in the report logic causing an incorrect link count.

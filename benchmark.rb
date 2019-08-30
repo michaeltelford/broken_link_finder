@@ -18,6 +18,6 @@ puts "Links crawled: #{finder.total_links_crawled}"
 # Site: 9.732416
 # Multi-threading crawl_site now yields the same time as a single page
 
-# https://meos.ch/ site crawl - post all link recording functionality
+# Large site crawl - post all link recording functionality
 # Pre:  608 seconds with 7665 links crawled
 # Post: 355 seconds with 1099 links crawled

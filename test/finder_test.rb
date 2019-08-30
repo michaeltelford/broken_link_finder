@@ -110,23 +110,23 @@ class FinderTest < TestHelper
 
   def test_crawl_url__links_page
     finder = Finder.new
-    assert finder.crawl_url 'https://meosch.tk/links.html'
+    assert finder.crawl_url 'https://example.co.uk/links.html'
     expected = {
-      'https://meosch.tk/links.html' => [
+      'https://example.co.uk/links.html' => [
         '/images/non-existent_logo.png',
         '/links.html#anchorthatdoesnotexist',
         '/nonexistent_page.html',
         '/nonexistent_page.html#anchorthatdoesnotexist',
 
-        'https://meos.ch#anchorthandoesnotexist',
-        'https://meos.ch/brokenlink',
-        'https://meos.ch/brokenlink#anchorthandoesnotexist',
-        'https://meos.ch/images/non-existing_logo.png',
+        'https://example.co.uk/images/non-existing_logo.png',
+        'https://example.co.uk/links.html#anchorthatdoesnotexist',
+        'https://example.co.uk/nonexisting_page.html',
+        'https://example.co.uk/nonexisting_page.html#anchorthatdoesnotexist',
 
-        'https://meosch.tk/images/non-existing_logo.png',
-        'https://meosch.tk/links.html#anchorthatdoesnotexist',
-        'https://meosch.tk/nonexisting_page.html',
-        'https://meosch.tk/nonexisting_page.html#anchorthatdoesnotexist',
+        'https://example.com#anchorthandoesnotexist',
+        'https://example.com/brokenlink',
+        'https://example.com/brokenlink#anchorthandoesnotexist',
+        'https://example.com/images/non-existing_logo.png',
 
         'https://thisdomaindoesnotexist-thouthou.com/badpage.html',
         'https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist',
@@ -140,26 +140,26 @@ class FinderTest < TestHelper
 
   def test_crawl_url__links_page__sort_by_link
     finder = Finder.new sort: :link
-    assert finder.crawl_url 'https://meosch.tk/links.html'
+    assert finder.crawl_url 'https://example.co.uk/links.html'
     expected = {
-      '/images/non-existent_logo.png' => ['https://meosch.tk/links.html'],
-      '/nonexistent_page.html' => ['https://meosch.tk/links.html'],
-      '/nonexistent_page.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
-      '/links.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
+      '/images/non-existent_logo.png' => ['https://example.co.uk/links.html'],
+      '/nonexistent_page.html' => ['https://example.co.uk/links.html'],
+      '/nonexistent_page.html#anchorthatdoesnotexist' => ['https://example.co.uk/links.html'],
+      '/links.html#anchorthatdoesnotexist' => ['https://example.co.uk/links.html'],
 
-      'https://meos.ch/images/non-existing_logo.png' => ['https://meosch.tk/links.html'],
-      'https://meos.ch/brokenlink' => ['https://meosch.tk/links.html'],
-      'https://meos.ch/brokenlink#anchorthandoesnotexist' => ['https://meosch.tk/links.html'],
-      'https://meos.ch#anchorthandoesnotexist' => ['https://meosch.tk/links.html'],
+      'https://example.com/images/non-existing_logo.png' => ['https://example.co.uk/links.html'],
+      'https://example.com/brokenlink' => ['https://example.co.uk/links.html'],
+      'https://example.com/brokenlink#anchorthandoesnotexist' => ['https://example.co.uk/links.html'],
+      'https://example.com#anchorthandoesnotexist' => ['https://example.co.uk/links.html'],
 
-      'https://meosch.tk/images/non-existing_logo.png' => ['https://meosch.tk/links.html'],
-      'https://meosch.tk/nonexisting_page.html' => ['https://meosch.tk/links.html'],
-      'https://meosch.tk/nonexisting_page.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
-      'https://meosch.tk/links.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
+      'https://example.co.uk/images/non-existing_logo.png' => ['https://example.co.uk/links.html'],
+      'https://example.co.uk/nonexisting_page.html' => ['https://example.co.uk/links.html'],
+      'https://example.co.uk/nonexisting_page.html#anchorthatdoesnotexist' => ['https://example.co.uk/links.html'],
+      'https://example.co.uk/links.html#anchorthatdoesnotexist' => ['https://example.co.uk/links.html'],
 
-      'https://thisdomaindoesnotexist-thouthou.com/badpage.html' => ['https://meosch.tk/links.html'],
-      'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png' => ['https://meosch.tk/links.html'],
-      'https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist' => ['https://meosch.tk/links.html'],
+      'https://thisdomaindoesnotexist-thouthou.com/badpage.html' => ['https://example.co.uk/links.html'],
+      'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png' => ['https://example.co.uk/links.html'],
+      'https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist' => ['https://example.co.uk/links.html'],
     }
     assert_equal expected, finder.broken_links
     assert_empty finder.ignored_links
