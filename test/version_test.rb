@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'helpers/test_helper'
 
 class VersionTest < TestHelper

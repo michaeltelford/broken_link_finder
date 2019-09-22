@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 require 'helpers/test_helper'
 
 class FinderTest < TestHelper
   def test_initialize_from_module
     finder = BrokenLinkFinder.new sort: :link, max_threads: 10
 
-    assert_equal Hash.new, finder.broken_links
-    assert_equal Hash.new, finder.ignored_links
+    assert_equal({}, finder.broken_links)
+    assert_equal({}, finder.ignored_links)
     assert_equal 0, finder.total_links_crawled
     assert_equal 10, finder.max_threads
     assert_equal :link, finder.sort
@@ -19,8 +21,8 @@ class FinderTest < TestHelper
   def test_initialize
     finder = Finder.new
 
-    assert_equal Hash.new, finder.broken_links
-    assert_equal Hash.new, finder.ignored_links
+    assert_equal({}, finder.broken_links)
+    assert_equal({}, finder.ignored_links)
     assert_equal 0, finder.total_links_crawled
     assert_equal 100, finder.max_threads
     assert_equal :page, finder.sort
@@ -37,8 +39,8 @@ class FinderTest < TestHelper
 
   def test_clear_links
     finder = Finder.new
-    finder.instance_variable_set :@broken_links, { name: 'foo' }
-    finder.instance_variable_set :@ignored_links, { name: 'bar' }
+    finder.instance_variable_set :@broken_links, name: 'foo'
+    finder.instance_variable_set :@ignored_links, name: 'bar'
     finder.clear_links
 
     assert_empty finder.broken_links
@@ -53,17 +55,17 @@ class FinderTest < TestHelper
     assert finder.crawl_url 'http://mock-server.com/'
 
     assert_equal({
-      'http://mock-server.com/' => [
-        'https://doesnt-exist.com',
-        'not_found',
-      ],
-    }, finder.broken_links)
+                   'http://mock-server.com/' => [
+                     'https://doesnt-exist.com',
+                     'not_found'
+                   ]
+                 }, finder.broken_links)
     assert_equal({
-      'http://mock-server.com/' => [
-        'mailto:youraddress@yourmailserver.com',
-        'tel:+13174562564',
-      ],
-    }, finder.ignored_links)
+                   'http://mock-server.com/' => [
+                     'mailto:youraddress@yourmailserver.com',
+                     'tel:+13174562564'
+                   ]
+                 }, finder.ignored_links)
     assert_equal 8, finder.total_links_crawled
   end
 
@@ -72,21 +74,21 @@ class FinderTest < TestHelper
     assert finder.crawl_url 'http://mock-server.com/'
 
     assert_equal({
-      'https://doesnt-exist.com' => [
-        'http://mock-server.com/',
-      ],
-      'not_found' => [
-        'http://mock-server.com/',
-      ],
-    }, finder.broken_links)
+                   'https://doesnt-exist.com' => [
+                     'http://mock-server.com/'
+                   ],
+                   'not_found' => [
+                     'http://mock-server.com/'
+                   ]
+                 }, finder.broken_links)
     assert_equal({
-      'mailto:youraddress@yourmailserver.com' => [
-        'http://mock-server.com/',
-      ],
-      'tel:+13174562564' => [
-        'http://mock-server.com/',
-      ],
-    }, finder.ignored_links)
+                   'mailto:youraddress@yourmailserver.com' => [
+                     'http://mock-server.com/'
+                   ],
+                   'tel:+13174562564' => [
+                     'http://mock-server.com/'
+                   ]
+                 }, finder.ignored_links)
     assert_equal 8, finder.total_links_crawled
   end
 
@@ -94,8 +96,8 @@ class FinderTest < TestHelper
     finder = Finder.new
     refute finder.crawl_url('http://mock-server.com/location')
 
-    assert_equal(Hash.new, finder.broken_links)
-    assert_equal(Hash.new, finder.ignored_links)
+    assert_equal({}, finder.broken_links)
+    assert_equal({}, finder.ignored_links)
     assert_equal 2, finder.total_links_crawled
   end
 
@@ -103,8 +105,8 @@ class FinderTest < TestHelper
     finder = Finder.new sort: :link
     refute finder.crawl_url('http://mock-server.com/location')
 
-    assert_equal(Hash.new, finder.broken_links)
-    assert_equal(Hash.new, finder.ignored_links)
+    assert_equal({}, finder.broken_links)
+    assert_equal({}, finder.ignored_links)
     assert_equal 2, finder.total_links_crawled
   end
 
@@ -130,7 +132,7 @@ class FinderTest < TestHelper
 
         'https://thisdomaindoesnotexist-thouthou.com/badpage.html',
         'https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist',
-        'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png',
+        'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png'
       ]
     }
     assert_equal expected, finder.broken_links
@@ -159,7 +161,7 @@ class FinderTest < TestHelper
 
       'https://thisdomaindoesnotexist-thouthou.com/badpage.html' => ['https://example.co.uk/links.html'],
       'https://thisdomaindoesnotexist-thouthou.com/nonexistentimage.png' => ['https://example.co.uk/links.html'],
-      'https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist' => ['https://example.co.uk/links.html'],
+      'https://thisdomaindoesnotexist-thouthou.com/badpage.html#anchorthatdoesnotexist' => ['https://example.co.uk/links.html']
     }
     assert_equal expected, finder.broken_links
     assert_empty finder.ignored_links
@@ -171,8 +173,8 @@ class FinderTest < TestHelper
     finder.crawl_url 'https://server-error.com'
 
     flunk
-  rescue RuntimeError => ex
-    assert_equal 'Invalid or broken URL: https://server-error.com', ex.message
+  rescue RuntimeError => e
+    assert_equal 'Invalid or broken URL: https://server-error.com', e.message
   end
 
   def test_crawl_site
@@ -181,40 +183,40 @@ class FinderTest < TestHelper
 
     assert has_broken_links
     assert_equal([
-      'http://mock-server.com/',
-      'http://mock-server.com/contact',
-      'http://mock-server.com/location',
-      'http://mock-server.com/about',
-      'http://mock-server.com/not_found',
-      'http://mock-server.com/location?q=hello',
-      'http://mock-server.com/about?q=world',
-    ], crawled_pages)
+                   'http://mock-server.com/',
+                   'http://mock-server.com/contact',
+                   'http://mock-server.com/location',
+                   'http://mock-server.com/about',
+                   'http://mock-server.com/not_found',
+                   'http://mock-server.com/location?q=hello',
+                   'http://mock-server.com/about?q=world'
+                 ], crawled_pages)
     assert_equal({
-      'http://mock-server.com/' => [
-        'https://doesnt-exist.com',
-        'not_found',
-      ],
-      'http://mock-server.com/about' => [
-        'https://doesnt-exist.com',
-      ],
-      'http://mock-server.com/about?q=world' => [
-        'https://doesnt-exist.com',
-      ],
-      'http://mock-server.com/contact' => [
-        '#doesntexist',
-        'https://doesnt-exist.com',
-        'not_found',
-      ],
-    }, finder.broken_links)
+                   'http://mock-server.com/' => [
+                     'https://doesnt-exist.com',
+                     'not_found'
+                   ],
+                   'http://mock-server.com/about' => [
+                     'https://doesnt-exist.com'
+                   ],
+                   'http://mock-server.com/about?q=world' => [
+                     'https://doesnt-exist.com'
+                   ],
+                   'http://mock-server.com/contact' => [
+                     '#doesntexist',
+                     'https://doesnt-exist.com',
+                     'not_found'
+                   ]
+                 }, finder.broken_links)
     assert_equal({
-      'http://mock-server.com/' => [
-        'mailto:youraddress@yourmailserver.com',
-        'tel:+13174562564',
-      ],
-      'http://mock-server.com/contact' => [
-        'ftp://websiteaddress.com',
-      ],
-    }, finder.ignored_links)
+                   'http://mock-server.com/' => [
+                     'mailto:youraddress@yourmailserver.com',
+                     'tel:+13174562564'
+                   ],
+                   'http://mock-server.com/contact' => [
+                     'ftp://websiteaddress.com'
+                   ]
+                 }, finder.ignored_links)
     assert_equal 17, finder.total_links_crawled
 
     # Check it can be run multiple times consecutively without error.
@@ -227,38 +229,38 @@ class FinderTest < TestHelper
 
     assert has_broken_links
     assert_equal([
-      'http://mock-server.com/',
-      'http://mock-server.com/contact',
-      'http://mock-server.com/location',
-      'http://mock-server.com/about',
-      'http://mock-server.com/not_found',
-      'http://mock-server.com/location?q=hello',
-      'http://mock-server.com/about?q=world',
-    ], crawled_pages)
+                   'http://mock-server.com/',
+                   'http://mock-server.com/contact',
+                   'http://mock-server.com/location',
+                   'http://mock-server.com/about',
+                   'http://mock-server.com/not_found',
+                   'http://mock-server.com/location?q=hello',
+                   'http://mock-server.com/about?q=world'
+                 ], crawled_pages)
     assert_equal({
-      '#doesntexist' => [
-        'http://mock-server.com/contact',
-      ],
-      'https://doesnt-exist.com' => [
-        'http://mock-server.com/',
-        'http://mock-server.com/about',
-        'http://mock-server.com/about?q=world',
-        'http://mock-server.com/contact',
-      ],
-      'not_found' => [
-        'http://mock-server.com/',
-        'http://mock-server.com/contact',
-      ],
-    }, finder.broken_links)
+                   '#doesntexist' => [
+                     'http://mock-server.com/contact'
+                   ],
+                   'https://doesnt-exist.com' => [
+                     'http://mock-server.com/',
+                     'http://mock-server.com/about',
+                     'http://mock-server.com/about?q=world',
+                     'http://mock-server.com/contact'
+                   ],
+                   'not_found' => [
+                     'http://mock-server.com/',
+                     'http://mock-server.com/contact'
+                   ]
+                 }, finder.broken_links)
     assert_equal({
-      'ftp://websiteaddress.com' => ['http://mock-server.com/contact'],
-      'mailto:youraddress@yourmailserver.com' => ['http://mock-server.com/'],
-      'tel:+13174562564' => ['http://mock-server.com/'],
-    }, finder.ignored_links)
+                   'ftp://websiteaddress.com' => ['http://mock-server.com/contact'],
+                   'mailto:youraddress@yourmailserver.com' => ['http://mock-server.com/'],
+                   'tel:+13174562564' => ['http://mock-server.com/']
+                 }, finder.ignored_links)
     assert_equal 17, finder.total_links_crawled
 
     # Check it can be run multiple times consecutively without error.
-    has_broken_links, _ = finder.crawl_site 'http://mock-server.com/'
+    has_broken_links, = finder.crawl_site 'http://mock-server.com/'
     assert has_broken_links
   end
 
@@ -267,7 +269,7 @@ class FinderTest < TestHelper
     finder.crawl_site 'https://server-error.com'
 
     flunk
-  rescue RuntimeError => ex
-    assert_equal 'Invalid or broken URL: https://server-error.com', ex.message
+  rescue RuntimeError => e
+    assert_equal 'Invalid or broken URL: https://server-error.com', e.message
   end
 end

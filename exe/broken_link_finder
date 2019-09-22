@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
-$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 require 'broken_link_finder'
 require 'thor'
 
@@ -14,10 +15,10 @@ class BrokenLinkFinderCLI < Thor
   def crawl(url)
     url = "http://#{url}" unless url.start_with?('http')
 
-    sort_by           = options[:sort_by_link] ? :link : :page
-    max_threads       = options[:threads]
-    broken_verbose    = !options[:concise]
-    ignored_verbose   = options[:verbose]
+    sort_by         = options[:sort_by_link] ? :link : :page
+    max_threads     = options[:threads]
+    broken_verbose  = !options[:concise]
+    ignored_verbose = options[:verbose]
 
     finder = BrokenLinkFinder::Finder.new(sort: sort_by, max_threads: max_threads)
     options[:recursive] ? finder.crawl_site(url) : finder.crawl_page(url)
@@ -25,8 +26,8 @@ class BrokenLinkFinderCLI < Thor
       broken_verbose: broken_verbose,
       ignored_verbose: ignored_verbose
     )
-  rescue Exception => ex
-    puts "An error has occurred: #{ex.message}"
+  rescue Exception => e
+    puts "An error has occurred: #{e.message}"
   end
 
   desc 'version', 'Display the currently installed version'

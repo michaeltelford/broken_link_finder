@@ -1,21 +1,11 @@
-require 'wgit'
+# frozen_string_literal: true
 
-# We pull out all of a Document's links, not just the links to other webpages.
+# We extract all the Document's links, not just the links to other webpages.
 Wgit::Document.define_extension(
   :all_links,
-  '//*/@href | //*/@src',
+  '//*/@href | //*/@src', # Any element with a href or src attribute.
   singleton: false,
-  text_content_only: true,
+  text_content_only: true
 ) do |links|
-  if links
-    links = links.
-      map do |link|
-        Wgit::Url.new(link)
-      rescue
-        nil
-      end.
-      compact.
-      uniq
-  end
-  links
+  links&.map(&:to_url)&.uniq
 end

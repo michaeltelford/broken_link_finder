@@ -1,15 +1,16 @@
+# frozen_string_literal: true
+
 module BrokenLinkFinder
   class Reporter
     # The amount of pages/links to display when verbose is false.
-    NUM_VALUES = 3.freeze
+    NUM_VALUES = 3
 
     # Creates a new Reporter instance.
     # stream is any Object that responds to :puts.
     def initialize(stream, sort, broken_links, ignored_links)
-      raise "stream must respond_to? :puts" unless stream.respond_to?(:puts)
-      unless [:page, :link].include?(sort)
-        raise "sort by either :page or :link, not #{sort}"
-      end
+      raise 'stream must respond_to? :puts' unless stream.respond_to?(:puts)
+      raise "sort by either :page or :link, not #{sort}" \
+      unless %i[page link].include?(sort)
 
       @stream         = stream
       @sort           = sort
@@ -21,6 +22,7 @@ module BrokenLinkFinder
     def pretty_print_link_report(broken_verbose: true, ignored_verbose: false)
       report_broken_links(verbose: broken_verbose)
       report_ignored_links(verbose: ignored_verbose)
+
       nil
     end
 
@@ -29,7 +31,7 @@ module BrokenLinkFinder
     # Report a summary of the broken links.
     def report_broken_links(verbose: true)
       if @broken_links.empty?
-        print "Good news, there are no broken links!"
+        print 'Good news, there are no broken links!'
       else
         num_pages, num_links = get_hash_stats(@broken_links)
         print "Found #{num_links} broken link(s) across #{num_pages} page(s):"
@@ -40,7 +42,7 @@ module BrokenLinkFinder
             "The broken link '#{key}' was found on the following pages:"
           nprint msg
 
-          if verbose or values.length <= NUM_VALUES
+          if verbose || (values.length <= NUM_VALUES)
             values.each { |value| print value }
           else # Only print N values and summarise the rest.
             NUM_VALUES.times { |i| print values[i] }
@@ -64,7 +66,7 @@ module BrokenLinkFinder
             "The link '#{key}' was ignored on the following pages:"
           nprint msg
 
-          if verbose or values.length <= NUM_VALUES
+          if verbose || (values.length <= NUM_VALUES)
             values.each { |value| print value }
           else # Only print N values and summarise the rest.
             NUM_VALUES.times { |i| print values[i] }
@@ -85,8 +87,8 @@ module BrokenLinkFinder
     # combined values. The hash should be of the format: { 'str' => [...] }.
     # Use like: `num_pages, num_links = get_hash_stats(links)`.
     def get_hash_stats(hash)
-      num_keys = hash.keys.length
-      values = hash.values.flatten
+      num_keys   = hash.keys.length
+      values     = hash.values.flatten
       num_values = sort_by_page? ? values.length : values.uniq.length
 
       sort_by_page? ?

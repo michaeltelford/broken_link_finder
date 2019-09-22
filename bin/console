@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
-require "bundler/setup"
-require "pry"
-require "byebug"
-require "broken_link_finder"
-require 'wgit/core_ext'
+require 'bundler/setup'
+require 'pry'
+require 'byebug'
 require 'logger'
 require 'httplog'
+require 'broken_link_finder'
 
 logger = Logger.new(STDOUT)
-logger.formatter = proc do |severity, datetime, progname, msg|
+logger.formatter = proc do |_severity, _datetime, _progname, msg|
   "#{msg}\n"
 end
 
@@ -43,7 +43,7 @@ end
 # You can add fixtures and/or initialization code here...
 reload
 
-url = "http://txti.es/"
+url = 'http://txti.es/'
 by_page = Finder.new
 by_link = Finder.new sort: :link
 finder = by_page

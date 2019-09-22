@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative './lib/broken_link_finder'
 require 'benchmark'
 require 'memory_profiler'
