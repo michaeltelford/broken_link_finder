@@ -45,7 +45,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "httplog", "~> 1.3"
   spec.add_development_dependency "memory_profiler", "~> 0.9"
 
-  spec.add_runtime_dependency "wgit", "0.0.17"
+  spec.add_runtime_dependency "wgit", "0.2.0"
   spec.add_runtime_dependency "thread", "0.2"
   spec.add_runtime_dependency "thor", "0.20.3"
 end
