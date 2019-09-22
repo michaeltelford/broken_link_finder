@@ -31,11 +31,11 @@ stub_request(:get, 'http://mock-server.com/location')
 stub_request(:get, 'http://mock-server.com/location?q=hello')
   .to_return(mock_response('location'))
 
-# / (index page for $mock_external_site)
+# Mock external site
 stub_request(:get, 'https://some-external-site.com.au')
   .to_return(mock_response('mock_external_site'))
 
-# JS and CSS links (to check they aren't crawled).
+# JS and CSS links (to check they aren't crawled)
 stub_request(:get, 'http://mock-server.com/script.js')
   .to_return(mock_response('script.js'))
 stub_request(:get, 'http://mock-server.com/styles.css')

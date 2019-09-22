@@ -9,6 +9,16 @@
 - ...
 ---
 
+## v0.9.1
+### Added
+- `BrokenLinkFinder::Finder.crawl_site` alias: `crawl_r`.
+### Changed/Removed
+- Upgraded `wgit` to v0.2.0.
+- Refactored the code base (no breaking changes).
+### Fixed
+- ...
+---
+
 ## v0.9.0
 ### Added
 - The `version` command to the executable.
