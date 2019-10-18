@@ -2,7 +2,6 @@
 
 require_relative './lib/broken_link_finder'
 require 'benchmark'
-require 'memory_profiler'
 
 url = ARGV[0] || 'http://txti.es'
 finder = BrokenLinkFinder::Finder.new
