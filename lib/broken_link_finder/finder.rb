@@ -138,7 +138,7 @@ module BrokenLinkFinder
         link_doc = @crawler.crawl_url(link_url)
 
         # Determine if the crawled link is broken or not.
-        if  @crawler.last_response.is_a?(Net::HTTPNotFound) ||
+        if  @crawler.last_response.code == 404 ||
             link_doc.nil? ||
             has_broken_anchor(link_doc)
           append_broken_link(doc.url, link)

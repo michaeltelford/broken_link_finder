@@ -3,7 +3,9 @@
 require 'webmock'
 
 include WebMock::API
+
 WebMock.enable!
+WebMock.disable_net_connect!
 
 def mock_response(file_name, status: 200)
   file_name += '.html' unless file_name.include?('.')
@@ -17,6 +19,10 @@ stub_request(:get, 'http://mock-server.com/')
 
 # /contact
 stub_request(:get, 'http://mock-server.com/contact')
+  .to_return(mock_response('contact'))
+stub_request(:get, 'http://mock-server.com/contact#help')
+  .to_return(mock_response('contact'))
+stub_request(:get, "http://mock-server.com/contact#doesntexist")
   .to_return(mock_response('contact'))
 
 # /about
@@ -63,6 +69,8 @@ stub_request(:get, 'https://server-error.com')
 
 # example.co.uk aka fixtures/links.html
 stub_request(:get, 'https://example.co.uk/links.html')
+  .to_return(mock_response('links'))
+stub_request(:get, 'https://example.co.uk/links.html#anchorthatdoesnotexist')
   .to_return(mock_response('links'))
 stub_request(:get, 'https://example.com')
   .to_return(mock_response('index'))
