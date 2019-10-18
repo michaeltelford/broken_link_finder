@@ -7,5 +7,5 @@ Wgit::Document.define_extension(
   singleton: false,
   text_content_only: true
 ) do |links|
-  links&.map(&:to_url)&.uniq
+  links.uniq.to_urls
 end

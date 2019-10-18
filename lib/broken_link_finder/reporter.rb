@@ -12,10 +12,10 @@ module BrokenLinkFinder
       raise "sort by either :page or :link, not #{sort}" \
       unless %i[page link].include?(sort)
 
-      @stream         = stream
-      @sort           = sort
-      @broken_links   = broken_links
-      @ignored_links  = ignored_links
+      @stream        = stream
+      @sort          = sort
+      @broken_links  = broken_links
+      @ignored_links = ignored_links
     end
 
     # Pretty print a report detailing the link summary.

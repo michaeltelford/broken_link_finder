@@ -39,7 +39,7 @@ module BrokenLinkFinder
 
     # Finds broken links within a single page and appends them to the
     # @broken_links array. Returns true if at least one broken link was found.
-    # Access the broken links with Finder#broken_links.
+    # Access the broken links afterwards with Finder#broken_links.
     def crawl_url(url)
       clear_links
 
@@ -61,7 +61,7 @@ module BrokenLinkFinder
     # Finds broken links within an entire site and appends them to the
     # @broken_links array. Returns a tuple containing a Boolean of true if
     # at least one broken link was found and an Array of all pages crawled.
-    # Access the broken links with Finder#broken_links.
+    # Access the broken links afterwards with Finder#broken_links.
     def crawl_site(url)
       clear_links
 
@@ -70,7 +70,7 @@ module BrokenLinkFinder
       crawled_pages = []
 
       # Crawl the site's HTML web pages looking for links.
-      orig_doc = @crawler.crawl_site(url) do |doc|
+      externals = @crawler.crawl_site(url) do |doc|
         crawled_pages << doc.url
         next unless doc
 
@@ -79,7 +79,7 @@ module BrokenLinkFinder
       end
 
       # Ensure the given website url is valid.
-      raise "Invalid or broken URL: #{url}" if orig_doc.nil?
+      raise "Invalid or broken URL: #{url}" unless externals
 
       # Wait for all threads to finish.
       pool.shutdown
@@ -113,15 +113,7 @@ module BrokenLinkFinder
 
     # Finds which links are unsupported or broken and records the details.
     def find_broken_links(doc)
-      # Report and reject any non supported links.
-      links = doc.all_links
-                 .reject do |link|
-                    if link.is_absolute? && !link.start_with?('http')
-                      append_ignored_link(doc.url, link)
-                      true
-                    end
-                  end
-                 .uniq
+      links = get_supported_links(doc)
 
       # Iterate over the supported links checking if they're broken or not.
       links.each do |link|
@@ -134,8 +126,7 @@ module BrokenLinkFinder
         end
 
         # The link hasn't been processed before so we crawl it.
-        link_url = get_absolute_link(doc, link)
-        link_doc = @crawler.crawl_url(link_url)
+        link_doc = crawl_link(doc, link)
 
         # Determine if the crawled link is broken or not.
         if  @crawler.last_response.code == 404 ||
@@ -148,6 +139,24 @@ module BrokenLinkFinder
       end
 
       nil
+    end
+
+    # Report and reject any non supported links. Any link that is absolute and
+    # doesn't start with 'http' is unsupported e.g. 'mailto:blah' etc.
+    def get_supported_links(doc)
+      doc.all_links
+         .reject do |link|
+           if link.is_absolute? && !link.start_with?('http')
+             append_ignored_link(doc.url, link)
+             true
+           end
+         end
+    end
+
+    # Makes the link absolute and crawls it, returning its Wgit::Document.
+    def crawl_link(doc, link)
+      link = get_absolute_link(doc, link)
+      @crawler.crawl_url(link)
     end
 
     # Returns the link in absolute form so it can be crawled.
