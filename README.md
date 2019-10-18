@@ -19,9 +19,11 @@ In a nutshell, only HTTP(S) based links can be successfully verified by `broken_
 
 See the [usage](#Usage) section below on how to check which links have been ignored during a crawl.
 
+With that said, the usual array of HTTP URL features are supported including anchors/fragments, query strings and IRI's (non ASCII based URL's).
+
 ## Made Possible By
 
-`broken_link_finder` relies heavily on the `wgit` Ruby gem. See its [repository](https://github.com/michaeltelford/wgit) for more details.
+`broken_link_finder` relies heavily on the `wgit` Ruby gem by the same author. See its [repository](https://github.com/michaeltelford/wgit) for more details.
 
 ## Installation
 
