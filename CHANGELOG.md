@@ -9,6 +9,15 @@
 - ...
 ---
 
+## v0.9.2
+### Added
+- ...
+### Changed/Removed
+- Updated `wgit` gem to version 0.4.0 which brings a speed boost to crawls.
+### Fixed
+- ...
+---
+
 ## v0.9.1
 ### Added
 - `BrokenLinkFinder::Finder.crawl_site` alias: `crawl_r`.
