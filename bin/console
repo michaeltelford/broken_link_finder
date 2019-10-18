@@ -4,30 +4,20 @@
 require 'bundler/setup'
 require 'pry'
 require 'byebug'
-require 'logger'
-require 'httplog'
 require 'broken_link_finder'
 
-logger = Logger.new(STDOUT)
-logger.formatter = proc do |_severity, _datetime, _progname, msg|
-  "#{msg}\n"
-end
+# Monkey patch and log all HTTP requests made during the console.
+module Typhoeus
+  singleton_class.class_eval do
+    alias_method :orig_get, :get
+  end
 
-# Monkey patch all Net:HTTP network calls and log them.
-HttpLog.configure do |config|
-  config.enabled        = true
-  config.logger         = logger
-
-  config.log_connect    = false
-  config.log_request    = true
-  config.log_headers    = false
-  config.log_data       = false
-  config.log_status     = true
-  config.log_response   = false
-  config.log_benchmark  = false
-
-  config.compact_log    = false
-  config.json_log       = false
+  def self.get(base_url, options = {})
+    puts "[typhoeus] Sending GET: #{base_url}"
+    resp = orig_get(base_url, options)
+    puts "[typhoeus] Status: #{resp.code} (#{resp.body.length} bytes in #{resp.total_time} seconds)"
+    resp
+  end
 end
 
 # Call reload to load all recent code changes.
@@ -48,6 +38,7 @@ by_page = Finder.new
 by_link = Finder.new sort: :link
 finder = by_page
 
+# Start the console.
 puts "\nbroken_link_finder v#{BrokenLinkFinder::VERSION}"
 
 binding.pry
