@@ -44,7 +44,7 @@ module BrokenLinkFinder
       clear_links
 
       url = url.to_url
-      doc = @crawler.crawl_url(url)
+      doc = @crawler.crawl(url)
 
       # Ensure the given page url is valid.
       raise "Invalid or broken URL: #{url}" unless doc
@@ -129,8 +129,8 @@ module BrokenLinkFinder
         link_doc = crawl_link(doc, link)
 
         # Determine if the crawled link is broken or not.
-        if  @crawler.last_response.code == 404 ||
-            link_doc.nil? ||
+        if  link_doc.nil? ||
+            @crawler.last_response.code == 404 ||
             has_broken_anchor(link_doc)
           append_broken_link(doc.url, link)
         else
@@ -156,7 +156,7 @@ module BrokenLinkFinder
     # Makes the link absolute and crawls it, returning its Wgit::Document.
     def crawl_link(doc, link)
       link = get_absolute_link(doc, link)
-      @crawler.crawl_url(link)
+      @crawler.crawl(link)
     end
 
     # Returns the link in absolute form so it can be crawled.
