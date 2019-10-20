@@ -9,6 +9,15 @@
 - ...
 ---
 
+## v0.9.3
+### Added
+- ...
+### Changed/Removed
+- ...
+### Fixed
+- A bug resulting in some servers dropping crawl requests from broken_link_finder.
+---
+
 ## v0.9.2
 ### Added
 - ...

@@ -123,9 +123,12 @@ The gem is available as open source under the terms of the [MIT License](http://
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new gem version:
+To install this gem onto your local machine, run `bundle exec rake install`.
+
+To release a new gem version:
 - Update the version number in `version.rb` and add the new version to the `CHANGELOG`
 - Run `bundle install`
 - Run `bundle exec rake test` ensuring all tests pass
 - Run `bundle exec rake compile` ensuring no warnings
+- Run `bundle exec rake install && rbenv rehash` and manually test the executable
 - Run `bundle exec rake release[origin]`
