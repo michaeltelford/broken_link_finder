@@ -1,17 +1,17 @@
 PATH
   remote: .
   specs:
-    broken_link_finder (0.9.3)
+    broken_link_finder (0.9.4)
       thor (~> 0.20.3)
       thread (~> 0.2.0)
-      wgit (~> 0.4.1)
+      wgit (~> 0.5.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.6.0)
       public_suffix (>= 2.0.2, < 4.0)
-    bson (4.5.0)
+    bson (4.6.0)
     byebug (11.0.1)
     coderay (1.1.2)
     crack (0.4.3)
@@ -27,7 +27,7 @@ GEM
     minitest (5.12.2)
     mongo (2.9.2)
       bson (>= 4.4.2, < 5.0.0)
-    nokogiri (1.10.4)
+    nokogiri (1.10.5)
       mini_portile2 (~> 2.4.0)
     pry (0.12.2)
       coderay (~> 1.1.0)
@@ -43,7 +43,7 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    wgit (0.4.1)
+    wgit (0.5.0)
       addressable (~> 2.6.0)
       mongo (~> 2.9.0)
       nokogiri (~> 1.10.3)

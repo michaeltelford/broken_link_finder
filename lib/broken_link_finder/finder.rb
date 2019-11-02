@@ -112,8 +112,8 @@ module BrokenLinkFinder
     private
 
     # Finds which links are unsupported or broken and records the details.
-    def find_broken_links(doc)
-      links = get_supported_links(doc)
+    def find_broken_links(page)
+      links = get_supported_links(page)
 
       # Iterate over the supported links checking if they're broken or not.
       links.each do |link|
@@ -121,18 +121,18 @@ module BrokenLinkFinder
         next if @all_intact_links.include?(link)
 
         if @all_broken_links.include?(link)
-          append_broken_link(doc.url, link)
+          append_broken_link(page.url, link)
           next
         end
 
         # The link hasn't been processed before so we crawl it.
-        link_doc = crawl_link(doc, link)
+        link_doc = crawl_link(page, link)
 
         # Determine if the crawled link is broken or not.
         if  link_doc.nil? ||
-            @crawler.last_response.code == 404 ||
+            @crawler.last_response.not_found? ||
             has_broken_anchor(link_doc)
-          append_broken_link(doc.url, link)
+          append_broken_link(page.url, link)
         else
           @lock.synchronize { @all_intact_links << link }
         end
@@ -155,24 +155,18 @@ module BrokenLinkFinder
 
     # Makes the link absolute and crawls it, returning its Wgit::Document.
     def crawl_link(doc, link)
-      link = get_absolute_link(doc, link)
+      link = link.prefix_base(doc)
       @crawler.crawl(link)
     end
 
-    # Returns the link in absolute form so it can be crawled.
-    def get_absolute_link(doc, link)
-      link.is_relative? ? doc.base_url(link: link).concat(link) : link
-    end
-
-    # Returns true if the link is/contains a broken anchor.
+    # Returns true if the link is/contains a broken anchor/fragment.
     def has_broken_anchor(doc)
       raise 'link document is nil' unless doc
 
-      anchor = doc.url.anchor
-      return false if anchor.nil? || (anchor == '#')
+      fragment = doc.url.fragment
+      return false if fragment.nil? || fragment.empty?
 
-      anchor = anchor[1..-1] if anchor.start_with?('#')
-      doc.xpath("//*[@id='#{anchor}']").empty?
+      doc.xpath("//*[@id='#{fragment}']").empty?
     end
 
     # Append key => [value] to @broken_links.

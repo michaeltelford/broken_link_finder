@@ -2,7 +2,9 @@
 
 Does what it says on the tin; Finds a website's broken links.
 
-Simply point it at a website and it will crawl all of its webpages searching for and identifing any broken links. You will then be presented with a nice concise summary of the broken links found.
+Simply point it at a website and it will crawl all of its webpages searching for and identifing any broken links. You will then be presented with a concise summary of the broken links found.
+
+Because `libcurl` is used under the hood, Broken Link Finder is fast!
 
 ## How It Works
 
@@ -10,7 +12,7 @@ Any HTML page element with a `href` or `src` attribute is considered a link. For
 
 - An empty HTML response body is returned.
 - A response status code of `404 Not Found` is returned.
-- The HTML response body doesn't contain an element ID matching that of the link's anchor e.g. `http://server.com#about` must contain an element with `id="about"` or the link is considered broken.
+- The HTML response body doesn't contain an element ID matching that of the link's fragment e.g. `http://server.com#about` must contain an element with `id="about"` or the link is considered broken.
 - The link redirects more than 5 times consecutively.
 
 **Note**: Not all link types are supported.
@@ -73,9 +75,9 @@ Below is a simple script which crawls a website and outputs its broken links to 
 require 'broken_link_finder'
 
 finder = BrokenLinkFinder.new
-finder.crawl_site 'http://txti.es'    # Or use Finder#crawl_page for a single webpage.
-finder.pretty_print_link_report       # Or use Finder#broken_links and Finder#ignored_links
-                                      # for direct access to the link Hashes.
+finder.crawl_site 'http://txti.es' # Or use Finder#crawl_page for a single webpage.
+finder.pretty_print_link_report    # Or use Finder#broken_links and Finder#ignored_links
+                                   # for direct access to the link Hashes.
 ```
 
 Then execute the script with:
@@ -126,9 +128,11 @@ After checking out the repo, run `bin/setup` to install dependencies. Then, run 
 To install this gem onto your local machine, run `bundle exec rake install`.
 
 To release a new gem version:
+- Update the deps in the `*.gemspec` if necessary
 - Update the version number in `version.rb` and add the new version to the `CHANGELOG`
 - Run `bundle install`
 - Run `bundle exec rake test` ensuring all tests pass
 - Run `bundle exec rake compile` ensuring no warnings
-- Run `bundle exec rake install && rbenv rehash` and manually test the executable
+- Run `bundle exec rake install && rbenv rehash`
+- Manually test the executable
 - Run `bundle exec rake release[origin]`

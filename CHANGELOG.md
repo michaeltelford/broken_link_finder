@@ -9,6 +9,15 @@
 - ...
 ---
 
+## v0.9.4
+### Added
+- ...
+### Changed/Removed
+- Updated `wgit` gem to version 0.5.0 which contains improvements and bugs fixes.
+### Fixed
+- ...
+---
+
 ## v0.9.3
 ### Added
 - ...
