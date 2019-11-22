@@ -15,7 +15,10 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/michaeltelford/broken-link-finder'
   spec.license       = 'MIT'
   spec.metadata      = {
-    'source_code_uri' => 'https://github.com/michaeltelford/broken-link-finder'
+    'source_code_uri' => 'https://github.com/michaeltelford/broken-link-finder',
+    'changelog_uri' => 'https://github.com/michaeltelford/broken-link-finder/blob/master/CHANGELOG.md',
+    'bug_tracker_uri' => 'https://github.com/michaeltelford/broken-link-finder/issues',
+    'documentation_uri' => 'https://www.rubydoc.info/gems/broken_link_finder'
   }
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

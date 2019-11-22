@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    broken_link_finder (0.9.4)
+    broken_link_finder (0.9.5)
       thor (~> 0.20)
       thread (~> 0.2)
       wgit (~> 0.5)

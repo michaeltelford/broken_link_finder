@@ -9,6 +9,16 @@
 - ...
 ---
 
+## v0.9.5
+### Added
+- ...
+### Changed/Removed
+- Now using optimistic dep versioning.
+- Updated `wgit` to version 0.5.1 containing improvements and bug fixes.
+### Fixed
+- ...
+---
+
 ## v0.9.4
 ### Added
 - ...
