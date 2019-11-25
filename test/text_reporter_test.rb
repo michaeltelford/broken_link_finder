@@ -2,7 +2,7 @@
 
 require 'helpers/test_helper'
 
-class ReporterTest < TestHelper
+class TextReporterTest < TestHelper
   def setup
     @stream = StringIO.new
   end
@@ -21,8 +21,8 @@ class ReporterTest < TestHelper
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
 
-    r = BrokenLinkFinder::Reporter.new @stream, :page, broken, ignored
-    r.pretty_print_link_report
+    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r.call
 
     expected = <<~TEXT
       Found 9 broken link(s) across 5 page(s):
@@ -78,8 +78,8 @@ class ReporterTest < TestHelper
       'smtp://mail-server.com' => ['http://example.com/', 'http://example.com/search']
     }
 
-    r = BrokenLinkFinder::Reporter.new @stream, :link, broken, ignored
-    r.pretty_print_link_report
+    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :link, broken, ignored
+    r.call
 
     expected = <<~TEXT
       Found 3 broken link(s) across 4 page(s):
@@ -127,8 +127,8 @@ class ReporterTest < TestHelper
       'http://example.com/quote' => ['mailto:blah@gmail.com', 'tel:048574362']
     }
 
-    r = BrokenLinkFinder::Reporter.new @stream, :page, broken, ignored
-    r.pretty_print_link_report ignored_verbose: true
+    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r.call ignored_verbose: true
 
     expected = <<~TEXT
       Found 9 broken link(s) across 5 page(s):
@@ -192,8 +192,8 @@ class ReporterTest < TestHelper
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
 
-    r = BrokenLinkFinder::Reporter.new @stream, :page, broken, ignored
-    r.pretty_print_link_report broken_verbose: false
+    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r.call broken_verbose: false
 
     expected = <<~TEXT
       Found 8 broken link(s) across 3 page(s):
@@ -244,8 +244,8 @@ class ReporterTest < TestHelper
       'http://example.com/' => ['mailto:blah@gmail.com', 'mailto:foo@bar.com', 'tel:048574362']
     }
 
-    r = BrokenLinkFinder::Reporter.new @stream, :page, broken, ignored
-    r.pretty_print_link_report
+    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r.call
 
     expected = <<~TEXT
       Found 9 broken link(s) across 5 page(s):
@@ -292,8 +292,8 @@ class ReporterTest < TestHelper
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
 
-    r = BrokenLinkFinder::Reporter.new @stream, :page, broken, ignored
-    r.pretty_print_link_report broken_verbose: false
+    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r.call broken_verbose: false
 
     expected = <<~TEXT
       Found 6 broken link(s) across 3 page(s):
@@ -335,8 +335,8 @@ class ReporterTest < TestHelper
     broken = {}
     ignored = {}
 
-    r = BrokenLinkFinder::Reporter.new @stream, :page, broken, ignored
-    r.pretty_print_link_report
+    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r.call
 
     expected = <<~TEXT
       Good news, there are no broken links!
@@ -355,8 +355,8 @@ class ReporterTest < TestHelper
     }
     ignored = {}
 
-    r = BrokenLinkFinder::Reporter.new @stream, :page, broken, ignored
-    r.pretty_print_link_report
+    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r.call
 
     expected = <<~TEXT
       Found 9 broken link(s) across 5 page(s):
@@ -392,8 +392,8 @@ class ReporterTest < TestHelper
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
 
-    r = BrokenLinkFinder::Reporter.new @stream, :page, broken, ignored
-    r.pretty_print_link_report
+    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r.call
 
     expected = <<~TEXT
       Good news, there are no broken links!

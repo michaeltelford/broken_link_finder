@@ -57,7 +57,7 @@ Installing this gem installs the `broken_link_finder` executable into your `$PAT
 
     $ broken_link_finder crawl http://txti.es
 
-Adding the `-r` flag would crawl the entire `txti.es` site, not just its index page.
+Adding the `--recursive` flag would crawl the entire `txti.es` site, not just its index page.
 
 See the [output](#Output) section below for an example of a site with broken links.
 
@@ -76,7 +76,7 @@ require 'broken_link_finder'
 
 finder = BrokenLinkFinder.new
 finder.crawl_site 'http://txti.es' # Or use Finder#crawl_page for a single webpage.
-finder.pretty_print_link_report    # Or use Finder#broken_links and Finder#ignored_links
+finder.report                      # Or use Finder#broken_links and Finder#ignored_links
                                    # for direct access to the link Hashes.
 ```
 
@@ -95,9 +95,9 @@ Found 6 broken link(s) across 2 page(s):
 
 The following broken links were found on 'http://txti.es/about':
 http://twitter.com/thebarrytone
+/doesntexist
 http://twitter.com/nwbld
-http://twitter.com/txties
-https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=84L4BDS86FBUU
+twitter.com/txties
 
 The following broken links were found on 'http://txti.es/how':
 http://en.wikipedia.org/wiki/Markdown
@@ -105,13 +105,15 @@ http://imgur.com
 
 Ignored 3 unsupported link(s) across 2 page(s), which you should check manually:
 
-The following links were ignored on http://txti.es:
+The following links were ignored on 'http://txti.es':
 tel:+13174562564
 mailto:big.jim@jmail.com
 
-The following links were ignored on http://txti.es/contact:
+The following links were ignored on 'http://txti.es/contact':
 ftp://server.com
 ```
+
+You can provide the `--html` flag if you'd prefer a HTML based report.
 
 ## Contributing
 
@@ -128,11 +130,11 @@ After checking out the repo, run `bin/setup` to install dependencies. Then, run 
 To install this gem onto your local machine, run `bundle exec rake install`.
 
 To release a new gem version:
-- Update the deps in the `*.gemspec` if necessary
-- Update the version number in `version.rb` and add the new version to the `CHANGELOG`
-- Run `bundle install`
-- Run `bundle exec rake test` ensuring all tests pass
-- Run `bundle exec rake compile` ensuring no warnings
-- Run `bundle exec rake install && rbenv rehash`
-- Manually test the executable
-- Run `bundle exec rake release[origin]`
+- Update the deps in the `*.gemspec`, if necessary.
+- Update the version number in `version.rb` and add the new version to the `CHANGELOG`.
+- Run `bundle install`.
+- Run `bundle exec rake test` ensuring all tests pass.
+- Run `bundle exec rake compile` ensuring no warnings.
+- Run `bundle exec rake install && rbenv rehash`.
+- Manually test the executable.
+- Run `bundle exec rake release[origin]`.

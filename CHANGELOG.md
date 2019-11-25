@@ -9,6 +9,15 @@
 - ...
 ---
 
+## v0.10.0
+### Added
+- A `--html` flag to the `crawl` executable command which produces a HTML report (instead of text).
+### Changed/Removed
+- The API has changed somewhat. See the [docs](https://www.rubydoc.info/gems/broken_link_finder) for the up to date code signatures if you're using `broken_link_finder` outside of its executable.
+### Fixed
+- ...
+---
+
 ## v0.9.5
 ### Added
 - ...

@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'reporter'
-require 'thread/pool'
-require 'set'
-
 module BrokenLinkFinder
   DEFAULT_MAX_THREADS = 100
 
@@ -43,11 +39,11 @@ module BrokenLinkFinder
     def crawl_url(url)
       clear_links
 
-      url = url.to_url
-      doc = @crawler.crawl(url)
+      @url = url.to_url
+      doc = @crawler.crawl(@url)
 
       # Ensure the given page url is valid.
-      raise "Invalid or broken URL: #{url}" unless doc
+      raise "Invalid or broken URL: #{@url}" unless doc
 
       # Get all page links and determine which are broken.
       find_broken_links(doc)
@@ -65,12 +61,12 @@ module BrokenLinkFinder
     def crawl_site(url)
       clear_links
 
-      url           = url.to_url
+      @url          = url.to_url
       pool          = Thread.pool(@max_threads)
       crawled_pages = []
 
       # Crawl the site's HTML web pages looking for links.
-      externals = @crawler.crawl_site(url) do |doc|
+      externals = @crawler.crawl_site(@url) do |doc|
         crawled_pages << doc.url
         next unless doc
 
@@ -79,7 +75,7 @@ module BrokenLinkFinder
       end
 
       # Ensure the given website url is valid.
-      raise "Invalid or broken URL: #{url}" unless externals
+      raise "Invalid or broken URL: #{@url}" unless externals
 
       # Wait for all threads to finish.
       pool.shutdown
@@ -93,15 +89,23 @@ module BrokenLinkFinder
     # Pretty prints the link report into a stream e.g. STDOUT or a file,
     # anything that respond_to? :puts. Defaults to STDOUT.
     # Returns true if there were broken links and vice versa.
-    def pretty_print_link_report(
+    def report(
       stream = STDOUT,
-      broken_verbose:  true,
+      type: :text,
+      broken_verbose: true,
       ignored_verbose: false
     )
-      reporter = BrokenLinkFinder::Reporter.new(
-        stream, @sort, @broken_links, @ignored_links
-      )
-      reporter.pretty_print_link_report(
+      klass = case type
+              when :text
+                BrokenLinkFinder::TextReporter
+              when :html
+                BrokenLinkFinder::HTMLReporter
+              else
+                raise "type: must be :text or :html, not: :#{type}"
+              end
+
+      reporter = klass.new(stream, @url, @sort, @broken_links, @ignored_links)
+      reporter.call(
         broken_verbose:  broken_verbose,
         ignored_verbose: ignored_verbose
       )
@@ -221,8 +225,7 @@ module BrokenLinkFinder
       @total_links_crawled = @all_broken_links.size + @all_intact_links.size
     end
 
-    alias crawl_page                crawl_url
-    alias crawl_r                   crawl_site
-    alias pretty_print_link_summary pretty_print_link_report
+    alias crawl_page crawl_url
+    alias crawl_r    crawl_site
   end
 end
