@@ -272,4 +272,20 @@ class FinderTest < TestHelper
   rescue RuntimeError => e
     assert_equal 'Invalid or broken URL: https://server-error.com', e.message
   end
+
+  def test_retry_mechanism
+    finder = Finder.new
+    refute finder.crawl_url('http://www.retry.com')
+
+    assert_empty finder.broken_links
+    assert_empty finder.ignored_links
+  end
+
+  def test_retry_mechanism__sort_by_link
+    finder = Finder.new sort: :link
+    refute finder.crawl_url('http://www.retry.com')
+
+    assert_empty finder.broken_links
+    assert_empty finder.ignored_links
+  end
 end

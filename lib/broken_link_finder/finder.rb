@@ -31,6 +31,7 @@ module BrokenLinkFinder
       @total_links_crawled = 0
       @all_broken_links    = Set.new
       @all_intact_links    = Set.new
+      @url_map             = {}
     end
 
     # Finds broken links within a single page and appends them to the
@@ -47,6 +48,7 @@ module BrokenLinkFinder
 
       # Get all page links and determine which are broken.
       find_broken_links(doc)
+      retry_broken_links
 
       sort_links
       set_total_links_crawled
@@ -79,6 +81,7 @@ module BrokenLinkFinder
 
       # Wait for all threads to finish.
       pool.shutdown
+      retry_broken_links
 
       sort_links
       set_total_links_crawled
@@ -133,16 +136,25 @@ module BrokenLinkFinder
         link_doc = crawl_link(page, link)
 
         # Determine if the crawled link is broken or not.
-        if  link_doc.nil? ||
-            @crawler.last_response.not_found? ||
-            has_broken_anchor(link_doc)
-          append_broken_link(page.url, link)
+        if link_broken?(link_doc)
+          append_broken_link(page.url, link, doc: page)
         else
           @lock.synchronize { @all_intact_links << link }
         end
       end
 
       nil
+    end
+
+    # Implements a retry mechanism for each of the broken links found.
+    # Removes any broken links found to be working OK.
+    def retry_broken_links
+      sleep(0.5) # Give the servers a break, then retry the links.
+
+      @url_map.each do |link, href|
+        doc = @crawler.crawl(href)
+        remove_broken_link(link) unless link_broken?(doc)
+      end
     end
 
     # Report and reject any non supported links. Any link that is absolute and
@@ -163,6 +175,11 @@ module BrokenLinkFinder
       @crawler.crawl(link)
     end
 
+    # Return if the crawled link is broken or not.
+    def link_broken?(doc)
+      doc.nil? || @crawler.last_response.not_found? || has_broken_anchor(doc)
+    end
+
     # Returns true if the link is/contains a broken anchor/fragment.
     def has_broken_anchor(doc)
       raise 'link document is nil' unless doc
@@ -174,7 +191,8 @@ module BrokenLinkFinder
     end
 
     # Append key => [value] to @broken_links.
-    def append_broken_link(url, link)
+    # If doc: is provided then the link will be recorded in absolute form.
+    def append_broken_link(url, link, doc: nil)
       key, value = get_key_value(url, link)
 
       @lock.synchronize do
@@ -183,6 +201,19 @@ module BrokenLinkFinder
 
         @all_broken_links  << link
       end
+
+      @url_map[link] = link.prefix_base(doc) if doc
+    end
+
+    def remove_broken_link(link)
+      if @sort == :page
+        @broken_links.each { |_k, links| links.delete(link) }
+        @broken_links.delete_if { |_k, links| links.empty? }
+      else
+        @broken_links.delete(link)
+      end
+
+      @all_broken_links.delete(link)
     end
 
     # Append key => [value] to @ignored_links.

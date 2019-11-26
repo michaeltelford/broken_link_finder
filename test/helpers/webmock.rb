@@ -99,3 +99,10 @@ stub_request(:get, 'https://example.com#anchorthandoesnotexist')
 ].each do |url|
   stub_request(:get, url).to_return(mock_response('not_found', status: 404))
 end
+
+# Stubs for testing Finder's retry mechanism.
+stub_request(:get, 'http://www.retry.com')
+  .to_return(mock_response('retry'))
+stub_request(:get, 'http://dos-preventer.net')
+  .to_timeout.then
+  .to_return(mock_response('index'))
