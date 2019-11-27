@@ -8,18 +8,18 @@ module BrokenLinkFinder
 
     # Creates a new Reporter instance.
     # stream is any Object that responds to :puts and :print.
-    def initialize(stream, url, sort, broken_links, ignored_links)
+    def initialize(stream, sort, broken_links, ignored_links, broken_link_map)
       unless stream.respond_to?(:puts) && stream.respond_to?(:print)
         raise 'stream must respond_to? :puts and :print'
       end
       raise "sort by either :page or :link, not #{sort}" \
       unless %i[page link].include?(sort)
 
-      @stream        = stream
-      @url           = url
-      @sort          = sort
-      @broken_links  = broken_links
-      @ignored_links = ignored_links
+      @stream          = stream
+      @sort            = sort
+      @broken_links    = broken_links
+      @ignored_links   = ignored_links
+      @broken_link_map = broken_link_map
     end
 
     # Pretty print a report detailing the full link summary.

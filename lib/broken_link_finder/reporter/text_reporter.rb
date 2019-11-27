@@ -4,7 +4,7 @@ module BrokenLinkFinder
   class TextReporter < Reporter
     # Creates a new TextReporter instance.
     # stream is any Object that responds to :puts and :print.
-    def initialize(stream, url, sort, broken_links, ignored_links)
+    def initialize(stream, sort, broken_links, ignored_links, broken_link_map)
       super
     end
 

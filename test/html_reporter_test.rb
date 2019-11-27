@@ -20,8 +20,19 @@ class HTMLReporterTest < TestHelper
       'http://example.com/about' => ['mailto:blah@gmail.com', 'tel:048574362'],
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
+    map = {
+      '/help' => 'http://example.com/help',
+      '/how-to' => 'http://example.com/how-to',
+      'http://blah.com' => 'http://blah.com',
+      '/doesnt-exist' => 'http://example.com/doesnt-exist',
+      'http://doesnt-exist.com' => 'http://doesnt-exist.com',
+      'blah' => 'http://example.com/blah',
+      '/gis' => 'http://example.com/gis',
+      '/map' => 'http://example.com/map',
+      'coordinates' => 'http://example.com/coordinates'
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
     r.call
 
     expected = <<~HTML
@@ -83,15 +94,20 @@ class HTMLReporterTest < TestHelper
   def test_sort_by_link
     broken = {
       '/doesnt-exist' => ['http://example.com/quote'],
-      'mailto:blah@gmail.com' => ['http://example.com/about', 'http://example.com/search'],
-      'tel:04857233' => ['http://example.com/about', 'http://example.com/contact']
+      'http://blah.com' => ['http://example.com/about', 'http://example.com/search'],
+      'help' => ['http://example.com/about', 'http://example.com/contact']
     }
     ignored = {
       'ftp://server.com' => ['http://example.com/', 'http://example.com/about', 'http://example.com/quote', 'http://example.com/search'],
       'smtp://mail-server.com' => ['http://example.com/', 'http://example.com/search']
     }
+    map = {
+      '/doesnt-exist' => 'http://example.com/doesnt-exist',
+      'http://blah.com' => 'http://blah.com',
+      'help' => 'http://example.com/help'
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, 'http://example.com', :link, broken, ignored
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :link, broken, ignored, map
     r.call
 
     expected = <<~HTML
@@ -103,12 +119,12 @@ class HTMLReporterTest < TestHelper
       <a class=\"broken_links_group_item\" href=\"http://example.com/quote\">http://example.com/quote</a><br />
       </p>
       <p class=\"broken_links_group\">
-      The broken link '<a href=\"mailto:blah@gmail.com\">mailto:blah@gmail.com</a>' was found on the following pages:<br />
+      The broken link '<a href=\"http://blah.com\">http://blah.com</a>' was found on the following pages:<br />
       <a class=\"broken_links_group_item\" href=\"http://example.com/about\">http://example.com/about</a><br />
       <a class=\"broken_links_group_item\" href=\"http://example.com/search\">http://example.com/search</a><br />
       </p>
       <p class=\"broken_links_group\">
-      The broken link '<a href=\"tel:04857233\">tel:04857233</a>' was found on the following pages:<br />
+      The broken link '<a href=\"http://example.com/help\">help</a>' was found on the following pages:<br />
       <a class=\"broken_links_group_item\" href=\"http://example.com/about\">http://example.com/about</a><br />
       <a class=\"broken_links_group_item\" href=\"http://example.com/contact\">http://example.com/contact</a><br />
       </p>
@@ -149,8 +165,19 @@ class HTMLReporterTest < TestHelper
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362'],
       'http://example.com/quote' => ['mailto:blah@gmail.com', 'tel:048574362']
     }
+    map = {
+      '/help' => 'http://example.com/help',
+      '/how-to' => 'http://example.com/how-to',
+      'http://blah.com' => 'http://blah.com',
+      '/doesnt-exist' => 'http://example.com/doesnt-exist',
+      'http://doesnt-exist.com' => 'http://doesnt-exist.com',
+      'blah' => 'http://example.com/blah',
+      '/gis' => 'http://example.com/gis',
+      '/map' => 'http://example.com/map',
+      'coordinates' => 'http://example.com/coordinates'
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
     r.call ignored_verbose: true
 
     expected = <<~HTML
@@ -229,8 +256,19 @@ class HTMLReporterTest < TestHelper
       'http://example.com/about' => ['mailto:blah@gmail.com', 'tel:048574362'],
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
+    map = {
+      '/help' => 'http://example.com/help',
+      '/how-to' => 'http://example.com/how-to',
+      'http://blah.com' => 'http://blah.com',
+      '/doesnt-exist' => 'http://example.com/doesnt-exist',
+      'http://doesnt-exist.com' => 'http://doesnt-exist.com',
+      'blah' => 'http://example.com/blah',
+      '/gis' => 'http://example.com/gis',
+      '/map' => 'http://example.com/map',
+      'coordinates' => 'http://example.com/coordinates'
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
     r.call broken_verbose: false
 
     expected = <<~HTML
@@ -292,8 +330,19 @@ class HTMLReporterTest < TestHelper
     ignored = {
       'http://example.com/' => ['mailto:blah@gmail.com', 'mailto:foo@bar.com', 'tel:048574362']
     }
+    map = {
+      '/help' => 'http://example.com/help',
+      '/how-to' => 'http://example.com/how-to',
+      'http://blah.com' => 'http://blah.com',
+      '/doesnt-exist' => 'http://example.com/doesnt-exist',
+      'http://doesnt-exist.com' => 'http://doesnt-exist.com',
+      'blah' => 'http://example.com/blah',
+      '/gis' => 'http://example.com/gis',
+      '/map' => 'http://example.com/map',
+      'coordinates' => 'http://example.com/coordinates'
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
     r.call
 
     expected = <<~HTML
@@ -351,8 +400,19 @@ class HTMLReporterTest < TestHelper
       'http://example.com/about' => ['mailto:blah@gmail.com', 'tel:048574362'],
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
+    map = {
+      '/help' => 'http://example.com/help',
+      '/how-to' => 'http://example.com/how-to',
+      'http://blah.com' => 'http://blah.com',
+      '/doesnt-exist' => 'http://example.com/doesnt-exist',
+      'http://doesnt-exist.com' => 'http://doesnt-exist.com',
+      'blah' => 'http://example.com/blah',
+      '/gis' => 'http://example.com/gis',
+      '/map' => 'http://example.com/map',
+      'coordinates' => 'http://example.com/coordinates'
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
     r.call broken_verbose: false
 
     expected = <<~HTML
@@ -405,8 +465,9 @@ class HTMLReporterTest < TestHelper
   def test_no_broken_links
     broken = {}
     ignored = {}
+    map = {}
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
     r.call
 
     expected = <<~HTML
@@ -431,8 +492,19 @@ class HTMLReporterTest < TestHelper
       'http://example.com/search' => ['/gis', '/map', 'coordinates']
     }
     ignored = {}
+    map = {
+      '/help' => 'http://example.com/help',
+      '/how-to' => 'http://example.com/how-to',
+      'http://blah.com' => 'http://blah.com',
+      '/doesnt-exist' => 'http://example.com/doesnt-exist',
+      'http://doesnt-exist.com' => 'http://doesnt-exist.com',
+      'blah' => 'http://example.com/blah',
+      '/gis' => 'http://example.com/gis',
+      '/map' => 'http://example.com/map',
+      'coordinates' => 'http://example.com/coordinates'
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
     r.call
 
     expected = <<~HTML
@@ -479,8 +551,9 @@ class HTMLReporterTest < TestHelper
       'http://example.com/about' => ['mailto:blah@gmail.com', 'tel:048574362'],
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
+    map = {}
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
     r.call
 
     expected = <<~HTML

@@ -4,7 +4,7 @@ module BrokenLinkFinder
   class HTMLReporter < Reporter
     # Creates a new HTMLReporter instance.
     # stream is any Object that responds to :puts and :print.
-    def initialize(stream, url, sort, broken_links, ignored_links)
+    def initialize(stream, sort, broken_links, ignored_links, broken_link_map)
       super
     end
 
@@ -83,9 +83,9 @@ module BrokenLinkFinder
       puts "<p class=\"#{klass}\">#{text}</p>"
     end
 
-    def puts_group(key, type:)
-      href = build_url(key)
-      a_element = "<a href=\"#{href}\">#{key}</a>"
+    def puts_group(link, type:)
+      href = build_url(link)
+      a_element = "<a href=\"#{href}\">#{link}</a>"
 
       case type
       when :broken
@@ -111,9 +111,9 @@ module BrokenLinkFinder
       puts "<a class=\"#{klass}\" href=\"#{build_url(value)}\">#{value}</a><br />"
     end
 
-    def build_url(href)
-      return href if href.to_url.absolute?
-      @url.to_url.to_base.concat(href)
+    def build_url(link)
+      return link if link.to_url.absolute?
+      @broken_link_map.fetch(link)
     end
 
     alias_method :report, :call

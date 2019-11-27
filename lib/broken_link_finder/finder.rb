@@ -29,9 +29,9 @@ module BrokenLinkFinder
       @broken_links        = {}
       @ignored_links       = {}
       @total_links_crawled = 0
-      @all_broken_links    = Set.new
-      @all_intact_links    = Set.new
-      @url_map             = {}
+      @all_broken_links    = Set.new # Used to prevent crawling a link twice.
+      @all_intact_links    = Set.new #  "
+      @broken_link_map     = {}      # Maps a link to its absolute form.
     end
 
     # Finds broken links within a single page and appends them to the
@@ -40,11 +40,11 @@ module BrokenLinkFinder
     def crawl_url(url)
       clear_links
 
-      @url = url.to_url
-      doc = @crawler.crawl(@url)
+      url = url.to_url
+      doc = @crawler.crawl(url)
 
       # Ensure the given page url is valid.
-      raise "Invalid or broken URL: #{@url}" unless doc
+      raise "Invalid or broken URL: #{url}" unless doc
 
       # Get all page links and determine which are broken.
       find_broken_links(doc)
@@ -63,12 +63,12 @@ module BrokenLinkFinder
     def crawl_site(url)
       clear_links
 
-      @url          = url.to_url
+      url           = url.to_url
       pool          = Thread.pool(@max_threads)
       crawled_pages = []
 
       # Crawl the site's HTML web pages looking for links.
-      externals = @crawler.crawl_site(@url) do |doc|
+      externals = @crawler.crawl_site(url) do |doc|
         crawled_pages << doc.url
         next unless doc
 
@@ -77,7 +77,7 @@ module BrokenLinkFinder
       end
 
       # Ensure the given website url is valid.
-      raise "Invalid or broken URL: #{@url}" unless externals
+      raise "Invalid or broken URL: #{url}" unless externals
 
       # Wait for all threads to finish.
       pool.shutdown
@@ -107,7 +107,9 @@ module BrokenLinkFinder
                 raise "type: must be :text or :html, not: :#{type}"
               end
 
-      reporter = klass.new(stream, @url, @sort, @broken_links, @ignored_links)
+      reporter = klass.new(
+        stream, @sort, @broken_links, @ignored_links, @broken_link_map
+      )
       reporter.call(
         broken_verbose:  broken_verbose,
         ignored_verbose: ignored_verbose
@@ -151,7 +153,7 @@ module BrokenLinkFinder
     def retry_broken_links
       sleep(0.5) # Give the servers a break, then retry the links.
 
-      @url_map.each do |link, href|
+      @broken_link_map.each do |link, href|
         doc = @crawler.crawl(href)
         remove_broken_link(link) unless link_broken?(doc)
       end
@@ -200,20 +202,23 @@ module BrokenLinkFinder
         @broken_links[key] << value
 
         @all_broken_links  << link
-      end
 
-      @url_map[link] = link.prefix_base(doc) if doc
+        @broken_link_map[link] = link.prefix_base(doc) if doc
+      end
     end
 
+    # Remove the broken_link from the necessary collections.
     def remove_broken_link(link)
-      if @sort == :page
-        @broken_links.each { |_k, links| links.delete(link) }
-        @broken_links.delete_if { |_k, links| links.empty? }
-      else
-        @broken_links.delete(link)
-      end
+      @lock.synchronize do
+        if @sort == :page
+          @broken_links.each { |_k, links| links.delete(link) }
+          @broken_links.delete_if { |_k, links| links.empty? }
+        else
+          @broken_links.delete(link)
+        end
 
-      @all_broken_links.delete(link)
+        @all_broken_links.delete(link)
+      end
     end
 
     # Append key => [value] to @ignored_links.

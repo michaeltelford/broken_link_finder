@@ -21,7 +21,7 @@ class TextReporterTest < TestHelper
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
     r.call
 
     expected = <<~TEXT
@@ -70,15 +70,15 @@ class TextReporterTest < TestHelper
   def test_sort_by_link
     broken = {
       '/doesnt-exist' => ['http://example.com/quote'],
-      'mailto:blah@gmail.com' => ['http://example.com/about', 'http://example.com/search'],
-      'tel:04857233' => ['http://example.com/about', 'http://example.com/contact']
+      'http://blah.com' => ['http://example.com/about', 'http://example.com/search'],
+      'help' => ['http://example.com/about', 'http://example.com/contact']
     }
     ignored = {
       'ftp://server.com' => ['http://example.com/', 'http://example.com/about', 'http://example.com/quote', 'http://example.com/search'],
       'smtp://mail-server.com' => ['http://example.com/', 'http://example.com/search']
     }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :link, broken, ignored
+    r = BrokenLinkFinder::TextReporter.new @stream, :link, broken, ignored, {}
     r.call
 
     expected = <<~TEXT
@@ -87,11 +87,11 @@ class TextReporterTest < TestHelper
       The broken link '/doesnt-exist' was found on the following pages:
       http://example.com/quote
 
-      The broken link 'mailto:blah@gmail.com' was found on the following pages:
+      The broken link 'http://blah.com' was found on the following pages:
       http://example.com/about
       http://example.com/search
 
-      The broken link 'tel:04857233' was found on the following pages:
+      The broken link 'help' was found on the following pages:
       http://example.com/about
       http://example.com/contact
 
@@ -127,7 +127,7 @@ class TextReporterTest < TestHelper
       'http://example.com/quote' => ['mailto:blah@gmail.com', 'tel:048574362']
     }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
     r.call ignored_verbose: true
 
     expected = <<~TEXT
@@ -192,7 +192,7 @@ class TextReporterTest < TestHelper
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
     r.call broken_verbose: false
 
     expected = <<~TEXT
@@ -244,7 +244,7 @@ class TextReporterTest < TestHelper
       'http://example.com/' => ['mailto:blah@gmail.com', 'mailto:foo@bar.com', 'tel:048574362']
     }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
     r.call
 
     expected = <<~TEXT
@@ -292,7 +292,7 @@ class TextReporterTest < TestHelper
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
     r.call broken_verbose: false
 
     expected = <<~TEXT
@@ -335,7 +335,7 @@ class TextReporterTest < TestHelper
     broken = {}
     ignored = {}
 
-    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
     r.call
 
     expected = <<~TEXT
@@ -355,7 +355,7 @@ class TextReporterTest < TestHelper
     }
     ignored = {}
 
-    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
     r.call
 
     expected = <<~TEXT
@@ -392,7 +392,7 @@ class TextReporterTest < TestHelper
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, 'http://example.com', :page, broken, ignored
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
     r.call
 
     expected = <<~TEXT
