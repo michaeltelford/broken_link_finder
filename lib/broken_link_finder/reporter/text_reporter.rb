@@ -4,12 +4,15 @@ module BrokenLinkFinder
   class TextReporter < Reporter
     # Creates a new TextReporter instance.
     # stream is any Object that responds to :puts and :print.
-    def initialize(stream, sort, broken_links, ignored_links, broken_link_map)
+    def initialize(stream, sort,
+                   broken_links, ignored_links,
+                   broken_link_map, crawl_stats)
       super
     end
 
     # Pretty print a report detailing the full link summary.
     def call(broken_verbose: true, ignored_verbose: false)
+      report_crawl_summary
       report_broken_links(verbose: broken_verbose)
       report_ignored_links(verbose: ignored_verbose)
 
@@ -17,6 +20,16 @@ module BrokenLinkFinder
     end
 
     private
+
+    # Report a summary of the overall crawl.
+    def report_crawl_summary
+      putsn format(
+        'Crawled %s (%s page(s) in %s seconds)',
+        @crawl_stats[:url],
+        @crawl_stats[:num_pages],
+        @crawl_stats[:duration]&.truncate(2)
+      )
+    end
 
     # Report a summary of the broken links.
     def report_broken_links(verbose: true)

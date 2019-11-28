@@ -12,6 +12,8 @@
 ## v0.10.0
 ### Added
 - A `--html` flag to the `crawl` executable command which produces a HTML report (instead of text).
+- Added a 'retry' mechanism for any broken links found. This is essentially a verification step before generating a report.
+- `Finder#crawl_stats` for info such as crawl duration, total links crawled etc.
 ### Changed/Removed
 - The API has changed somewhat. See the [docs](https://www.rubydoc.info/gems/broken_link_finder) for the up to date code signatures if you're using `broken_link_finder` outside of its executable.
 ### Fixed

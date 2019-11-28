@@ -31,12 +31,26 @@ class HTMLReporterTest < TestHelper
       '/map' => 'http://example.com/map',
       'coordinates' => 'http://example.com/coordinates'
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map, stats
     r.call
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
+      <p class=\"crawl_summary\">Crawled http://example.com/ (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 9 broken link(s) across 5 page(s):</p>
       <p class=\"broken_links_group\">
@@ -106,12 +120,26 @@ class HTMLReporterTest < TestHelper
       'http://blah.com' => 'http://blah.com',
       'help' => 'http://example.com/help'
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, :link, broken, ignored, map
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :link, broken, ignored, map, stats
     r.call
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
+      <p class=\"crawl_summary\">Crawled http://example.com/ (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 3 broken link(s) across 4 page(s):</p>
       <p class=\"broken_links_group\">
@@ -176,12 +204,26 @@ class HTMLReporterTest < TestHelper
       '/map' => 'http://example.com/map',
       'coordinates' => 'http://example.com/coordinates'
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map, stats
     r.call ignored_verbose: true
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
+      <p class=\"crawl_summary\">Crawled http://example.com/ (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 9 broken link(s) across 5 page(s):</p>
       <p class=\"broken_links_group\">
@@ -267,12 +309,26 @@ class HTMLReporterTest < TestHelper
       '/map' => 'http://example.com/map',
       'coordinates' => 'http://example.com/coordinates'
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map, stats
     r.call broken_verbose: false
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
+      <p class=\"crawl_summary\">Crawled http://example.com/ (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 8 broken link(s) across 3 page(s):</p>
       <p class=\"broken_links_group\">
@@ -341,12 +397,26 @@ class HTMLReporterTest < TestHelper
       '/map' => 'http://example.com/map',
       'coordinates' => 'http://example.com/coordinates'
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map, stats
     r.call
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
+      <p class=\"crawl_summary\">Crawled http://example.com/ (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 9 broken link(s) across 5 page(s):</p>
       <p class=\"broken_links_group\">
@@ -411,12 +481,26 @@ class HTMLReporterTest < TestHelper
       '/map' => 'http://example.com/map',
       'coordinates' => 'http://example.com/coordinates'
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map, stats
     r.call broken_verbose: false
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
+      <p class=\"crawl_summary\">Crawled http://example.com/ (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 6 broken link(s) across 3 page(s):</p>
       <p class=\"broken_links_group\">
@@ -466,12 +550,26 @@ class HTMLReporterTest < TestHelper
     broken = {}
     ignored = {}
     map = {}
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map, stats
     r.call
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
+      <p class=\"crawl_summary\">Crawled http://example.com/ (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Good news, there are no broken links!</p>
       </div>
@@ -503,12 +601,28 @@ class HTMLReporterTest < TestHelper
       '/map' => 'http://example.com/map',
       'coordinates' => 'http://example.com/coordinates'
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search',
+        'http://example.com/blah',
+        'http://example.com/gis',
+      ],
+      num_pages: 7,
+      num_links: 21,
+      duration: 8.125565
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map, stats
     r.call
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
+      <p class=\"crawl_summary\">Crawled http://example.com/ (7 page(s) in 8.12 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 9 broken link(s) across 5 page(s):</p>
       <p class=\"broken_links_group\">
@@ -552,12 +666,26 @@ class HTMLReporterTest < TestHelper
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
     map = {}
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map, stats
     r.call
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
+      <p class=\"crawl_summary\">Crawled http://example.com/ (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Good news, there are no broken links!</p>
       </div>

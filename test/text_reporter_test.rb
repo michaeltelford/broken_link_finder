@@ -20,11 +20,26 @@ class TextReporterTest < TestHelper
       'http://example.com/about' => ['mailto:blah@gmail.com', 'tel:048574362'],
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}, stats
     r.call
 
     expected = <<~TEXT
+      Crawled http://example.com/ (5 page(s) in 7.34 seconds)
+
       Found 9 broken link(s) across 5 page(s):
 
       The following broken links were found on 'http://example.com/':
@@ -77,11 +92,26 @@ class TextReporterTest < TestHelper
       'ftp://server.com' => ['http://example.com/', 'http://example.com/about', 'http://example.com/quote', 'http://example.com/search'],
       'smtp://mail-server.com' => ['http://example.com/', 'http://example.com/search']
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, :link, broken, ignored, {}
+    r = BrokenLinkFinder::TextReporter.new @stream, :link, broken, ignored, {}, stats
     r.call
 
     expected = <<~TEXT
+      Crawled http://example.com/ (5 page(s) in 7.34 seconds)
+
       Found 3 broken link(s) across 4 page(s):
 
       The broken link '/doesnt-exist' was found on the following pages:
@@ -126,11 +156,26 @@ class TextReporterTest < TestHelper
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362'],
       'http://example.com/quote' => ['mailto:blah@gmail.com', 'tel:048574362']
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}, stats
     r.call ignored_verbose: true
 
     expected = <<~TEXT
+      Crawled http://example.com/ (5 page(s) in 7.34 seconds)
+
       Found 9 broken link(s) across 5 page(s):
 
       The following broken links were found on 'http://example.com/':
@@ -191,11 +236,26 @@ class TextReporterTest < TestHelper
       'http://example.com/about' => ['mailto:blah@gmail.com', 'tel:048574362'],
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}, stats
     r.call broken_verbose: false
 
     expected = <<~TEXT
+      Crawled http://example.com/ (5 page(s) in 7.34 seconds)
+
       Found 8 broken link(s) across 3 page(s):
 
       The following broken links were found on 'http://example.com/':
@@ -243,11 +303,26 @@ class TextReporterTest < TestHelper
     ignored = {
       'http://example.com/' => ['mailto:blah@gmail.com', 'mailto:foo@bar.com', 'tel:048574362']
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}, stats
     r.call
 
     expected = <<~TEXT
+      Crawled http://example.com/ (5 page(s) in 7.34 seconds)
+
       Found 9 broken link(s) across 5 page(s):
 
       The following broken links were found on 'http://example.com/':
@@ -291,11 +366,26 @@ class TextReporterTest < TestHelper
       'http://example.com/about' => ['mailto:blah@gmail.com', 'tel:048574362'],
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
-    r.call broken_verbose: false
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}, stats
+    r.call
 
     expected = <<~TEXT
+      Crawled http://example.com/ (5 page(s) in 7.34 seconds)
+
       Found 6 broken link(s) across 3 page(s):
 
       The following broken links were found on 'http://example.com/':
@@ -334,11 +424,26 @@ class TextReporterTest < TestHelper
   def test_no_broken_links
     broken = {}
     ignored = {}
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}, stats
     r.call
 
     expected = <<~TEXT
+      Crawled http://example.com/ (5 page(s) in 7.34 seconds)
+
       Good news, there are no broken links!
     TEXT
 
@@ -354,11 +459,26 @@ class TextReporterTest < TestHelper
       'http://example.com/search' => ['/gis', '/map', 'coordinates']
     }
     ignored = {}
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}, stats
     r.call
 
     expected = <<~TEXT
+      Crawled http://example.com/ (5 page(s) in 7.34 seconds)
+
       Found 9 broken link(s) across 5 page(s):
 
       The following broken links were found on 'http://example.com/':
@@ -391,11 +511,26 @@ class TextReporterTest < TestHelper
       'http://example.com/about' => ['mailto:blah@gmail.com', 'tel:048574362'],
       'http://example.com/how' => ['mailto:blah@gmail.com', 'smtp://mail.com', 'tel:048574362']
     }
+    stats = {
+      url: 'http://example.com/',
+      pages_crawled: [
+        'http://example.com/',
+        'http://example.com/about',
+        'http://example.com/contact',
+        'http://example.com/how',
+        'http://example.com/search'
+      ],
+      num_pages: 5,
+      num_links: 15,
+      duration: 7.345565
+    }
 
-    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}
+    r = BrokenLinkFinder::TextReporter.new @stream, :page, broken, ignored, {}, stats
     r.call
 
     expected = <<~TEXT
+      Crawled http://example.com/ (5 page(s) in 7.34 seconds)
+
       Good news, there are no broken links!
 
       Ignored 9 unsupported link(s) across 3 page(s), which you should check manually:

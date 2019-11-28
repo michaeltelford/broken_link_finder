@@ -105,4 +105,6 @@ stub_request(:get, 'http://www.retry.com')
   .to_return(mock_response('retry'))
 stub_request(:get, 'http://dos-preventer.net')
   .to_timeout.then
+  .to_return(mock_response('index')).then
+  .to_timeout.then
   .to_return(mock_response('index'))

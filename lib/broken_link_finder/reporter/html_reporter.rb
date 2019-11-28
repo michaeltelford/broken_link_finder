@@ -4,7 +4,9 @@ module BrokenLinkFinder
   class HTMLReporter < Reporter
     # Creates a new HTMLReporter instance.
     # stream is any Object that responds to :puts and :print.
-    def initialize(stream, sort, broken_links, ignored_links, broken_link_map)
+    def initialize(stream, sort,
+                   broken_links, ignored_links,
+                   broken_link_map, crawl_stats)
       super
     end
 
@@ -12,6 +14,7 @@ module BrokenLinkFinder
     def call(broken_verbose: true, ignored_verbose: false)
       puts '<div class="broken_link_finder_report">'
 
+      report_crawl_summary
       report_broken_links(verbose: broken_verbose)
       report_ignored_links(verbose: ignored_verbose)
 
@@ -21,6 +24,16 @@ module BrokenLinkFinder
     end
 
     private
+
+    # Report a summary of the overall crawl.
+    def report_crawl_summary
+      puts format(
+        '<p class="crawl_summary">Crawled %s (%s page(s) in %s seconds)</p>',
+        @crawl_stats[:url],
+        @crawl_stats[:num_pages],
+        @crawl_stats[:duration]&.truncate(2)
+      )
+    end
 
     # Report a summary of the broken links.
     def report_broken_links(verbose: true)
