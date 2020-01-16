@@ -26,12 +26,13 @@ module BrokenLinkFinder
 
     # Clear/empty the link collection Hashes.
     def reset_crawl
-      @broken_links     = {}
-      @ignored_links    = {}
-      @all_broken_links = Set.new # Used to prevent crawling a link twice.
-      @all_intact_links = Set.new #  "
-      @broken_link_map  = {}      # Maps a link to its absolute form.
-      @crawl_stats      = {}      # Records crawl stats e.g. duration etc.
+      @broken_links      = {}      # Used for mapping pages to broken links.
+      @ignored_links     = {}      # Used for mapping pages to ignored links.
+      @all_broken_links  = Set.new # Used to prevent crawling a broken link twice.
+      @all_intact_links  = Set.new # Used to prevent crawling an intact link twice.
+      @all_ignored_links = Set.new # Used for building crawl statistics.
+      @broken_link_map   = {}      # Maps a link to its absolute form.
+      @crawl_stats       = {}      # Records crawl stats e.g. duration etc.
     end
 
     # Finds broken links within a single page and appends them to the
@@ -220,6 +221,8 @@ module BrokenLinkFinder
       @lock.synchronize do
         @ignored_links[key] = [] unless @ignored_links[key]
         @ignored_links[key] << value
+
+        @all_ignored_links << link
       end
     end
 
@@ -250,11 +253,16 @@ module BrokenLinkFinder
 
     # Sets and returns the total number of links crawled.
     def set_crawl_stats(url:, pages_crawled:, start:)
-      @crawl_stats[:url]           = url
-      @crawl_stats[:pages_crawled] = pages_crawled
-      @crawl_stats[:num_pages]     = pages_crawled.size
-      @crawl_stats[:num_links]     = @all_broken_links.size + @all_intact_links.size
-      @crawl_stats[:duration]      = Time.now - start
+      @crawl_stats[:url]               = url
+      @crawl_stats[:pages_crawled]     = pages_crawled
+      @crawl_stats[:num_pages]         = pages_crawled.size
+      @crawl_stats[:num_links]         = (
+        @all_broken_links.size + @all_intact_links.size + @all_ignored_links.size
+      )
+      @crawl_stats[:num_broken_links]  = @all_broken_links.size
+      @crawl_stats[:num_intact_links]  = @all_intact_links.size
+      @crawl_stats[:num_ignored_links] = @all_ignored_links.size
+      @crawl_stats[:duration]          = Time.now - start
     end
 
     alias crawl_page crawl_url

@@ -13,8 +13,10 @@ class FinderTest < TestHelper
     assert_equal :link, finder.sort
     assert_equal Set, finder.instance_variable_get(:@all_broken_links).class
     assert_equal Set, finder.instance_variable_get(:@all_intact_links).class
+    assert_equal Set, finder.instance_variable_get(:@all_ignored_links).class
     assert_empty finder.instance_variable_get(:@all_broken_links)
     assert_empty finder.instance_variable_get(:@all_intact_links)
+    assert_empty finder.instance_variable_get(:@all_ignored_links)
     refute_nil finder.instance_variable_get(:@crawler)
   end
 
@@ -28,8 +30,10 @@ class FinderTest < TestHelper
     assert_equal :page, finder.sort
     assert_equal Set, finder.instance_variable_get(:@all_broken_links).class
     assert_equal Set, finder.instance_variable_get(:@all_intact_links).class
+    assert_equal Set, finder.instance_variable_get(:@all_ignored_links).class
     assert_empty finder.instance_variable_get(:@all_broken_links)
     assert_empty finder.instance_variable_get(:@all_intact_links)
+    assert_empty finder.instance_variable_get(:@all_ignored_links)
     refute_nil finder.instance_variable_get(:@crawler)
 
     finder = Finder.new sort: :link, max_threads: 10
@@ -42,15 +46,19 @@ class FinderTest < TestHelper
     finder.instance_variable_set :@broken_links, name: 'foo'
     finder.instance_variable_set :@ignored_links, name: 'bar'
     finder.instance_variable_set :@crawl_stats, { url: '/blah' }
-    finder.instance_variable_set :@all_broken_links, ['/blah']
-    finder.instance_variable_set :@all_intact_links, ['/blah']
+    finder.instance_variable_set :@broken_link_map, { url: '/blah' }
+    finder.instance_variable_set :@all_broken_links, Set.new(['/blah'])
+    finder.instance_variable_set :@all_intact_links, Set.new(['/blah'])
+    finder.instance_variable_set :@all_ignored_links, Set.new(['/blah'])
     finder.reset_crawl
 
     assert_empty finder.broken_links
     assert_empty finder.ignored_links
     assert_empty finder.crawl_stats
+    assert_empty finder.instance_variable_get(:@broken_link_map)
     assert_empty finder.instance_variable_get(:@all_broken_links)
     assert_empty finder.instance_variable_get(:@all_intact_links)
+    assert_empty finder.instance_variable_get(:@all_ignored_links)
   end
 
   def test_crawl_url
@@ -73,7 +81,10 @@ class FinderTest < TestHelper
     assert_equal 'http://mock-server.com/', finder.crawl_stats[:url]
     assert_equal ['http://mock-server.com/'], finder.crawl_stats[:pages_crawled]
     assert_equal 1, finder.crawl_stats[:num_pages]
-    assert_equal 8, finder.crawl_stats[:num_links]
+    assert_equal 10, finder.crawl_stats[:num_links]
+    assert_equal 2, finder.crawl_stats[:num_broken_links]
+    assert_equal 6, finder.crawl_stats[:num_intact_links]
+    assert_equal 2, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
   end
 
@@ -101,7 +112,10 @@ class FinderTest < TestHelper
     assert_equal 'http://mock-server.com/', finder.crawl_stats[:url]
     assert_equal ['http://mock-server.com/'], finder.crawl_stats[:pages_crawled]
     assert_equal 1, finder.crawl_stats[:num_pages]
-    assert_equal 8, finder.crawl_stats[:num_links]
+    assert_equal 10, finder.crawl_stats[:num_links]
+    assert_equal 2, finder.crawl_stats[:num_broken_links]
+    assert_equal 6, finder.crawl_stats[:num_intact_links]
+    assert_equal 2, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
   end
 
@@ -115,6 +129,9 @@ class FinderTest < TestHelper
     assert_equal ['http://mock-server.com/location'], finder.crawl_stats[:pages_crawled]
     assert_equal 1, finder.crawl_stats[:num_pages]
     assert_equal 2, finder.crawl_stats[:num_links]
+    assert_equal 0, finder.crawl_stats[:num_broken_links]
+    assert_equal 2, finder.crawl_stats[:num_intact_links]
+    assert_equal 0, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
   end
 
@@ -128,6 +145,9 @@ class FinderTest < TestHelper
     assert_equal ['http://mock-server.com/location'], finder.crawl_stats[:pages_crawled]
     assert_equal 1, finder.crawl_stats[:num_pages]
     assert_equal 2, finder.crawl_stats[:num_links]
+    assert_equal 0, finder.crawl_stats[:num_broken_links]
+    assert_equal 2, finder.crawl_stats[:num_intact_links]
+    assert_equal 0, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
   end
 
@@ -163,6 +183,9 @@ class FinderTest < TestHelper
     assert_equal ['https://example.co.uk/links.html'], finder.crawl_stats[:pages_crawled]
     assert_equal 1, finder.crawl_stats[:num_pages]
     assert_equal 15, finder.crawl_stats[:num_links]
+    assert_equal 15, finder.crawl_stats[:num_broken_links]
+    assert_equal 0, finder.crawl_stats[:num_intact_links]
+    assert_equal 0, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
   end
 
@@ -196,6 +219,9 @@ class FinderTest < TestHelper
     assert_equal ['https://example.co.uk/links.html'], finder.crawl_stats[:pages_crawled]
     assert_equal 1, finder.crawl_stats[:num_pages]
     assert_equal 15, finder.crawl_stats[:num_links]
+    assert_equal 15, finder.crawl_stats[:num_broken_links]
+    assert_equal 0, finder.crawl_stats[:num_intact_links]
+    assert_equal 0, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
   end
 
@@ -253,7 +279,10 @@ class FinderTest < TestHelper
       'http://mock-server.com/about?q=world'
     ], finder.crawl_stats[:pages_crawled])
     assert_equal 7, finder.crawl_stats[:num_pages]
-    assert_equal 17, finder.crawl_stats[:num_links]
+    assert_equal 20, finder.crawl_stats[:num_links]
+    assert_equal 3, finder.crawl_stats[:num_broken_links]
+    assert_equal 14, finder.crawl_stats[:num_intact_links]
+    assert_equal 3, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
 
     # Check it can be run multiple times consecutively without error.
@@ -296,7 +325,10 @@ class FinderTest < TestHelper
       'http://mock-server.com/about?q=world'
     ], finder.crawl_stats[:pages_crawled])
     assert_equal 7, finder.crawl_stats[:num_pages]
-    assert_equal 17, finder.crawl_stats[:num_links]
+    assert_equal 20, finder.crawl_stats[:num_links]
+    assert_equal 3, finder.crawl_stats[:num_broken_links]
+    assert_equal 14, finder.crawl_stats[:num_intact_links]
+    assert_equal 3, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
 
     # Check it can be run multiple times consecutively without error.
@@ -325,6 +357,9 @@ class FinderTest < TestHelper
     assert_equal ['http://www.retry.com'], finder.crawl_stats[:pages_crawled]
     assert_equal 1, finder.crawl_stats[:num_pages]
     assert_equal 1, finder.crawl_stats[:num_links]
+    assert_equal 0, finder.crawl_stats[:num_broken_links]
+    assert_equal 1, finder.crawl_stats[:num_intact_links]
+    assert_equal 0, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
   end
 
@@ -338,6 +373,9 @@ class FinderTest < TestHelper
     assert_equal ['http://www.retry.com'], finder.crawl_stats[:pages_crawled]
     assert_equal 1, finder.crawl_stats[:num_pages]
     assert_equal 1, finder.crawl_stats[:num_links]
+    assert_equal 0, finder.crawl_stats[:num_broken_links]
+    assert_equal 1, finder.crawl_stats[:num_intact_links]
+    assert_equal 0, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
   end
 end
