@@ -145,9 +145,14 @@ module BrokenLinkFinder
     def retry_broken_links
       sleep(0.5) # Give the servers a break, then retry the links.
 
-      @broken_link_map.each do |link, href|
+      @broken_link_map.select! do |link, href|
         doc = @crawler.crawl(href)
-        remove_broken_link(link) unless link_broken?(doc)
+        if link_broken?(doc)
+          true
+        else
+          remove_broken_link(link)
+          false
+        end
       end
     end
 

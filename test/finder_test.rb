@@ -361,6 +361,7 @@ class FinderTest < TestHelper
     assert_equal 1, finder.crawl_stats[:num_intact_links]
     assert_equal 0, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
+    assert_empty finder.instance_variable_get(:@broken_link_map)
   end
 
   def test_retry_mechanism__sort_by_link
@@ -377,5 +378,6 @@ class FinderTest < TestHelper
     assert_equal 1, finder.crawl_stats[:num_intact_links]
     assert_equal 0, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
+    assert_empty finder.instance_variable_get(:@broken_link_map)
   end
 end
