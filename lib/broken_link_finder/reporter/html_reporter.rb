@@ -28,10 +28,11 @@ module BrokenLinkFinder
     # Report a summary of the overall crawl.
     def report_crawl_summary
       puts format(
-        '<p class="crawl_summary">Crawled <a href="%s">%s</a> (%s page(s) in %s seconds)</p>',
+        '<p class="crawl_summary">Crawled <a href="%s">%s</a> (%s page(s) containing %s link(s) in %s seconds)</p>',
         @crawl_stats[:url],
         @crawl_stats[:url],
         @crawl_stats[:num_pages],
+        @crawl_stats[:num_links],
         @crawl_stats[:duration]&.truncate(2)
       )
     end

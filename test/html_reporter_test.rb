@@ -50,7 +50,7 @@ class HTMLReporterTest < TestHelper
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
-      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
+      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) containing 15 link(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 9 unique broken link(s) across 5 page(s):</p>
       <p class=\"broken_links_group\">
@@ -139,7 +139,7 @@ class HTMLReporterTest < TestHelper
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
-      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
+      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) containing 15 link(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 3 unique broken link(s) across 4 page(s):</p>
       <p class=\"broken_links_group\">
@@ -223,7 +223,7 @@ class HTMLReporterTest < TestHelper
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
-      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
+      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) containing 15 link(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 9 unique broken link(s) across 5 page(s):</p>
       <p class=\"broken_links_group\">
@@ -328,7 +328,7 @@ class HTMLReporterTest < TestHelper
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
-      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
+      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) containing 15 link(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 8 unique broken link(s) across 3 page(s):</p>
       <p class=\"broken_links_group\">
@@ -416,7 +416,7 @@ class HTMLReporterTest < TestHelper
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
-      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
+      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) containing 15 link(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 9 unique broken link(s) across 5 page(s):</p>
       <p class=\"broken_links_group\">
@@ -500,7 +500,7 @@ class HTMLReporterTest < TestHelper
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
-      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
+      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) containing 15 link(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 6 unique broken link(s) across 3 page(s):</p>
       <p class=\"broken_links_group\">
@@ -569,7 +569,7 @@ class HTMLReporterTest < TestHelper
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
-      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
+      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) containing 15 link(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Good news, there are no broken links!</p>
       </div>
@@ -622,7 +622,7 @@ class HTMLReporterTest < TestHelper
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
-      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (7 page(s) in 8.12 seconds)</p>
+      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (7 page(s) containing 21 link(s) in 8.12 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Found 9 unique broken link(s) across 5 page(s):</p>
       <p class=\"broken_links_group\">
@@ -685,7 +685,7 @@ class HTMLReporterTest < TestHelper
 
     expected = <<~HTML
       <div class=\"broken_link_finder_report\">
-      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
+      <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) containing 15 link(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
       <p class=\"broken_links_summary\">Good news, there are no broken links!</p>
       </div>

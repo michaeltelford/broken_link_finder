@@ -91,7 +91,7 @@ See the full source code documentation [here](https://www.rubydoc.info/gems/brok
 If broken links are found then the output will look something like:
 
 ```text
-Crawled http://txti.es (7 page(s) in 7.88 seconds)
+Crawled http://txti.es (7 page(s) containing 32 link(s) in 6.82 seconds)
 
 Found 6 unique broken link(s) across 2 page(s):
 
