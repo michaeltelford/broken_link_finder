@@ -42,8 +42,7 @@ module BrokenLinkFinder
     # Use like: `num_pages, num_links = get_hash_stats(links)`.
     def get_hash_stats(hash)
       num_keys   = hash.keys.length
-      values     = hash.values.flatten
-      num_values = sort_by_page? ? values.length : values.uniq.length
+      num_values = hash.values.flatten.uniq.length
 
       sort_by_page? ?
         [num_keys, num_values] :

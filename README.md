@@ -93,7 +93,7 @@ If broken links are found then the output will look something like:
 ```text
 Crawled http://txti.es (7 page(s) in 7.88 seconds)
 
-Found 6 broken link(s) across 2 page(s):
+Found 6 unique broken link(s) across 2 page(s):
 
 The following broken links were found on 'http://txti.es/about':
 http://twitter.com/thebarrytone
@@ -105,7 +105,7 @@ The following broken links were found on 'http://txti.es/how':
 http://en.wikipedia.org/wiki/Markdown
 http://imgur.com
 
-Ignored 3 unsupported link(s) across 2 page(s), which you should check manually:
+Ignored 3 unique unsupported link(s) across 2 page(s), which you should check manually:
 
 The following links were ignored on 'http://txti.es':
 tel:+13174562564

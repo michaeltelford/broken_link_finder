@@ -40,7 +40,7 @@ class TextReporterTest < TestHelper
     expected = <<~TEXT
       Crawled http://example.com/ (5 page(s) in 7.34 seconds)
 
-      Found 9 broken link(s) across 5 page(s):
+      Found 9 unique broken link(s) across 5 page(s):
 
       The following broken links were found on 'http://example.com/':
       /help
@@ -61,7 +61,7 @@ class TextReporterTest < TestHelper
       /map
       coordinates
 
-      Ignored 9 unsupported link(s) across 3 page(s), which you should check manually:
+      Ignored 5 unique unsupported link(s) across 3 page(s), which you should check manually:
 
       The following links were ignored on 'http://example.com/':
       mailto:blah@gmail.com
@@ -112,7 +112,7 @@ class TextReporterTest < TestHelper
     expected = <<~TEXT
       Crawled http://example.com/ (5 page(s) in 7.34 seconds)
 
-      Found 3 broken link(s) across 4 page(s):
+      Found 3 unique broken link(s) across 4 page(s):
 
       The broken link '/doesnt-exist' was found on the following pages:
       http://example.com/quote
@@ -125,7 +125,7 @@ class TextReporterTest < TestHelper
       http://example.com/about
       http://example.com/contact
 
-      Ignored 2 unsupported link(s) across 4 page(s), which you should check manually:
+      Ignored 2 unique unsupported link(s) across 4 page(s), which you should check manually:
 
       The link 'ftp://server.com' was ignored on the following pages:
       http://example.com/
@@ -176,7 +176,7 @@ class TextReporterTest < TestHelper
     expected = <<~TEXT
       Crawled http://example.com/ (5 page(s) in 7.34 seconds)
 
-      Found 9 broken link(s) across 5 page(s):
+      Found 9 unique broken link(s) across 5 page(s):
 
       The following broken links were found on 'http://example.com/':
       /help
@@ -197,7 +197,7 @@ class TextReporterTest < TestHelper
       /map
       coordinates
 
-      Ignored 12 unsupported link(s) across 5 page(s), which you should check manually:
+      Ignored 6 unique unsupported link(s) across 5 page(s), which you should check manually:
 
       The following links were ignored on 'http://example.com/':
       mailto:blah@gmail.com
@@ -256,7 +256,7 @@ class TextReporterTest < TestHelper
     expected = <<~TEXT
       Crawled http://example.com/ (5 page(s) in 7.34 seconds)
 
-      Found 8 broken link(s) across 3 page(s):
+      Found 8 unique broken link(s) across 3 page(s):
 
       The following broken links were found on 'http://example.com/':
       /help
@@ -271,7 +271,7 @@ class TextReporterTest < TestHelper
       /map
       + 2 other link(s), remove --concise to see them all
 
-      Ignored 9 unsupported link(s) across 3 page(s), which you should check manually:
+      Ignored 5 unique unsupported link(s) across 3 page(s), which you should check manually:
 
       The following links were ignored on 'http://example.com/':
       mailto:blah@gmail.com
@@ -323,7 +323,7 @@ class TextReporterTest < TestHelper
     expected = <<~TEXT
       Crawled http://example.com/ (5 page(s) in 7.34 seconds)
 
-      Found 9 broken link(s) across 5 page(s):
+      Found 9 unique broken link(s) across 5 page(s):
 
       The following broken links were found on 'http://example.com/':
       /help
@@ -344,7 +344,7 @@ class TextReporterTest < TestHelper
       /map
       coordinates
 
-      Ignored 3 unsupported link(s) across 1 page(s), which you should check manually:
+      Ignored 3 unique unsupported link(s) across 1 page(s), which you should check manually:
 
       The following links were ignored on 'http://example.com/':
       mailto:blah@gmail.com
@@ -386,7 +386,7 @@ class TextReporterTest < TestHelper
     expected = <<~TEXT
       Crawled http://example.com/ (5 page(s) in 7.34 seconds)
 
-      Found 6 broken link(s) across 3 page(s):
+      Found 6 unique broken link(s) across 3 page(s):
 
       The following broken links were found on 'http://example.com/':
       /help
@@ -400,7 +400,7 @@ class TextReporterTest < TestHelper
       blah
       http://doesnt-exist.com
 
-      Ignored 9 unsupported link(s) across 3 page(s), which you should check manually:
+      Ignored 5 unique unsupported link(s) across 3 page(s), which you should check manually:
 
       The following links were ignored on 'http://example.com/':
       mailto:blah@gmail.com
@@ -479,7 +479,7 @@ class TextReporterTest < TestHelper
     expected = <<~TEXT
       Crawled http://example.com/ (5 page(s) in 7.34 seconds)
 
-      Found 9 broken link(s) across 5 page(s):
+      Found 9 unique broken link(s) across 5 page(s):
 
       The following broken links were found on 'http://example.com/':
       /help
@@ -533,7 +533,7 @@ class TextReporterTest < TestHelper
 
       Good news, there are no broken links!
 
-      Ignored 9 unsupported link(s) across 3 page(s), which you should check manually:
+      Ignored 5 unique unsupported link(s) across 3 page(s), which you should check manually:
 
       The following links were ignored on 'http://example.com/':
       mailto:blah@gmail.com

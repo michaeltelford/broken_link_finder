@@ -52,7 +52,7 @@ class HTMLReporterTest < TestHelper
       <div class=\"broken_link_finder_report\">
       <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
-      <p class=\"broken_links_summary\">Found 9 broken link(s) across 5 page(s):</p>
+      <p class=\"broken_links_summary\">Found 9 unique broken link(s) across 5 page(s):</p>
       <p class=\"broken_links_group\">
       The following broken links were found on '<a href=\"http://example.com/\">http://example.com/</a>':<br />
       <a class=\"broken_links_group_item\" href=\"http://example.com/help\">/help</a><br />
@@ -79,7 +79,7 @@ class HTMLReporterTest < TestHelper
       </p>
       </div>
       <div class=\"ignored_links\">
-      <p class=\"ignored_links_summary\">Ignored 9 unsupported link(s) across 3 page(s), which you should check manually:</p>
+      <p class=\"ignored_links_summary\">Ignored 5 unique unsupported link(s) across 3 page(s), which you should check manually:</p>
       <p class=\"ignored_links_group\">
       The following links were ignored on '<a href=\"http://example.com/\">http://example.com/</a>':<br />
       <a class=\"ignored_links_group_item\" href=\"mailto:blah@gmail.com\">mailto:blah@gmail.com</a><br />
@@ -141,7 +141,7 @@ class HTMLReporterTest < TestHelper
       <div class=\"broken_link_finder_report\">
       <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
-      <p class=\"broken_links_summary\">Found 3 broken link(s) across 4 page(s):</p>
+      <p class=\"broken_links_summary\">Found 3 unique broken link(s) across 4 page(s):</p>
       <p class=\"broken_links_group\">
       The broken link '<a href=\"http://example.com/doesnt-exist\">/doesnt-exist</a>' was found on the following pages:<br />
       <a class=\"broken_links_group_item\" href=\"http://example.com/quote\">http://example.com/quote</a><br />
@@ -158,7 +158,7 @@ class HTMLReporterTest < TestHelper
       </p>
       </div>
       <div class=\"ignored_links\">
-      <p class=\"ignored_links_summary\">Ignored 2 unsupported link(s) across 4 page(s), which you should check manually:</p>
+      <p class=\"ignored_links_summary\">Ignored 2 unique unsupported link(s) across 4 page(s), which you should check manually:</p>
       <p class=\"ignored_links_group\">
       The link '<a href=\"ftp://server.com\">ftp://server.com</a>' was ignored on the following pages:<br />
       <a class=\"ignored_links_group_item\" href=\"http://example.com/\">http://example.com/</a><br />
@@ -225,7 +225,7 @@ class HTMLReporterTest < TestHelper
       <div class=\"broken_link_finder_report\">
       <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
-      <p class=\"broken_links_summary\">Found 9 broken link(s) across 5 page(s):</p>
+      <p class=\"broken_links_summary\">Found 9 unique broken link(s) across 5 page(s):</p>
       <p class=\"broken_links_group\">
       The following broken links were found on '<a href=\"http://example.com/\">http://example.com/</a>':<br />
       <a class=\"broken_links_group_item\" href=\"http://example.com/help\">/help</a><br />
@@ -252,7 +252,7 @@ class HTMLReporterTest < TestHelper
       </p>
       </div>
       <div class=\"ignored_links\">
-      <p class=\"ignored_links_summary\">Ignored 12 unsupported link(s) across 5 page(s), which you should check manually:</p>
+      <p class=\"ignored_links_summary\">Ignored 6 unique unsupported link(s) across 5 page(s), which you should check manually:</p>
       <p class=\"ignored_links_group\">
       The following links were ignored on '<a href=\"http://example.com/\">http://example.com/</a>':<br />
       <a class=\"ignored_links_group_item\" href=\"mailto:blah@gmail.com\">mailto:blah@gmail.com</a><br />
@@ -330,7 +330,7 @@ class HTMLReporterTest < TestHelper
       <div class=\"broken_link_finder_report\">
       <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
-      <p class=\"broken_links_summary\">Found 8 broken link(s) across 3 page(s):</p>
+      <p class=\"broken_links_summary\">Found 8 unique broken link(s) across 3 page(s):</p>
       <p class=\"broken_links_group\">
       The following broken links were found on '<a href=\"http://example.com/\">http://example.com/</a>':<br />
       <a class=\"broken_links_group_item\" href=\"http://example.com/help\">/help</a><br />
@@ -349,7 +349,7 @@ class HTMLReporterTest < TestHelper
       </p>
       </div>
       <div class=\"ignored_links\">
-      <p class=\"ignored_links_summary\">Ignored 9 unsupported link(s) across 3 page(s), which you should check manually:</p>
+      <p class=\"ignored_links_summary\">Ignored 5 unique unsupported link(s) across 3 page(s), which you should check manually:</p>
       <p class=\"ignored_links_group\">
       The following links were ignored on '<a href=\"http://example.com/\">http://example.com/</a>':<br />
       <a class=\"ignored_links_group_item\" href=\"mailto:blah@gmail.com\">mailto:blah@gmail.com</a><br />
@@ -418,7 +418,7 @@ class HTMLReporterTest < TestHelper
       <div class=\"broken_link_finder_report\">
       <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
-      <p class=\"broken_links_summary\">Found 9 broken link(s) across 5 page(s):</p>
+      <p class=\"broken_links_summary\">Found 9 unique broken link(s) across 5 page(s):</p>
       <p class=\"broken_links_group\">
       The following broken links were found on '<a href=\"http://example.com/\">http://example.com/</a>':<br />
       <a class=\"broken_links_group_item\" href=\"http://example.com/help\">/help</a><br />
@@ -445,7 +445,7 @@ class HTMLReporterTest < TestHelper
       </p>
       </div>
       <div class=\"ignored_links\">
-      <p class=\"ignored_links_summary\">Ignored 3 unsupported link(s) across 1 page(s), which you should check manually:</p>
+      <p class=\"ignored_links_summary\">Ignored 3 unique unsupported link(s) across 1 page(s), which you should check manually:</p>
       <p class=\"ignored_links_group\">
       The following links were ignored on '<a href=\"http://example.com/\">http://example.com/</a>':<br />
       <a class=\"ignored_links_group_item\" href=\"mailto:blah@gmail.com\">mailto:blah@gmail.com</a><br />
@@ -502,7 +502,7 @@ class HTMLReporterTest < TestHelper
       <div class=\"broken_link_finder_report\">
       <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (5 page(s) in 7.34 seconds)</p>
       <div class=\"broken_links\">
-      <p class=\"broken_links_summary\">Found 6 broken link(s) across 3 page(s):</p>
+      <p class=\"broken_links_summary\">Found 6 unique broken link(s) across 3 page(s):</p>
       <p class=\"broken_links_group\">
       The following broken links were found on '<a href=\"http://example.com/\">http://example.com/</a>':<br />
       <a class=\"broken_links_group_item\" href=\"http://example.com/help\">/help</a><br />
@@ -520,7 +520,7 @@ class HTMLReporterTest < TestHelper
       </p>
       </div>
       <div class=\"ignored_links\">
-      <p class=\"ignored_links_summary\">Ignored 9 unsupported link(s) across 3 page(s), which you should check manually:</p>
+      <p class=\"ignored_links_summary\">Ignored 5 unique unsupported link(s) across 3 page(s), which you should check manually:</p>
       <p class=\"ignored_links_group\">
       The following links were ignored on '<a href=\"http://example.com/\">http://example.com/</a>':<br />
       <a class=\"ignored_links_group_item\" href=\"mailto:blah@gmail.com\">mailto:blah@gmail.com</a><br />
@@ -624,7 +624,7 @@ class HTMLReporterTest < TestHelper
       <div class=\"broken_link_finder_report\">
       <p class=\"crawl_summary\">Crawled <a href=\"http://example.com/\">http://example.com/</a> (7 page(s) in 8.12 seconds)</p>
       <div class=\"broken_links\">
-      <p class=\"broken_links_summary\">Found 9 broken link(s) across 5 page(s):</p>
+      <p class=\"broken_links_summary\">Found 9 unique broken link(s) across 5 page(s):</p>
       <p class=\"broken_links_group\">
       The following broken links were found on '<a href=\"http://example.com/\">http://example.com/</a>':<br />
       <a class=\"broken_links_group_item\" href=\"http://example.com/help\">/help</a><br />
@@ -690,7 +690,7 @@ class HTMLReporterTest < TestHelper
       <p class=\"broken_links_summary\">Good news, there are no broken links!</p>
       </div>
       <div class=\"ignored_links\">
-      <p class=\"ignored_links_summary\">Ignored 9 unsupported link(s) across 3 page(s), which you should check manually:</p>
+      <p class=\"ignored_links_summary\">Ignored 5 unique unsupported link(s) across 3 page(s), which you should check manually:</p>
       <p class=\"ignored_links_group\">
       The following links were ignored on '<a href=\"http://example.com/\">http://example.com/</a>':<br />
       <a class=\"ignored_links_group_item\" href=\"mailto:blah@gmail.com\">mailto:blah@gmail.com</a><br />

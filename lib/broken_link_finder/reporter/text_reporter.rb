@@ -37,7 +37,7 @@ module BrokenLinkFinder
         puts 'Good news, there are no broken links!'
       else
         num_pages, num_links = get_hash_stats(@broken_links)
-        puts "Found #{num_links} broken link(s) across #{num_pages} page(s):"
+        puts "Found #{num_links} unique broken link(s) across #{num_pages} page(s):"
 
         @broken_links.each do |key, values|
           msg = sort_by_page? ?
@@ -61,7 +61,7 @@ module BrokenLinkFinder
     def report_ignored_links(verbose: false)
       if @ignored_links.any?
         num_pages, num_links = get_hash_stats(@ignored_links)
-        nputs "Ignored #{num_links} unsupported link(s) across #{num_pages} page(s), which you should check manually:"
+        nputs "Ignored #{num_links} unique unsupported link(s) across #{num_pages} page(s), which you should check manually:"
 
         @ignored_links.each do |key, values|
           msg = sort_by_page? ?

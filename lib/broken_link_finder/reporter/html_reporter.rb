@@ -44,7 +44,7 @@ module BrokenLinkFinder
         puts_summary 'Good news, there are no broken links!', type: :broken
       else
         num_pages, num_links = get_hash_stats(@broken_links)
-        puts_summary "Found #{num_links} broken link(s) across #{num_pages} page(s):", type: :broken
+        puts_summary "Found #{num_links} unique broken link(s) across #{num_pages} page(s):", type: :broken
 
         @broken_links.each do |key, values|
           puts_group(key, type: :broken) # Puts the opening <p> element.
@@ -71,7 +71,7 @@ module BrokenLinkFinder
 
       if @ignored_links.any?
         num_pages, num_links = get_hash_stats(@ignored_links)
-        puts_summary "Ignored #{num_links} unsupported link(s) across #{num_pages} page(s), which you should check manually:", type: :ignored
+        puts_summary "Ignored #{num_links} unique unsupported link(s) across #{num_pages} page(s), which you should check manually:", type: :ignored
 
         @ignored_links.each do |key, values|
           puts_group(key, type: :ignored) # Puts the opening <p> element.
