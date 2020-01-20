@@ -380,4 +380,18 @@ class FinderTest < TestHelper
     assert finder.crawl_stats[:duration] > 0.0
     assert_empty finder.instance_variable_get(:@broken_link_map)
   end
+
+  def test_link_map__on_external_redirect
+    # http://broken.external.redirect.test.com (contains <a> link to:)
+    #  |> http://broken.external.redirect.com (301 redirects to:)
+    #      |> https://server-error.com (500 internal server error)
+
+    finder = Finder.new
+    assert finder.crawl_url('http://broken.external.redirect.test.com')
+
+    # We assert the redirected to URL isn't recorded.
+    assert_equal({
+      'http://broken.external.redirect.com' => 'http://broken.external.redirect.com'
+    }, finder.instance_variable_get(:@broken_link_map))
+  end
 end

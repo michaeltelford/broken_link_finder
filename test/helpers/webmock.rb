@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'webmock'
 
 include WebMock::API
@@ -62,6 +60,14 @@ stub_request(:get, 'http://mock-server.com/redirect')
 # Redirect - Relative Location
 stub_request(:get, 'http://mock-server.com/redirect/2')
   .to_return(status: 301, headers: { 'Location': '/location' })
+
+# Broken external redirect
+stub_request(:get, 'http://broken.external.redirect.test.com')
+  .to_return(status: 200, body:
+    '<a href="http://broken.external.redirect.com">Broken External Redirect</a>'
+  )
+stub_request(:get, 'http://broken.external.redirect.com')
+  .to_return(status: 301, headers: { 'Location': 'https://server-error.com' })
 
 # Server error
 stub_request(:get, 'https://server-error.com')

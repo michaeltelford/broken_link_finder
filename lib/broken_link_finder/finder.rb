@@ -146,7 +146,7 @@ module BrokenLinkFinder
       sleep(0.5) # Give the servers a break, then retry the links.
 
       @broken_link_map.select! do |link, href|
-        doc = @crawler.crawl(href)
+        doc = @crawler.crawl(href.dup)
         if link_broken?(doc)
           true
         else
@@ -171,7 +171,7 @@ module BrokenLinkFinder
     # Make the link absolute and crawl it, returning its Wgit::Document.
     def crawl_link(doc, link)
       link = link.prefix_base(doc)
-      @crawler.crawl(link)
+      @crawler.crawl(link.dup)
     end
 
     # Return if the crawled link is broken or not.
