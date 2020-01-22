@@ -29,13 +29,19 @@ class BrokenLinkFinderCLI < Thor
       broken_verbose:  broken_verbose,
       ignored_verbose: ignored_verbose
     )
-  rescue Exception => e
+
+    exit 0
+  rescue StandardError => e
     puts "An error has occurred: #{e.message}"
+
+    exit 1
   end
 
   desc 'version', 'Display the currently installed version'
   def version
     puts "broken_link_finder v#{BrokenLinkFinder::VERSION}"
+
+    exit 0
   end
 end
 
