@@ -24,7 +24,7 @@ module BrokenLinkFinder
     # Report a summary of the overall crawl.
     def report_crawl_summary
       putsn format(
-        'Crawled %s (%s page(s) containing %s link(s) in %s seconds)',
+        'Crawled %s (%s page(s) containing %s unique link(s) in %s seconds)',
         @crawl_stats[:url],
         @crawl_stats[:num_pages],
         @crawl_stats[:num_links],
