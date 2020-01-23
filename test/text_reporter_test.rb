@@ -38,7 +38,8 @@ class TextReporterTest < TestHelper
     r.call
 
     expected = <<~TEXT
-      Crawled http://example.com/ (5 page(s) containing 15 unique link(s) in 7.34 seconds)
+      Crawled http://example.com/
+      5 page(s) containing 15 unique link(s) in 7.34 seconds
 
       Found 9 unique broken link(s) across 5 page(s):
 
@@ -110,7 +111,8 @@ class TextReporterTest < TestHelper
     r.call
 
     expected = <<~TEXT
-      Crawled http://example.com/ (5 page(s) containing 15 unique link(s) in 7.34 seconds)
+      Crawled http://example.com/
+      5 page(s) containing 15 unique link(s) in 7.34 seconds
 
       Found 3 unique broken link(s) across 4 page(s):
 
@@ -174,7 +176,8 @@ class TextReporterTest < TestHelper
     r.call ignored_verbose: true
 
     expected = <<~TEXT
-      Crawled http://example.com/ (5 page(s) containing 15 unique link(s) in 7.34 seconds)
+      Crawled http://example.com/
+      5 page(s) containing 15 unique link(s) in 7.34 seconds
 
       Found 9 unique broken link(s) across 5 page(s):
 
@@ -254,7 +257,8 @@ class TextReporterTest < TestHelper
     r.call broken_verbose: false
 
     expected = <<~TEXT
-      Crawled http://example.com/ (5 page(s) containing 15 unique link(s) in 7.34 seconds)
+      Crawled http://example.com/
+      5 page(s) containing 15 unique link(s) in 7.34 seconds
 
       Found 8 unique broken link(s) across 3 page(s):
 
@@ -321,7 +325,8 @@ class TextReporterTest < TestHelper
     r.call
 
     expected = <<~TEXT
-      Crawled http://example.com/ (5 page(s) containing 15 unique link(s) in 7.34 seconds)
+      Crawled http://example.com/
+      5 page(s) containing 15 unique link(s) in 7.34 seconds
 
       Found 9 unique broken link(s) across 5 page(s):
 
@@ -384,7 +389,8 @@ class TextReporterTest < TestHelper
     r.call
 
     expected = <<~TEXT
-      Crawled http://example.com/ (5 page(s) containing 15 unique link(s) in 7.34 seconds)
+      Crawled http://example.com/
+      5 page(s) containing 15 unique link(s) in 7.34 seconds
 
       Found 6 unique broken link(s) across 3 page(s):
 
@@ -442,7 +448,8 @@ class TextReporterTest < TestHelper
     r.call
 
     expected = <<~TEXT
-      Crawled http://example.com/ (5 page(s) containing 15 unique link(s) in 7.34 seconds)
+      Crawled http://example.com/
+      5 page(s) containing 15 unique link(s) in 7.34 seconds
 
       Good news, there are no broken links!
     TEXT
@@ -477,7 +484,8 @@ class TextReporterTest < TestHelper
     r.call
 
     expected = <<~TEXT
-      Crawled http://example.com/ (5 page(s) containing 15 unique link(s) in 7.34 seconds)
+      Crawled http://example.com/
+      5 page(s) containing 15 unique link(s) in 7.34 seconds
 
       Found 9 unique broken link(s) across 5 page(s):
 
@@ -529,7 +537,8 @@ class TextReporterTest < TestHelper
     r.call
 
     expected = <<~TEXT
-      Crawled http://example.com/ (5 page(s) containing 15 unique link(s) in 7.34 seconds)
+      Crawled http://example.com/
+      5 page(s) containing 15 unique link(s) in 7.34 seconds
 
       Good news, there are no broken links!
 
