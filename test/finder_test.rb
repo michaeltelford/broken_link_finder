@@ -394,4 +394,11 @@ class FinderTest < TestHelper
       'http://broken.external.redirect.com' => 'http://broken.external.redirect.com'
     }, finder.instance_variable_get(:@broken_link_map))
   end
+
+  def test_redirect_updates_url
+    # redirect.com#top -> no.anchor.com (Ignore #contact after the redirect)
+
+    finder = Finder.new
+    refute finder.crawl_url('http://redirect.anchor.com')
+  end
 end

@@ -53,13 +53,21 @@ stub_request(:get, 'https://doesnt-exist.com')
 stub_request(:get, 'http://mock-server.com/not_found')
   .to_return(mock_response('not_found', status: 404))
 
-# Redirect - Absolute Location
+# Redirect - Absolute location
 stub_request(:get, 'http://mock-server.com/redirect')
   .to_return(status: 301, headers: { 'Location': 'http://mock-server.com/location' })
 
-# Redirect - Relative Location
+# Redirect - Relative location
 stub_request(:get, 'http://mock-server.com/redirect/2')
   .to_return(status: 301, headers: { 'Location': '/location' })
+
+# Redirect - Absolute location to page with missing anchor
+stub_request(:get, 'http://redirect.anchor.com')
+  .to_return(mock_response('redirect_anchor'))
+stub_request(:get, 'http://redirect.com#top')
+  .to_return(status: 301, headers: { 'Location': 'http://no.anchor.com' })
+stub_request(:get, 'http://no.anchor.com')
+  .to_return(mock_response('index'))
 
 # Broken external redirect
 stub_request(:get, 'http://broken.external.redirect.test.com')
@@ -106,7 +114,7 @@ stub_request(:get, 'https://example.com#anchorthandoesnotexist')
   stub_request(:get, url).to_return(mock_response('not_found', status: 404))
 end
 
-# Stubs for testing Finder's retry mechanism.
+# Stubs for testing Finder's retry mechanism
 stub_request(:get, 'http://www.retry.com')
   .to_return(mock_response('retry'))
 stub_request(:get, 'http://dos-preventer.net')
