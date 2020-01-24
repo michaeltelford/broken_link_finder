@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    broken_link_finder (0.10.0)
+    broken_link_finder (0.11.0)
       thor (~> 0.20)
       thread (~> 0.2)
       wgit (~> 0.8)
@@ -11,7 +11,7 @@ GEM
   specs:
     addressable (2.6.0)
       public_suffix (>= 2.0.2, < 4.0)
-    bson (4.7.0)
+    bson (4.7.1)
     byebug (11.0.1)
     coderay (1.1.2)
     crack (0.4.3)
@@ -25,8 +25,8 @@ GEM
     method_source (0.9.2)
     mini_portile2 (2.4.0)
     minitest (5.12.2)
-    mongo (2.11.2)
-      bson (>= 4.6.0, < 5.0.0)
+    mongo (2.11.3)
+      bson (>= 4.4.2, < 5.0.0)
     nokogiri (1.10.7)
       mini_portile2 (~> 2.4.0)
     pry (0.12.2)

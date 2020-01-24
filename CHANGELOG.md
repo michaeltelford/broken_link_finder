@@ -9,6 +9,18 @@
 - ...
 ---
 
+## v0.11.0
+### Added
+- Additional crawl statistics.
+- Exit code handling to executable. `0` for success, `1` for an error scenario.
+### Changed/Removed
+- The report formats slighly bringing various improvements such as the total number of links crawled etc.
+### Fixed
+- Bug in html report, summary url is now an `<a>` link.
+- Bug in `Finder@broken_link_map` URLs during redirects.
+- Bug causing an error on crawling unparsable/invalid URL's.
+---
+
 ## v0.10.0
 ### Added
 - A `--html` flag to the `crawl` executable command which produces a HTML report (instead of text).
