@@ -43,7 +43,7 @@ module BrokenLinkFinder
 
       start = Time.now
       url   = url.to_url
-      doc   = @crawler.crawl(url)
+      doc   = @crawler.crawl(url.dup)
 
       # Ensure the given page url is valid.
       raise "Invalid or broken URL: #{url}" unless doc
@@ -70,7 +70,7 @@ module BrokenLinkFinder
       crawled = Set.new
 
       # Crawl the site's HTML web pages looking for links.
-      externals = @crawler.crawl_site(url) do |doc|
+      externals = @crawler.crawl_site(url.dup) do |doc|
         crawled << doc.url
         next unless doc
 

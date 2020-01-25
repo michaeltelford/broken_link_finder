@@ -381,7 +381,7 @@ class FinderTest < TestHelper
     assert_empty finder.instance_variable_get(:@broken_link_map)
   end
 
-  def test_link_map__on_external_redirect
+  def test_broken_links__on_redirect
     # http://broken.external.redirect.test.com (contains <a> link to:)
     #  |> http://broken.external.redirect.com (301 redirects to:)
     #      |> https://server-error.com (500 internal server error)
@@ -391,14 +391,40 @@ class FinderTest < TestHelper
 
     # We assert the redirected to URL isn't recorded.
     assert_equal({
+      'http://broken.external.redirect.test.com' => ['http://broken.external.redirect.com']
+    }, finder.broken_links)
+    assert_equal({
       'http://broken.external.redirect.com' => 'http://broken.external.redirect.com'
     }, finder.instance_variable_get(:@broken_link_map))
+    assert(
+      finder.instance_variable_get(:@all_broken_links)
+            .include?('http://broken.external.redirect.com')
+    )
+    refute(
+      finder.instance_variable_get(:@all_broken_links)
+            .include?('https://server-error.com')
+    )
   end
 
-  def test_redirect_updates_url
-    # redirect.com#top -> no.anchor.com (Ignore #contact after the redirect)
+  def test_crawl_stats__on_redirect
+    # http://mock-server.com/redirect/2 (301 redirects to:)
+    #  |> /location (contains no broken links)
 
     finder = Finder.new
+    refute finder.crawl_url('http://mock-server.com/redirect/2')
+
+    # We assert the redirected to URL isn't recorded.
+    assert_equal 'http://mock-server.com/redirect/2', finder.crawl_stats[:url]
+  end
+
+  def test_anchor__on_redirect
+    # http://redirect.anchor.com (contains <a> link to:)
+    #  |> http://redirect.com#top (301 redirect to:)
+    #      |> http://no.anchor.com (Missing #top anchor on redirected-to page)
+
+    finder = Finder.new
+
+    # Assert http://no.anchor.com#top isn't a broken link.
     refute finder.crawl_url('http://redirect.anchor.com')
   end
 end
