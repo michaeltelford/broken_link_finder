@@ -427,4 +427,35 @@ class FinderTest < TestHelper
     # Assert http://no.anchor.com#top isn't a broken link.
     refute finder.crawl_url('http://redirect.anchor.com')
   end
+
+  def test_unparsable_links
+    finder = Finder.new
+
+    assert finder.crawl_url('http://unparsable.com')
+    assert_equal({
+      'http://unparsable.com' => [
+        'http://',
+        'https://',
+        'https://server-error.com' # Parsable but broken link.
+      ]
+    }, finder.broken_links)
+    assert_empty finder.ignored_links
+    assert [
+      'http://', 'https://', 'https://server-error.com'
+    ], finder.instance_variable_get(:@all_broken_links)
+    assert_equal({
+      'http://'  => 'http://',
+      'https://' => 'https://',
+      'https://server-error.com' => 'https://server-error.com'
+    }, finder.instance_variable_get(:@broken_link_map))
+
+    assert_equal 'http://unparsable.com', finder.crawl_stats[:url]
+    assert_equal ['http://unparsable.com'], finder.crawl_stats[:pages_crawled]
+    assert_equal 1, finder.crawl_stats[:num_pages]
+    assert_equal 4, finder.crawl_stats[:num_links]
+    assert_equal 3, finder.crawl_stats[:num_broken_links]
+    assert_equal 1, finder.crawl_stats[:num_intact_links]
+    assert_equal 0, finder.crawl_stats[:num_ignored_links]
+    assert finder.crawl_stats[:duration] > 0.0
+  end
 end

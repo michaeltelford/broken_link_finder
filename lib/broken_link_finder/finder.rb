@@ -114,6 +114,8 @@ module BrokenLinkFinder
 
     # Finds which links are unsupported or broken and records the details.
     def find_broken_links(page)
+      process_unparsable_links(page)
+
       links = get_supported_links(page)
 
       # Iterate over the supported links checking if they're broken or not.
@@ -122,7 +124,7 @@ module BrokenLinkFinder
         next if @all_intact_links.include?(link)
 
         if @all_broken_links.include?(link)
-          append_broken_link(page.url, link) # Record on which page.
+          append_broken_link(page, link, map: false)
           next
         end
 
@@ -131,7 +133,7 @@ module BrokenLinkFinder
 
         # Determine if the crawled link is broken or not.
         if link_broken?(link_doc)
-          append_broken_link(page.url, link, doc: page)
+          append_broken_link(page, link)
         else
           @lock.synchronize { @all_intact_links << link }
         end
@@ -140,13 +142,25 @@ module BrokenLinkFinder
       nil
     end
 
+    # Record each unparsable link as a broken link.
+    def process_unparsable_links(doc)
+      doc.unparsable_links.each do |link|
+        append_broken_link(doc, link, map: false)
+        @broken_link_map[link] = link
+      end
+    end
+
     # Implements a retry mechanism for each of the broken links found.
     # Removes any broken links found to be working OK.
     def retry_broken_links
       sleep(0.5) # Give the servers a break, then retry the links.
 
       @broken_link_map.select! do |link, href|
+        # Don't retry unparsable hrefs (which are Strings).
+        next(true) unless href.is_a?(Wgit::Url)
+
         doc = @crawler.crawl(href.dup)
+
         if link_broken?(doc)
           true
         else
@@ -190,9 +204,9 @@ module BrokenLinkFinder
     end
 
     # Append key => [value] to @broken_links.
-    # If doc: is provided then the link will be recorded in absolute form.
-    def append_broken_link(url, link, doc: nil)
-      key, value = get_key_value(url, link)
+    # If map: true, then the link will also be recorded in @broken_link_map.
+    def append_broken_link(doc, link, map: true)
+      key, value = get_key_value(doc.url, link)
 
       @lock.synchronize do
         @broken_links[key] = [] unless @broken_links[key]
@@ -200,7 +214,7 @@ module BrokenLinkFinder
 
         @all_broken_links << link
 
-        @broken_link_map[link] = link.prefix_base(doc) if doc
+        @broken_link_map[link] = link.prefix_base(doc) if map
       end
     end
 

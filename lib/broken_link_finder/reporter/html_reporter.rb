@@ -127,8 +127,8 @@ module BrokenLinkFinder
     end
 
     def build_url(link)
-      return link if link.to_url.absolute?
-      @broken_link_map.fetch(link)
+      href = @broken_link_map[link]
+      href || link
     end
 
     alias_method :report, :call

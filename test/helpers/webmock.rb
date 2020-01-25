@@ -81,6 +81,10 @@ stub_request(:get, 'http://broken.external.redirect.com')
 stub_request(:get, 'https://server-error.com')
   .to_return(status: 500)
 
+# Unparsable links
+stub_request(:get, 'http://unparsable.com')
+  .to_return(mock_response('unparsable_links'))
+
 # example.co.uk aka fixtures/links.html
 stub_request(:get, 'https://example.co.uk/links.html')
   .to_return(mock_response('links'))

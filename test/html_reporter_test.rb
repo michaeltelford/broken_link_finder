@@ -715,4 +715,49 @@ class HTMLReporterTest < TestHelper
 
     assert_equal expected, @stream.string
   end
+
+  def test_unparsable_links
+    broken = {
+      'http://unparsable.com' => [
+        'http://',
+        'https://',
+        'https://server-error.com'
+      ]
+    }
+    ignored = {}
+    map = {
+      'http://' => 'http://',
+      'https://' => 'https://',
+      'https://server-error.com' => 'https://server-error.com'
+    }
+    stats = {
+      url: 'http://unparsable.com',
+      pages_crawled: ['http://unparsable.com'],
+      num_pages: 1,
+      num_links: 4,
+      duration: 2.44506
+    }
+
+    r = BrokenLinkFinder::HTMLReporter.new @stream, :page, broken, ignored, map, stats
+    r.call
+
+    expected = <<~HTML
+    <div class=\"broken_link_finder_report\">
+    <p class=\"crawl_summary\">Crawled <a href=\"http://unparsable.com\">http://unparsable.com</a><br />1 page(s) containing 4 unique link(s) in 2.44 seconds</p>
+    <div class=\"broken_links\">
+    <p class=\"broken_links_summary\">Found 3 unique broken link(s) across 1 page(s):</p>
+    <p class=\"broken_links_group\">
+    The following broken links were found on '<a href=\"http://unparsable.com\">http://unparsable.com</a>':<br />
+    <a class=\"broken_links_group_item\" href=\"http://\">http://</a><br />
+    <a class=\"broken_links_group_item\" href=\"https://\">https://</a><br />
+    <a class=\"broken_links_group_item\" href=\"https://server-error.com\">https://server-error.com</a><br />
+    </p>
+    </div>
+    <div class=\"ignored_links\">
+    </div>
+    </div>
+    HTML
+
+    assert_equal expected, @stream.string
+  end
 end
