@@ -17,7 +17,7 @@
 - The report formats slighly bringing various improvements such as the total number of links crawled etc.
 ### Fixed
 - Bug in html report, summary url is now an `<a>` link.
-- Bug in `Finder@broken_link_map` URLs during redirects.
+- Bug in `Finder@broken_link_map` URLs and `Finder#crawl_stats[:url]` URL during redirects.
 - Bug causing an error on crawling unparsable/invalid URL's.
 ---
 
