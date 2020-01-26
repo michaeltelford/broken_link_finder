@@ -2,6 +2,7 @@
 
 module BrokenLinkFinder
   DEFAULT_MAX_THREADS = 100
+  SERVER_WAIT_TIME    = 0.5
 
   # Alias for BrokenLinkFinder::Finder.new.
   def self.new(sort: :page, max_threads: DEFAULT_MAX_THREADS)
@@ -24,26 +25,28 @@ module BrokenLinkFinder
       reset_crawl
     end
 
-    # Clear/empty the link collection Hashes.
+    # Clear/empty the link collection objects.
     def reset_crawl
       @broken_links      = {}      # Used for mapping pages to broken links.
       @ignored_links     = {}      # Used for mapping pages to ignored links.
       @all_broken_links  = Set.new # Used to prevent crawling a broken link twice.
       @all_intact_links  = Set.new # Used to prevent crawling an intact link twice.
       @all_ignored_links = Set.new # Used for building crawl statistics.
-      @broken_link_map   = {}      # Maps a link to its absolute form.
+      @broken_link_map   = {}      # Maps a link to its absolute (crawlable) form.
       @crawl_stats       = {}      # Records crawl stats e.g. duration etc.
     end
 
-    # Finds broken links within a single page and appends them to the
-    # @broken_links array. Returns true if at least one broken link was found.
+    # Finds broken links within a single page and records them.
+    # Returns true if at least one broken link was found.
     # Access the broken links afterwards with Finder#broken_links.
     def crawl_url(url)
       reset_crawl
 
       start = Time.now
       url   = url.to_url
-      doc   = @crawler.crawl(url.dup)
+
+      # We dup the url to avoid recording any redirects.
+      doc = @crawler.crawl(url.dup)
 
       # Ensure the given page url is valid.
       raise "Invalid or broken URL: #{url}" unless doc
@@ -58,8 +61,8 @@ module BrokenLinkFinder
       @broken_links.any?
     end
 
-    # Finds broken links within an entire site and appends them to the
-    # @broken_links array. Returns true if at least one broken link was found.
+    # Finds broken links within an entire site and records them.
+    # Returns true if at least one broken link was found.
     # Access the broken links afterwards with Finder#broken_links.
     def crawl_site(url)
       reset_crawl
@@ -70,6 +73,7 @@ module BrokenLinkFinder
       crawled = Set.new
 
       # Crawl the site's HTML web pages looking for links.
+      # We dup the url to avoid recording any redirects.
       externals = @crawler.crawl_site(url.dup) do |doc|
         crawled << doc.url
         next unless doc
@@ -91,22 +95,23 @@ module BrokenLinkFinder
       @broken_links.any?
     end
 
-    # Pretty prints the link report into a stream e.g. STDOUT or a file,
+    # Outputs the link report into a stream e.g. STDOUT or a file,
     # anything that respond_to? :puts. Defaults to STDOUT.
-    def report(stream = STDOUT,
-               type: :text, broken_verbose: true, ignored_verbose: false)
+    def report(stream = STDOUT, type: :text,
+               broken_verbose: true, ignored_verbose: false)
       klass = case type
               when :text
                 BrokenLinkFinder::TextReporter
               when :html
                 BrokenLinkFinder::HTMLReporter
               else
-                raise "type: must be :text or :html, not: :#{type}"
+                raise "The type: must be :text or :html, not: :#{type}"
               end
 
-      reporter = klass.new(stream, @sort, @broken_links,
-                           @ignored_links, @broken_link_map, @crawl_stats)
-      reporter.call(broken_verbose:  broken_verbose,
+      reporter = klass.new(stream, @sort,
+                           @broken_links, @ignored_links,
+                           @broken_link_map, @crawl_stats)
+      reporter.call(broken_verbose: broken_verbose,
                     ignored_verbose: ignored_verbose)
     end
 
@@ -114,27 +119,28 @@ module BrokenLinkFinder
 
     # Finds which links are unsupported or broken and records the details.
     def find_broken_links(page)
-      process_unparsable_links(page)
+      process_unparsable_links(page) # Record them as broken.
 
       links = get_supported_links(page)
 
       # Iterate over the supported links checking if they're broken or not.
       links.each do |link|
-        # Skip if the link has been processed previously.
+        # Skip if the link has been encountered previously.
         next if @all_intact_links.include?(link)
 
         if @all_broken_links.include?(link)
+          # The link has already been proven broken so simply record it.
           append_broken_link(page, link, map: false)
           next
         end
 
-        # The link hasn't been processed before so we crawl it.
+        # The link hasn't been encountered before so we crawl it.
         link_doc = crawl_link(page, link)
 
-        # Determine if the crawled link is broken or not.
+        # Determine if the crawled link is broken or not and record it.
         if link_broken?(link_doc)
           append_broken_link(page, link)
-        else
+        else # Record it as being intact.
           @lock.synchronize { @all_intact_links << link }
         end
       end
@@ -153,10 +159,10 @@ module BrokenLinkFinder
     # Implements a retry mechanism for each of the broken links found.
     # Removes any broken links found to be working OK.
     def retry_broken_links
-      sleep(0.5) # Give the servers a break, then retry the links.
+      sleep(SERVER_WAIT_TIME) # Give the servers a break, then retry the links.
 
       @broken_link_map.select! do |link, href|
-        # Don't retry unparsable hrefs (which are Strings).
+        # Don't retry unparsable links (which are Strings).
         next(true) unless href.is_a?(Wgit::Url)
 
         doc = @crawler.crawl(href.dup)
@@ -185,7 +191,7 @@ module BrokenLinkFinder
     # Make the link absolute and crawl it, returning its Wgit::Document.
     def crawl_link(doc, link)
       link = link.prefix_base(doc)
-      @crawler.crawl(link.dup)
+      @crawler.crawl(link.dup) # We dup link to avoid recording any redirects.
     end
 
     # Return if the crawled link is broken or not.
@@ -194,8 +200,9 @@ module BrokenLinkFinder
     end
 
     # Returns true if the link is/contains a broken anchor/fragment.
+    # E.g. /about#top should contain a HTML element with an @id of 'top' etc.
     def has_broken_anchor(doc)
-      raise 'link document is nil' unless doc
+      raise 'The link document is nil' unless doc
 
       fragment = doc.url.fragment
       return false if fragment.nil? || fragment.empty?
@@ -203,7 +210,7 @@ module BrokenLinkFinder
       doc.xpath("//*[@id='#{fragment}']").empty?
     end
 
-    # Append key => [value] to @broken_links.
+    # Append key => [value] to the broken link collections.
     # If map: true, then the link will also be recorded in @broken_link_map.
     def append_broken_link(doc, link, map: true)
       key, value = get_key_value(doc.url, link)
@@ -218,7 +225,7 @@ module BrokenLinkFinder
       end
     end
 
-    # Remove the broken_link from the necessary collections.
+    # Remove the broken link from the necessary collections.
     def remove_broken_link(link)
       @lock.synchronize do
         if @sort == :page
@@ -233,7 +240,7 @@ module BrokenLinkFinder
       end
     end
 
-    # Append key => [value] to @ignored_links.
+    # Append key => [value] to the ignored link collections.
     def append_ignored_link(url, link)
       key, value = get_key_value(url, link)
 
@@ -270,7 +277,7 @@ module BrokenLinkFinder
       @ignored_links.each { |_k, v| v.sort! }
     end
 
-    # Sets and returns the total number of links crawled.
+    # Sets various statistics about the crawl and its links.
     def set_crawl_stats(url:, pages_crawled:, start:)
       @crawl_stats[:url]               = url
       @crawl_stats[:pages_crawled]     = pages_crawled

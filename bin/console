@@ -23,12 +23,14 @@ end
 # You can add fixtures and/or initialization code here...
 reload
 
-url = 'http://txti.es/'
-by_page = Finder.new
-by_link = Finder.new sort: :link
-finder = by_page
+def url; @url ||= 'http://txti.es/'; end
+def by_page; @by_page ||= Finder.new; end
+def by_link; @by_link ||= Finder.new(sort: :link); end
+def finder; @finder ||= by_page; end
 
 # Start the console.
-puts "\nbroken_link_finder v#{BrokenLinkFinder::VERSION} (#{Wgit.version_str})"
+puts
+puts "broken_link_finder v#{BrokenLinkFinder::VERSION} (#{Wgit.version_str})"
+puts
 
-binding.pry
+Pry.start
