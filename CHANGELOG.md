@@ -14,7 +14,7 @@
 - Additional crawl statistics.
 - Exit code handling to executable. `0` for success, `1` for an error scenario.
 ### Changed/Removed
-- The report formats slighly bringing various improvements such as the total number of links crawled etc.
+- Updated the report formats slightly bringing various improvements such as the total number of links crawled etc.
 ### Fixed
 - Bug in html report, summary url is now an `<a>` link.
 - Bug in `Finder@broken_link_map` URLs and `Finder#crawl_stats[:url]` URL during redirects.
