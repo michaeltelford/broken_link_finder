@@ -6,7 +6,7 @@ module BrokenLinkFinder
     # The amount of pages/links to display when verbose is false.
     NUM_VALUES = 3
 
-    # Creates a new Reporter instance.
+    # Returns a new Reporter instance.
     # stream is any Object that responds to :puts and :print.
     def initialize(stream, sort,
                    broken_links, ignored_links,

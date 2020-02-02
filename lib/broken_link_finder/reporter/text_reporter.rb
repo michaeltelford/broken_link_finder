@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 module BrokenLinkFinder
+  # Class responsible for reporting in a text format.
   class TextReporter < Reporter
-    # Creates a new TextReporter instance.
+    # Returns a new TextReporter instance.
     # stream is any Object that responds to :puts and :print.
     def initialize(stream, sort,
                    broken_links, ignored_links,

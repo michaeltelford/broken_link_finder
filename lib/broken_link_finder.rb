@@ -7,6 +7,7 @@ require 'set'
 
 require_relative './broken_link_finder/wgit_extensions'
 require_relative './broken_link_finder/version'
+require_relative './broken_link_finder/link_manager'
 require_relative './broken_link_finder/reporter/reporter'
 require_relative './broken_link_finder/reporter/text_reporter'
 require_relative './broken_link_finder/reporter/html_reporter'

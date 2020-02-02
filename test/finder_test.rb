@@ -6,59 +6,32 @@ class FinderTest < TestHelper
   def test_initialize_from_module
     finder = BrokenLinkFinder.new sort: :link, max_threads: 10
 
+    assert_equal 10, finder.max_threads
+    assert_equal :link, finder.sort
+    refute_nil finder.instance_variable_get(:@crawler)
+    refute_nil manager(finder)
     assert_empty finder.broken_links
     assert_empty finder.ignored_links
     assert_empty finder.crawl_stats
-    assert_equal 10, finder.max_threads
-    assert_equal :link, finder.sort
-    assert_equal Set, finder.instance_variable_get(:@all_broken_links).class
-    assert_equal Set, finder.instance_variable_get(:@all_intact_links).class
-    assert_equal Set, finder.instance_variable_get(:@all_ignored_links).class
-    assert_empty finder.instance_variable_get(:@all_broken_links)
-    assert_empty finder.instance_variable_get(:@all_intact_links)
-    assert_empty finder.instance_variable_get(:@all_ignored_links)
-    refute_nil finder.instance_variable_get(:@crawler)
   end
 
   def test_initialize
     finder = Finder.new
 
-    assert_empty finder.broken_links
-    assert_empty finder.ignored_links
-    assert_empty finder.crawl_stats
     assert_equal 100, finder.max_threads
     assert_equal :page, finder.sort
-    assert_equal Set, finder.instance_variable_get(:@all_broken_links).class
-    assert_equal Set, finder.instance_variable_get(:@all_intact_links).class
-    assert_equal Set, finder.instance_variable_get(:@all_ignored_links).class
-    assert_empty finder.instance_variable_get(:@all_broken_links)
-    assert_empty finder.instance_variable_get(:@all_intact_links)
-    assert_empty finder.instance_variable_get(:@all_ignored_links)
     refute_nil finder.instance_variable_get(:@crawler)
-
-    finder = Finder.new sort: :link, max_threads: 10
-    assert_equal :link, finder.sort
-    assert_equal 10, finder.max_threads
-  end
-
-  def test_reset_crawl
-    finder = Finder.new
-    finder.instance_variable_set :@broken_links, name: 'foo'
-    finder.instance_variable_set :@ignored_links, name: 'bar'
-    finder.instance_variable_set :@crawl_stats, { url: '/blah' }
-    finder.instance_variable_set :@broken_link_map, { url: '/blah' }
-    finder.instance_variable_set :@all_broken_links, Set.new(['/blah'])
-    finder.instance_variable_set :@all_intact_links, Set.new(['/blah'])
-    finder.instance_variable_set :@all_ignored_links, Set.new(['/blah'])
-    finder.reset_crawl
-
+    refute_nil manager(finder)
     assert_empty finder.broken_links
     assert_empty finder.ignored_links
     assert_empty finder.crawl_stats
-    assert_empty finder.instance_variable_get(:@broken_link_map)
-    assert_empty finder.instance_variable_get(:@all_broken_links)
-    assert_empty finder.instance_variable_get(:@all_intact_links)
-    assert_empty finder.instance_variable_get(:@all_ignored_links)
+
+    finder = Finder.new sort: :link, max_threads: 10
+
+    assert_equal :link, finder.sort
+    assert_equal 10, finder.max_threads
+
+    assert_raises(StandardError) { LinkManager.new :blah }
   end
 
   def test_crawl_url
@@ -361,7 +334,7 @@ class FinderTest < TestHelper
     assert_equal 1, finder.crawl_stats[:num_intact_links]
     assert_equal 0, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
-    assert_empty finder.instance_variable_get(:@broken_link_map)
+    assert_empty manager(finder).broken_link_map
   end
 
   def test_retry_mechanism__sort_by_link
@@ -378,7 +351,7 @@ class FinderTest < TestHelper
     assert_equal 1, finder.crawl_stats[:num_intact_links]
     assert_equal 0, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
-    assert_empty finder.instance_variable_get(:@broken_link_map)
+    assert_empty manager(finder).broken_link_map
   end
 
   def test_broken_links__on_redirect
@@ -395,13 +368,13 @@ class FinderTest < TestHelper
     }, finder.broken_links)
     assert_equal({
       'http://broken.external.redirect.com' => 'http://broken.external.redirect.com'
-    }, finder.instance_variable_get(:@broken_link_map))
+    }, manager(finder).broken_link_map)
     assert(
-      finder.instance_variable_get(:@all_broken_links)
+      manager(finder).all_broken_links
             .include?('http://broken.external.redirect.com')
     )
     refute(
-      finder.instance_variable_get(:@all_broken_links)
+      manager(finder).all_broken_links
             .include?('https://server-error.com')
     )
   end
@@ -442,12 +415,12 @@ class FinderTest < TestHelper
     assert_empty finder.ignored_links
     assert [
       'http://', 'https://', 'https://server-error.com'
-    ], finder.instance_variable_get(:@all_broken_links)
+    ], manager(finder).all_broken_links
     assert_equal({
       'http://'  => 'http://',
       'https://' => 'https://',
       'https://server-error.com' => 'https://server-error.com'
-    }, finder.instance_variable_get(:@broken_link_map))
+    }, manager(finder).broken_link_map)
 
     assert_equal 'http://unparsable.com', finder.crawl_stats[:url]
     assert_equal ['http://unparsable.com'], finder.crawl_stats[:pages_crawled]
@@ -457,5 +430,11 @@ class FinderTest < TestHelper
     assert_equal 1, finder.crawl_stats[:num_intact_links]
     assert_equal 0, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
+  end
+
+  private
+
+  def manager(finder)
+    finder.instance_variable_get(:@manager)
   end
 end

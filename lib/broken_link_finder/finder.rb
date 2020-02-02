@@ -1,46 +1,53 @@
 # frozen_string_literal: true
 
 module BrokenLinkFinder
-  DEFAULT_MAX_THREADS = 100
-  SERVER_WAIT_TIME    = 0.5
+  DEFAULT_MAX_THREADS = 100 # Used by Finder#crawl_site.
+  SERVER_WAIT_TIME    = 0.5 # Used by Finder#retry_broken_links.
 
   # Alias for BrokenLinkFinder::Finder.new.
   def self.new(sort: :page, max_threads: DEFAULT_MAX_THREADS)
     Finder.new(sort: sort, max_threads: max_threads)
   end
 
+  # Class responsible for finding broken links on a page or site.
   class Finder
-    attr_reader :sort, :max_threads, :broken_links, :ignored_links, :crawl_stats
+    # The collection key - either :page or :link.
+    attr_reader :sort
 
-    # Creates a new Finder instance.
-    def initialize(sort: :page, max_threads: BrokenLinkFinder::DEFAULT_MAX_THREADS)
+    # The max number of threads created during #crawl_site - one thread per page.
+    attr_reader :max_threads
+
+    # Returns a new Finder instance.
+    def initialize(sort: :page, max_threads: DEFAULT_MAX_THREADS)
       raise "Sort by either :page or :link, not #{sort}" \
       unless %i[page link].include?(sort)
 
       @sort        = sort
       @max_threads = max_threads
-      @lock        = Mutex.new
       @crawler     = Wgit::Crawler.new
-
-      reset_crawl
+      @manager     = BrokenLinkFinder::LinkManager.new(@sort)
     end
 
-    # Clear/empty the link collection objects.
-    def reset_crawl
-      @broken_links      = {}      # Used for mapping pages to broken links.
-      @ignored_links     = {}      # Used for mapping pages to ignored links.
-      @all_broken_links  = Set.new # Used to prevent crawling a broken link twice.
-      @all_intact_links  = Set.new # Used to prevent crawling an intact link twice.
-      @all_ignored_links = Set.new # Used for building crawl statistics.
-      @broken_link_map   = {}      # Maps a link to its absolute (crawlable) form.
-      @crawl_stats       = {}      # Records crawl stats e.g. duration etc.
+    # Returns the current broken links.
+    def broken_links
+      @manager.broken_links
+    end
+
+    # Returns the current ignored links.
+    def ignored_links
+      @manager.ignored_links
+    end
+
+    # Returns the current crawl stats.
+    def crawl_stats
+      @manager.crawl_stats
     end
 
     # Finds broken links within a single page and records them.
     # Returns true if at least one broken link was found.
     # Access the broken links afterwards with Finder#broken_links.
     def crawl_url(url)
-      reset_crawl
+      @manager.empty
 
       start = Time.now
       url   = url.to_url
@@ -55,17 +62,17 @@ module BrokenLinkFinder
       find_broken_links(doc)
       retry_broken_links
 
-      sort_links
-      set_crawl_stats(url: url, pages_crawled: [url], start: start)
+      @manager.sort
+      @manager.tally(url: url, pages_crawled: [url], start: start)
 
-      @broken_links.any?
+      broken_links.any?
     end
 
     # Finds broken links within an entire site and records them.
     # Returns true if at least one broken link was found.
     # Access the broken links afterwards with Finder#broken_links.
     def crawl_site(url)
-      reset_crawl
+      @manager.empty
 
       start   = Time.now
       url     = url.to_url
@@ -89,10 +96,10 @@ module BrokenLinkFinder
       pool.shutdown
       retry_broken_links
 
-      sort_links
-      set_crawl_stats(url: url, pages_crawled: crawled.to_a, start: start)
+      @manager.sort
+      @manager.tally(url: url, pages_crawled: crawled.to_a, start: start)
 
-      @broken_links.any?
+      broken_links.any?
     end
 
     # Outputs the link report into a stream e.g. STDOUT or a file,
@@ -109,8 +116,8 @@ module BrokenLinkFinder
               end
 
       reporter = klass.new(stream, @sort,
-                           @broken_links, @ignored_links,
-                           @broken_link_map, @crawl_stats)
+                           broken_links, ignored_links,
+                           @manager.broken_link_map, crawl_stats)
       reporter.call(broken_verbose: broken_verbose,
                     ignored_verbose: ignored_verbose)
     end
@@ -119,18 +126,18 @@ module BrokenLinkFinder
 
     # Finds which links are unsupported or broken and records the details.
     def find_broken_links(page)
-      process_unparsable_links(page) # Record them as broken.
+      record_unparsable_links(page) # Record them as broken.
 
       links = get_supported_links(page)
 
       # Iterate over the supported links checking if they're broken or not.
       links.each do |link|
         # Skip if the link has been encountered previously.
-        next if @all_intact_links.include?(link)
+        next if @manager.all_intact_links.include?(link)
 
-        if @all_broken_links.include?(link)
+        if @manager.all_broken_links.include?(link)
           # The link has already been proven broken so simply record it.
-          append_broken_link(page, link, map: false)
+          @manager.append_broken_link(page, link, map: false)
           next
         end
 
@@ -139,21 +146,13 @@ module BrokenLinkFinder
 
         # Determine if the crawled link is broken or not and record it.
         if link_broken?(link_doc)
-          append_broken_link(page, link)
-        else # Record it as being intact.
-          @lock.synchronize { @all_intact_links << link }
+          @manager.append_broken_link(page, link)
+        else
+          @manager.append_intact_link(link)
         end
       end
 
       nil
-    end
-
-    # Record each unparsable link as a broken link.
-    def process_unparsable_links(doc)
-      doc.unparsable_links.each do |link|
-        append_broken_link(doc, link, map: false)
-        @broken_link_map[link] = link
-      end
     end
 
     # Implements a retry mechanism for each of the broken links found.
@@ -161,7 +160,7 @@ module BrokenLinkFinder
     def retry_broken_links
       sleep(SERVER_WAIT_TIME) # Give the servers a break, then retry the links.
 
-      @broken_link_map.select! do |link, href|
+      @manager.broken_link_map.select! do |link, href|
         # Don't retry unparsable links (which are Strings).
         next(true) unless href.is_a?(Wgit::Url)
 
@@ -170,22 +169,30 @@ module BrokenLinkFinder
         if link_broken?(doc)
           true
         else
-          remove_broken_link(link)
+          @manager.remove_broken_link(link)
           false
         end
+      end
+    end
+
+    # Record each unparsable link as a broken link.
+    def record_unparsable_links(doc)
+      doc.unparsable_links.each do |link|
+        # We map the link ourselves because link is a String, not a Wgit::Url.
+        @manager.append_broken_link(doc, link, map: false)
+        @manager.broken_link_map[link] = link
       end
     end
 
     # Report and reject any non supported links. Any link that is absolute and
     # doesn't start with 'http' is unsupported e.g. 'mailto:blah' etc.
     def get_supported_links(doc)
-      doc.all_links
-         .reject do |link|
-           if link.is_absolute? && !link.start_with?('http')
-             append_ignored_link(doc.url, link)
-             true
-           end
-         end
+      doc.all_links.reject do |link|
+        if link.is_absolute? && !link.start_with?('http')
+          @manager.append_ignored_link(doc.url, link)
+          true
+        end
+      end
     end
 
     # Make the link absolute and crawl it, returning its Wgit::Document.
@@ -208,87 +215,6 @@ module BrokenLinkFinder
       return false if fragment.nil? || fragment.empty?
 
       doc.xpath("//*[@id='#{fragment}']").empty?
-    end
-
-    # Append key => [value] to the broken link collections.
-    # If map: true, then the link will also be recorded in @broken_link_map.
-    def append_broken_link(doc, link, map: true)
-      key, value = get_key_value(doc.url, link)
-
-      @lock.synchronize do
-        @broken_links[key] = [] unless @broken_links[key]
-        @broken_links[key] << value
-
-        @all_broken_links << link
-
-        @broken_link_map[link] = link.prefix_base(doc) if map
-      end
-    end
-
-    # Remove the broken link from the necessary collections.
-    def remove_broken_link(link)
-      @lock.synchronize do
-        if @sort == :page
-          @broken_links.each { |_k, links| links.delete(link) }
-          @broken_links.delete_if { |_k, links| links.empty? }
-        else
-          @broken_links.delete(link)
-        end
-
-        @all_broken_links.delete(link)
-        @all_intact_links << link
-      end
-    end
-
-    # Append key => [value] to the ignored link collections.
-    def append_ignored_link(url, link)
-      key, value = get_key_value(url, link)
-
-      @lock.synchronize do
-        @ignored_links[key] = [] unless @ignored_links[key]
-        @ignored_links[key] << value
-
-        @all_ignored_links << link
-      end
-    end
-
-    # Returns the correct key value depending on the @sort type.
-    # @sort == :page ? [url, link] : [link, url]
-    def get_key_value(url, link)
-      case @sort
-      when :page
-        [url, link]
-      when :link
-        [link, url]
-      else
-        raise "Unsupported sort type: #{sort}"
-      end
-    end
-
-    # Sort keys and values alphabetically.
-    def sort_links
-      @broken_links.values.map(&:uniq!)
-      @ignored_links.values.map(&:uniq!)
-
-      @broken_links  = @broken_links.sort_by  { |k, _v| k }.to_h
-      @ignored_links = @ignored_links.sort_by { |k, _v| k }.to_h
-
-      @broken_links.each  { |_k, v| v.sort! }
-      @ignored_links.each { |_k, v| v.sort! }
-    end
-
-    # Sets various statistics about the crawl and its links.
-    def set_crawl_stats(url:, pages_crawled:, start:)
-      @crawl_stats[:url]               = url
-      @crawl_stats[:pages_crawled]     = pages_crawled
-      @crawl_stats[:num_pages]         = pages_crawled.size
-      @crawl_stats[:num_links]         = (
-        @all_broken_links.size + @all_intact_links.size + @all_ignored_links.size
-      )
-      @crawl_stats[:num_broken_links]  = @all_broken_links.size
-      @crawl_stats[:num_intact_links]  = @all_intact_links.size
-      @crawl_stats[:num_ignored_links] = @all_ignored_links.size
-      @crawl_stats[:duration]          = Time.now - start
     end
 
     alias crawl_page crawl_url
