@@ -89,11 +89,12 @@ module BrokenLinkFinder
         pool.process { find_broken_links(doc) }
       end
 
+      # Wait for all threads to finish, even if url was invalid.
+      pool.shutdown
+
       # Ensure the given website url is valid.
       raise "Invalid or broken URL: #{url}" unless externals
 
-      # Wait for all threads to finish.
-      pool.shutdown
       retry_broken_links
 
       @manager.sort
