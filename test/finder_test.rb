@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'helpers/test_helper'
 
 class FinderTest < TestHelper
@@ -260,6 +258,44 @@ class FinderTest < TestHelper
 
     # Check it can be run multiple times consecutively without error.
     assert finder.crawl_site 'http://mock-server.com/'
+  end
+
+  def test_crawl_site__paths
+    finder = Finder.new
+    paths = { allow_paths: 'about*', disallow_paths: 'blog*' }
+    assert finder.crawl_site 'http://mock-server.com/', paths
+
+    assert_equal({
+                   'http://mock-server.com/' => [
+                     'https://doesnt-exist.com',
+                     'not_found'
+                   ],
+                   'http://mock-server.com/about' => [
+                     'https://doesnt-exist.com'
+                   ],
+                   'http://mock-server.com/about?q=world' => [
+                     'https://doesnt-exist.com'
+                   ]
+                 }, finder.broken_links)
+    assert_equal({
+                   'http://mock-server.com/' => [
+                     'mailto:youraddress@yourmailserver.com',
+                     'tel:+13174562564'
+                   ]
+                 }, finder.ignored_links)
+
+    assert_equal 'http://mock-server.com/', finder.crawl_stats[:url]
+    assert_equal([
+      'http://mock-server.com/',
+      'http://mock-server.com/about',
+      'http://mock-server.com/about?q=world'
+    ], finder.crawl_stats[:pages_crawled])
+    assert_equal 3, finder.crawl_stats[:num_pages]
+    assert_equal 15, finder.crawl_stats[:num_links]
+    assert_equal 2, finder.crawl_stats[:num_broken_links]
+    assert_equal 11, finder.crawl_stats[:num_intact_links]
+    assert_equal 2, finder.crawl_stats[:num_ignored_links]
+    assert finder.crawl_stats[:duration] > 0.0
   end
 
   def test_crawl_site__sort_by_link

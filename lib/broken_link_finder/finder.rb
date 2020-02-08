@@ -71,7 +71,7 @@ module BrokenLinkFinder
     # Finds broken links within an entire site and records them.
     # Returns true if at least one broken link was found.
     # Access the broken links afterwards with Finder#broken_links.
-    def crawl_site(url)
+    def crawl_site(url, allow_paths: nil, disallow_paths: nil)
       @manager.empty
 
       start   = Time.now
@@ -81,7 +81,8 @@ module BrokenLinkFinder
 
       # Crawl the site's HTML web pages looking for links.
       # We dup the url to avoid recording any redirects.
-      externals = @crawler.crawl_site(url.dup) do |doc|
+      paths = { allow_paths: allow_paths, disallow_paths: disallow_paths }
+      externals = @crawler.crawl_site(url.dup, paths) do |doc|
         crawled << doc.url
         next unless doc
 
@@ -101,6 +102,8 @@ module BrokenLinkFinder
       @manager.tally(url: url, pages_crawled: crawled.to_a, start: start)
 
       broken_links.any?
+    ensure
+      pool.shutdown if defined?(pool)
     end
 
     # Outputs the link report into a stream e.g. STDOUT or a file,
