@@ -9,6 +9,15 @@
 - ...
 ---
 
+## v0.11.1
+### Added
+- ...
+### Changed/Removed
+- Updated wgit gem to version 0.9.0 which contains improvements and bugs fixes.
+### Fixed
+- ...
+---
+
 ## v0.11.0
 ### Added
 - Additional crawl statistics.

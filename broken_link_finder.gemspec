@@ -49,5 +49,5 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'thor', '~> 0.20'
   spec.add_runtime_dependency 'thread', '~> 0.2'
-  spec.add_runtime_dependency 'wgit', '~> 0.8'
+  spec.add_runtime_dependency 'wgit', '~> 0.9'
 end

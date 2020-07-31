@@ -1,10 +1,10 @@
 # Broken Link Finder
 
-Does what it says on the tin; Finds a website's broken links.
+Does what it says on the tin - finds a website's broken links.
 
-Simply point it at a website and it will crawl all of its webpages searching for and identifing any broken links. You will then be presented with a concise summary of the broken links found.
+Simply point it at a website and it will crawl all of its webpages searching for and identifing broken links. You will then be presented with a concise summary of any broken links found.
 
-Because `libcurl` is used under the hood, Broken Link Finder is fast!
+Broken Link Finder is multi-threaded and uses `libcurl` under the hood, it's fast!
 
 ## How It Works
 
