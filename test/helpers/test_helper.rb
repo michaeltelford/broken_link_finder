@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
+$VERBOSE = nil # Suppress ruby warnings during the test run.
 
 require 'broken_link_finder'
 require 'maxitest/autorun'

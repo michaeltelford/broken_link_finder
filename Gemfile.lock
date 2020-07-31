@@ -40,7 +40,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     public_suffix (4.0.5)
-    rake (10.5.0)
+    rake (13.0.1)
     safe_yaml (1.0.5)
     thor (0.20.3)
     thread (0.2.2)
@@ -69,7 +69,7 @@ DEPENDENCIES
   byebug (~> 11.0)
   maxitest (~> 3.3)
   pry (~> 0.12)
-  rake (~> 10.0)
+  rake (~> 13.0)
   webmock (~> 3.6)
 
 RUBY VERSION
