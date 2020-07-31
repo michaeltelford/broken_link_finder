@@ -263,7 +263,7 @@ class FinderTest < TestHelper
   def test_crawl_site__paths
     finder = Finder.new
     paths = { allow_paths: 'about*', disallow_paths: 'blog*' }
-    assert finder.crawl_site 'http://mock-server.com/', paths
+    assert finder.crawl_site 'http://mock-server.com/', **paths
 
     assert_equal({
                    'http://mock-server.com/' => [

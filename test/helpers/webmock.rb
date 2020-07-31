@@ -5,6 +5,17 @@ include WebMock::API
 WebMock.enable!
 WebMock.disable_net_connect!
 
+# Any custom Typhoeus mocking (missing from Webmock) goes below.
+class Typhoeus::Response
+  def total_time
+    options[:total_time] || rand(0.2...0.7)
+  end
+
+  def primary_ip
+    "192.241.176.#{rand(10..99)}"
+  end
+end
+
 def mock_response(file_name, status: 200)
   file_name += '.html' unless file_name.include?('.')
   file_path = "test/fixtures/#{file_name}"

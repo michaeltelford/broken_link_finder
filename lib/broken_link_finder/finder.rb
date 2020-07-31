@@ -82,7 +82,7 @@ module BrokenLinkFinder
       # Crawl the site's HTML web pages looking for links.
       # We dup the url to avoid recording any redirects.
       paths = { allow_paths: allow_paths, disallow_paths: disallow_paths }
-      externals = @crawler.crawl_site(url.dup, paths) do |doc|
+      externals = @crawler.crawl_site(url.dup, **paths) do |doc|
         crawled << doc.url
         next unless doc
 
@@ -201,7 +201,7 @@ module BrokenLinkFinder
 
     # Make the link absolute and crawl it, returning its Wgit::Document.
     def crawl_link(doc, link)
-      link = link.prefix_base(doc)
+      link = link.make_absolute(doc)
       @crawler.crawl(link.dup) # We dup link to avoid recording any redirects.
     end
 

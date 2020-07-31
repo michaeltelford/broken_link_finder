@@ -57,7 +57,7 @@ module BrokenLinkFinder
 
         @all_broken_links << link
 
-        @broken_link_map[link] = link.prefix_base(doc) if map
+        @broken_link_map[link] = link.make_absolute(doc) if map
       end
     end
 
