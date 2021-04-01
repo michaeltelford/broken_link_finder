@@ -29,21 +29,21 @@ With that said, the usual array of HTTP URL features are supported including anc
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Only MRI Ruby is tested and supported, but `broken_link_finder` may work with other Ruby implementations.
 
-```ruby
-gem 'broken_link_finder'
-```
+Currently, the required MRI Ruby version is:
 
-And then execute:
+`~> 2.5` (a.k.a.) `>= 2.5 && < 3`
 
-    $ bundle
+### Using Bundler
 
-Or install it yourself as:
+    $ bundle add broken_link_finder
+
+### Using RubyGems
 
     $ gem install broken_link_finder
 
-Finally, verify the installation with:
+### Verify
 
     $ broken_link_finder version
 
