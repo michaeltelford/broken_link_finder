@@ -88,6 +88,10 @@ stub_request(:get, 'http://broken.external.redirect.test.com')
 stub_request(:get, 'http://broken.external.redirect.com')
   .to_return(status: 301, headers: { 'Location': 'https://server-error.com' })
 
+# Scheme relative URL
+stub_request(:get, 'http://fonts.google.com')
+  .to_return(status: 200, body: '<h1>Welcome</h1>')
+
 # Server error
 stub_request(:get, 'https://server-error.com')
   .to_return(status: 500)
