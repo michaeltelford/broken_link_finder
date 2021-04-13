@@ -52,9 +52,9 @@ class FinderTest < TestHelper
     assert_equal 'http://mock-server.com/', finder.crawl_stats[:url]
     assert_equal ['http://mock-server.com/'], finder.crawl_stats[:pages_crawled]
     assert_equal 1, finder.crawl_stats[:num_pages]
-    assert_equal 11, finder.crawl_stats[:num_links]
+    assert_equal 9, finder.crawl_stats[:num_links]
     assert_equal 2, finder.crawl_stats[:num_broken_links]
-    assert_equal 7, finder.crawl_stats[:num_intact_links]
+    assert_equal 5, finder.crawl_stats[:num_intact_links]
     assert_equal 2, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
   end
@@ -83,9 +83,9 @@ class FinderTest < TestHelper
     assert_equal 'http://mock-server.com/', finder.crawl_stats[:url]
     assert_equal ['http://mock-server.com/'], finder.crawl_stats[:pages_crawled]
     assert_equal 1, finder.crawl_stats[:num_pages]
-    assert_equal 11, finder.crawl_stats[:num_links]
+    assert_equal 9, finder.crawl_stats[:num_links]
     assert_equal 2, finder.crawl_stats[:num_broken_links]
-    assert_equal 7, finder.crawl_stats[:num_intact_links]
+    assert_equal 5, finder.crawl_stats[:num_intact_links]
     assert_equal 2, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
   end
@@ -250,9 +250,9 @@ class FinderTest < TestHelper
       'http://mock-server.com/about?q=world'
     ], finder.crawl_stats[:pages_crawled])
     assert_equal 7, finder.crawl_stats[:num_pages]
-    assert_equal 21, finder.crawl_stats[:num_links]
+    assert_equal 20, finder.crawl_stats[:num_links]
     assert_equal 3, finder.crawl_stats[:num_broken_links]
-    assert_equal 15, finder.crawl_stats[:num_intact_links]
+    assert_equal 14, finder.crawl_stats[:num_intact_links]
     assert_equal 3, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
 
@@ -291,9 +291,9 @@ class FinderTest < TestHelper
       'http://mock-server.com/about?q=world'
     ], finder.crawl_stats[:pages_crawled])
     assert_equal 3, finder.crawl_stats[:num_pages]
-    assert_equal 16, finder.crawl_stats[:num_links]
+    assert_equal 14, finder.crawl_stats[:num_links]
     assert_equal 2, finder.crawl_stats[:num_broken_links]
-    assert_equal 12, finder.crawl_stats[:num_intact_links]
+    assert_equal 10, finder.crawl_stats[:num_intact_links]
     assert_equal 2, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
   end
@@ -334,9 +334,9 @@ class FinderTest < TestHelper
       'http://mock-server.com/about?q=world'
     ], finder.crawl_stats[:pages_crawled])
     assert_equal 7, finder.crawl_stats[:num_pages]
-    assert_equal 21, finder.crawl_stats[:num_links]
+    assert_equal 20, finder.crawl_stats[:num_links]
     assert_equal 3, finder.crawl_stats[:num_broken_links]
-    assert_equal 15, finder.crawl_stats[:num_intact_links]
+    assert_equal 14, finder.crawl_stats[:num_intact_links]
     assert_equal 3, finder.crawl_stats[:num_ignored_links]
     assert finder.crawl_stats[:duration] > 0.0
 

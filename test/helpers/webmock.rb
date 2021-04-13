@@ -5,7 +5,7 @@ include WebMock::API
 WebMock.enable!
 WebMock.disable_net_connect!
 
-# Any custom Typhoeus mocking (missing from Webmock) goes below.
+# Any custom Typhoeus mocking (missing from Webmock) goes below
 class Typhoeus::Response
   def total_time
     options[:total_time] || rand(0.2...0.7)

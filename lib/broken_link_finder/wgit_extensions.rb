@@ -17,10 +17,10 @@ rescue StandardError
   nil
 end
 
-# We extract all the Document's links e.g. <a>, <img>, <script>, <link> etc.
+# We extract all the Document's <body> links e.g. <a>, <img>, <script> etc.
 Wgit::Document.define_extractor(
   :all_links,
-  '//*/@href | //*/@src', # Any element's href or src attribute URL.
+  '/html/body//*/@href | /html/body//*/@src',
   singleton: false,
   text_content_only: true
 ) do |links, doc|
