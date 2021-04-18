@@ -17,10 +17,10 @@ rescue StandardError
   nil
 end
 
-# We extract all the Document's <body> links e.g. <a>, <img>, <script> etc.
+# Define a custom extractor for all page links we're interested in checking.
 Wgit::Document.define_extractor(
   :all_links,
-  '/html/body//*/@href | /html/body//*/@src',
+  lambda { BrokenLinkFinder::link_xpath },
   singleton: false,
   text_content_only: true
 ) do |links, doc|

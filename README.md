@@ -8,7 +8,9 @@ Broken Link Finder is multi-threaded and uses `libcurl` under the hood, it's fas
 
 ## How It Works
 
-Any HTML page element with a `href` or `src` attribute is considered a link. For each link on a given page, any of the following conditions constitutes that the link is broken:
+Any HTML `<body>` element with a `href` or `src` attribute is considered a link (this is [configurable](#Link-Extraction) however).
+
+For each link on a given page, any of the following conditions constitutes that the link is broken:
 
 - An empty HTML response body is returned.
 - A response status code of `404 Not Found` is returned.
@@ -117,6 +119,35 @@ ftp://server.com
 ```
 
 You can provide the `--html` flag if you'd prefer a HTML based report.
+
+## Link Extraction
+
+You can customise the XPath used to extract links from each crawled page. This can be done via the command line or the library.
+
+### Executable
+
+Simply add the `--xpath` (or `-x`) flag to the crawl command e.g.
+
+    $ broken_link_finder crawl http://txti.es -x //img/@src
+
+### Library
+
+Simply set the desired XPath using the accessor methods provided:
+
+> main.rb
+
+```ruby
+require 'broken_link_finder'
+
+# Set your desired xpath before crawling...
+BrokenLinkFinder::link_xpath = '//img/@src'
+
+# Now crawl as normal and only your custom targeted links will be checked.
+BrokenLinkFinder.new.crawl_page 'http://txti.es'
+
+# Go back to using the default provided xpath as needed.
+BrokenLinkFinder::link_xpath = BrokenLinkFinder::DEFAULT_LINK_XPATH
+```
 
 ## Contributing
 

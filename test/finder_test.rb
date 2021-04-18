@@ -196,6 +196,20 @@ class FinderTest < TestHelper
     assert finder.crawl_stats[:duration] > 0.0
   end
 
+  def test_crawl_url__custom_link_xpath
+    finder = Finder.new
+    refute finder.crawl_url 'http://mock-server.com/location'
+
+    assert_equal 2, finder.crawl_stats[:num_links]
+
+    BrokenLinkFinder::link_xpath = '/html/body//*/@href'
+    refute finder.crawl_url 'http://mock-server.com/location'
+
+    assert_equal 1, finder.crawl_stats[:num_links]
+  ensure
+    BrokenLinkFinder::link_xpath = BrokenLinkFinder::DEFAULT_LINK_XPATH
+  end
+
   def test_crawl_url__invalid
     finder = Finder.new
     finder.crawl_url 'https://server-error.com'
