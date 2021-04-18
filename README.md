@@ -8,7 +8,7 @@ Broken Link Finder is multi-threaded and uses `libcurl` under the hood, it's fas
 
 ## How It Works
 
-Any HTML `<body>` element with a `href` or `src` attribute is considered a link (this is [configurable](#Link-Extraction) however).
+Any HTML element within `<body>` with a `href` or `src` attribute is considered a link (this is [configurable](#Link-Extraction) however).
 
 For each link on a given page, any of the following conditions constitutes that the link is broken:
 
@@ -51,7 +51,7 @@ Currently, the required MRI Ruby version is:
 
 ## Usage
 
-You can check for broken links via the library or executable.
+You can check for broken links via the executable or library.
 
 ### Executable
 
@@ -122,17 +122,17 @@ You can provide the `--html` flag if you'd prefer a HTML based report.
 
 ## Link Extraction
 
-You can customise the XPath used to extract links from each crawled page. This can be done via the command line or the library.
+You can customise the XPath used to extract links from each crawled page. This can be done via the executable or library.
 
 ### Executable
 
-Simply add the `--xpath` (or `-x`) flag to the crawl command e.g.
+Add the `--xpath` (or `-x`) flag to the crawl command e.g.
 
     $ broken_link_finder crawl http://txti.es -x //img/@src
 
 ### Library
 
-Simply set the desired XPath using the accessor methods provided:
+Set the desired XPath using the accessor methods provided:
 
 > main.rb
 

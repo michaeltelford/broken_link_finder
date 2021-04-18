@@ -9,6 +9,16 @@
 - ...
 ---
 
+## v0.12.0
+### Added
+- `BrokenLinkFinder::link_xpath` and `link_xpath=` methods so you can customise how links are extracted from each crawled page using the API.
+- An `--xpath` (or just `-x`) command line flag so you can customise how links are extracted when using the command line.
+### Changed/Removed
+- Changed the default way in which links are extracted from a page. Previously any element with a `href` or `src` attribute was extracted and checked; now only those links inside the `<body>` are extracted and checked, ignoring the `<head>` section entirely. You can change this behaviour back with: `BrokenLinkFinder::link_xpath = '//*/@href | //*/@src'` before you perform a crawl. Alternatively, if using the command line, use the `--xpath //*/@href | //*/@src` option.
+### Fixed
+- [Scheme relative bug](https://github.com/michaeltelford/broken_link_finder/issues/16) by upgrading to `wgit v0.10.0`.
+---
+
 ## v0.11.1
 ### Added
 - ...
