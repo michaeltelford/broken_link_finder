@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.post_install_message = "Added the executable 'broken_link_finder' to $PATH"
 
-  spec.required_ruby_version = '~> 2.6'
+  spec.required_ruby_version = '>= 2.6', '< 4'
 
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'byebug', '~> 11.0'

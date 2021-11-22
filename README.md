@@ -35,7 +35,7 @@ Only MRI Ruby is tested and supported, but `broken_link_finder` may work with ot
 
 Currently, the required MRI Ruby version is:
 
-`~> 2.5` (a.k.a.) `>= 2.5 && < 3`
+`ruby '>= 2.6', '< 4'`
 
 ### Using Bundler
 
