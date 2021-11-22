@@ -9,6 +9,15 @@
 - ...
 ---
 
+## v0.12.1
+### Added
+- Support for Ruby 3.
+### Changed/Removed
+- Removed support for Ruby 2.5 (as it's too old).
+### Fixed
+- ...
+---
+
 ## v0.12.0
 ### Added
 - `BrokenLinkFinder::link_xpath` and `link_xpath=` methods so you can customise how links are extracted from each crawled page using the API.
