@@ -9,7 +9,9 @@ class BrokenLinkFinderCLI < Thor
   desc 'crawl [URL]', 'Find broken links at the URL'
   option :recursive, type: :boolean, aliases: [:r], default: false, desc: 'Crawl the entire site.'
   option :threads, type: :numeric, aliases: [:t], default: BrokenLinkFinder::DEFAULT_MAX_THREADS, desc: 'Max number of threads to use when crawling recursively; 1 thread per web page.'
-  option :xpath, type: :string, aliases: [:x], default: BrokenLinkFinder::DEFAULT_LINK_XPATH
+  option :xpath, type: :string, aliases: [:x], default: BrokenLinkFinder::DEFAULT_LINK_XPATH, desc: 'The xpath to extract links with, before checking if broken'
+  option :js, type: :boolean, default: false, desc: 'Run the Javascript on a page before crawling the HTML, requires Chrome/Chromium to be installed to $PATH'
+  option :js_delay, type: :numeric, default: 1, desc: "The seconds of delay time given to a page's Javascript for it to update the DOM, requires the --js flag"
   option :html, type: :boolean, aliases: [:h], default: false, desc: 'Produce a HTML report (instead of text)'
   option :sort_by_link, type: :boolean, aliases: [:l], default: false, desc: 'Makes report more concise if there are more pages crawled than broken links found. Use with -r on medium/large sites.'
   option :verbose, type: :boolean, aliases: [:v], default: false, desc: 'Display all ignored links.'
@@ -22,15 +24,17 @@ class BrokenLinkFinderCLI < Thor
     max_threads     = options[:threads]
     broken_verbose  = !options[:concise]
     ignored_verbose = options[:verbose]
+    parse_js        = options[:js]
+    parse_js_delay  = options[:js_delay]
 
     BrokenLinkFinder.link_xpath = options[:xpath]
-    finder = BrokenLinkFinder::Finder.new(sort: sort_by, max_threads: max_threads)
+    finder = BrokenLinkFinder::Finder.new(sort: sort_by, max_threads:) do |crawler|
+      crawler.parse_javascript = parse_js
+      crawler.parse_javascript_delay = parse_js_delay
+    end
+
     options[:recursive] ? finder.crawl_site(url) : finder.crawl_page(url)
-    finder.report(
-      type:            report_type,
-      broken_verbose:  broken_verbose,
-      ignored_verbose: ignored_verbose
-    )
+    finder.report(type: report_type, broken_verbose:, ignored_verbose:)
 
     exit 0
   rescue StandardError => e

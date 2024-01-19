@@ -5,8 +5,8 @@ module BrokenLinkFinder
   SERVER_WAIT_TIME    = 0.5 # Used by Finder#retry_broken_links.
 
   # Alias for BrokenLinkFinder::Finder.new.
-  def self.new(sort: :page, max_threads: DEFAULT_MAX_THREADS)
-    Finder.new(sort: sort, max_threads: max_threads)
+  def self.new(sort: :page, max_threads: DEFAULT_MAX_THREADS, &block)
+    Finder.new(sort: sort, max_threads: max_threads, &block)
   end
 
   # Class responsible for finding broken links on a page or site.
@@ -17,8 +17,11 @@ module BrokenLinkFinder
     # The max number of threads created during #crawl_site - one thread per page.
     attr_reader :max_threads
 
+    # The underlying Wgit::Crawler used by this instance of Finder.
+    attr_reader :crawler
+
     # Returns a new Finder instance.
-    def initialize(sort: :page, max_threads: DEFAULT_MAX_THREADS)
+    def initialize(sort: :page, max_threads: DEFAULT_MAX_THREADS, &block)
       raise "Sort by either :page or :link, not #{sort}" \
       unless %i[page link].include?(sort)
 
@@ -26,6 +29,8 @@ module BrokenLinkFinder
       @max_threads = max_threads
       @crawler     = Wgit::Crawler.new
       @manager     = BrokenLinkFinder::LinkManager.new(@sort)
+
+      yield @crawler if block_given?
     end
 
     # Returns the current broken links.

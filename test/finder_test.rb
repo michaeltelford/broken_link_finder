@@ -13,6 +13,18 @@ class FinderTest < TestHelper
     assert_empty finder.crawl_stats
   end
 
+  def test_initialize_from_module__block
+    finder = BrokenLinkFinder.new do |crawler|
+      crawler.parse_javascript = true
+      crawler.parse_javascript_delay = 3.5
+    end
+
+    refute_nil finder
+    refute_nil finder.crawler
+    assert finder.crawler.parse_javascript
+    assert_equal 3.5, finder.crawler.parse_javascript_delay
+  end
+
   def test_initialize
     finder = Finder.new
 
@@ -30,6 +42,18 @@ class FinderTest < TestHelper
     assert_equal 10, finder.max_threads
 
     assert_raises(StandardError) { LinkManager.new :blah }
+  end
+
+  def test_initialize__block
+    finder = Finder.new do |crawler|
+      crawler.parse_javascript = true
+      crawler.parse_javascript_delay = 3.5
+    end
+
+    refute_nil finder
+    refute_nil finder.crawler
+    assert finder.crawler.parse_javascript
+    assert_equal 3.5, finder.crawler.parse_javascript_delay
   end
 
   def test_crawl_url
