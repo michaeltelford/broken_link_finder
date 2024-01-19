@@ -47,7 +47,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'webmock', '~> 3.6'
 
-  spec.add_runtime_dependency 'thor', '~> 0.20'
+  spec.add_runtime_dependency 'thor', '~> 1.3'
   spec.add_runtime_dependency 'thread', '~> 0.2'
-  spec.add_runtime_dependency 'wgit', '~> 0.10'
+  spec.add_runtime_dependency 'wgit', '~> 0.11'
 end
