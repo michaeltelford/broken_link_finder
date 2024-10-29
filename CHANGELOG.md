@@ -9,9 +9,18 @@
 - ...
 ---
 
+## v0.12.3
+### Added
+- ...
+### Changed/Removed
+- Updated production dependencies including `wgit` (to `v0.12.0`)
+### Fixed
+- ...
+---
+
 ## v0.12.2
 ### Added
-- Updated to Ruby 3.3 and updated production dependencies including Wgit (v0.11)
+- Updated to Ruby 3.3 and updated production dependencies including Wgit (v0.11.0)
 - Added `--js` and `--js-delay` flag options to the executable. This allows JS parsing to update a page's DOM before it get crawled.
 ### Changed/Removed
 - ...
