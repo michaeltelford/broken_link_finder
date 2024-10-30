@@ -171,4 +171,5 @@ To release a new gem version:
 - Run `bundle exec rake compile` ensuring no warnings.
 - Run `bundle exec rake install && rbenv rehash`.
 - Manually test the executable.
+- Commit any changes and merge your dev branch into `master`. Push `master` to `origin`.
 - Run `bundle exec rake release[origin]`.
