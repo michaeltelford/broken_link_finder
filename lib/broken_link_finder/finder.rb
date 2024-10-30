@@ -20,6 +20,9 @@ module BrokenLinkFinder
     # The underlying Wgit::Crawler used by this instance of Finder.
     attr_reader :crawler
 
+    # The underlying link manager used by this instance of Finder.
+    attr_reader :manager
+
     # Returns a new Finder instance.
     def initialize(sort: :page, max_threads: DEFAULT_MAX_THREADS, &block)
       raise "Sort by either :page or :link, not #{sort}" \
@@ -61,7 +64,7 @@ module BrokenLinkFinder
       doc = @crawler.crawl(url.dup)
 
       # Ensure the given page url is valid.
-      raise "Invalid or broken URL: #{url}" unless doc
+      raise "Invalid or broken URL: #{url}" if doc.empty?
 
       # Get all page links and determine which are broken.
       find_broken_links(doc)
@@ -212,7 +215,7 @@ module BrokenLinkFinder
 
     # Return if the crawled link is broken or not.
     def link_broken?(doc)
-      doc.nil? || @crawler.last_response.not_found? || has_broken_anchor(doc)
+      doc.empty? || @crawler.last_response.not_found? || has_broken_anchor(doc)
     end
 
     # Returns true if the link is/contains a broken anchor/fragment.

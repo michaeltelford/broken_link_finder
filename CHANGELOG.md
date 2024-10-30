@@ -11,9 +11,10 @@
 
 ## v0.12.3
 ### Added
-- ...
+- Added `BrokenLinkFinder::Finder#manager` getter method.
 ### Changed/Removed
-- Updated production dependencies including `wgit` (to `v0.12.0`)
+- Updated production dependencies including `wgit` (to `v0.12.0`).
+- Updated `Wgit::Url`s to look like Strings when inspected.
 ### Fixed
 - ...
 ---

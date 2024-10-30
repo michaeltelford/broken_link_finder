@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# Make Wgit::Urls look like Strings when inspected.
+class Wgit::Url
+  def inspect
+    to_s.inspect
+  end
+end
+
 # Define a method on each doc for recording unparsable links.
 # Unparsable links are recorded as broken links by Finder.
 class Wgit::Document
